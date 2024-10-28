@@ -1,0 +1,21 @@
+.placeholder-white::placeholder {
+    color: white; /* Change placeholder color to white */
+    opacity: 1; /* Ensure placeholder is fully opaque */
+  }
+
+  .custom-email-input {
+    background-color: #0760A1; /* Set background color */
+    color: white; /* Set text color */
+    font-family: 'Helvetica'; /* Set font family */
+    border: none; /* Eliminate border */
+    padding: 1rem; /* Increase padding for larger field */
+    font-size: 1rem; /* Correct font size */
+    height: 2.8rem; /* Set a larger height */
+  }
+  
+  .custom-email-input:focus,
+  .custom-email-input:valid {
+    background-color: #0760A1; /* Maintain background color on focus and valid */
+    color: white; /* Maintain text color */
+    outline: none; /* Optional: Remove outline on focus */
+  }
