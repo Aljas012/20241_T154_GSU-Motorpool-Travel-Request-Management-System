@@ -19,7 +19,7 @@ function SignupGoogle() {
       <NavbarComponent />
 
       <Container>
-        <Row >
+        <Row>
           <Col>
             <img
               src="./images/PICT1.png"

@@ -4,8 +4,9 @@ import FooterComponent from "./components/FooterComponents";
 import SignupGoogle from "./components/SignupGoogle";
 import LandingPageComponents from "./components/LandingPageComponents";
 import UserLandingPage from "./components/UserLandingPage";
+import AuthorityToTravelForm from "./components/AuthorityToTravelForm"
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import "./App.css"; // Make sure to import your CSS file
+
 
 /*function App() {
   return (
@@ -20,7 +21,7 @@ import "./App.css"; // Make sure to import your CSS file
 }*/
 
 function App() {
-  return <UserLandingPage />;
+  return <AuthorityToTravelForm />;
 }
 
 export default App;
