@@ -1,22 +1,26 @@
 const express = require('express');
 const router = express.Router();
-const data = require('./db/db_samples');
 
 router.get('/', (req, res) => {  //user homepage
-    res.send(data);
-})
-
-
-router.get('/:user_id', (req, res) => {  //get specific user
-    res.send()
-})
-
-// Sign In using Office Code
-router.post('/userLogin/:office_code', (req, res) => {
-    res.json("this is the user login");
+    res.send('welcome to home user!');
+    console.log('welcome to homepage');
 });
 
 
-router.
+router.post('/signin', (req, res) => {  //sign in or add user
+    // const { email, password } = req.body;
+    res.send('User signed up successfully');
+    console.log('signup successfully');
+});
 
-    module.exports = router
+router.post('/login', (req, res) => { //user login
+    res.send('logged user');
+    console.log('welcome to login page');
+});
+
+router.patch('/profile/updateProfile', (req, res) => { //end point for updating user profile
+    res.send('user updated successfully');
+    console.log('user updated successfully');
+});
+
+module.exports = router;
