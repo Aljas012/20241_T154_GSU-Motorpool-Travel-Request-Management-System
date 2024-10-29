@@ -1,9 +1,17 @@
-import React from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import React from "react";
+import { Container, Row, Col } from "react-bootstrap";
 
 function FooterComponent() {
   return (
-    <footer style={{ backgroundColor: "#0760A1", position: "relative", bottom: "0", width: "100%" }} className="text-white py-3">
+    <footer
+      style={{
+        backgroundColor: "#0760A1",
+        position: "relative",
+        bottom: "0",
+        width: "100%",
+      }}
+      className="text-white py-3"
+    >
       <Container>
         <Row className="text-center">
           <Col>

@@ -11,7 +11,7 @@ import {
 } from "react-bootstrap";
 
 import NavbarComponent from "./NavBarComponents";
-import "./form.css";
+import "./SignupGoogle.css";
 
 function SignupGoogle() {
   return (
@@ -53,7 +53,10 @@ function SignupGoogle() {
                         fontSize: "1.rem", // Increase font size
                         height: "2.8rem", // Set a larger height
                       }}
-                      className="placeholder-white custom-email-input" // Apply custom class for placeholder
+                      className="custom-email-input" // Apply custom class for placeholder
+                      autoComplete="off" // Disable autofill
+                      readOnly
+                      onFocus={(e) => e.target.removeAttribute('readonly')} // Remove readonly on focus
                     />
                   </InputGroup>
 
@@ -72,7 +75,7 @@ function SignupGoogle() {
                         fontSize: "1.rem", // Increase font size
                         height: "2.8rem", // Set a larger height
                       }}
-                      className="placeholder-white" // Apply custom class for placeholder
+                      className="custom-email-input " // Apply custom class for placeholder
                     />
                   </InputGroup>
 

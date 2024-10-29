@@ -1,0 +1,18 @@
+.custom-email-input:-webkit-autofill,
+.custom-email-input:-webkit-autofill:hover,
+.custom-email-input:-webkit-autofill:focus,
+.custom-email-input:-webkit-autofill:active {
+  background-color: #0760A1 !important; /* Force background color */
+  color: white !important; /* Ensure text color remains white */
+  font-family: Helvetica; /* Maintain font family */
+  border: none;
+  -webkit-box-shadow: 0 0 0 1000px #0760A1 inset !important; /* Prevent color change */
+  transition: background-color 5000s ease-in-out 0s; /* Workaround for autofill delay */
+}
+
+
+.custom-email-input::placeholder {
+    color: white; /* Set placeholder font color to white */
+    opacity: 1; /* Ensure full opacity for placeholder */
+  }
+  

@@ -5,6 +5,7 @@ import SignupGoogle from "./components/SignupGoogle";
 import LandingPageComponents from "./components/LandingPageComponents";
 import UserLandingPage from "./components/UserLandingPage";
 import AuthorityToTravelForm from "./components/AuthorityToTravelForm"
+import RequestToTravelForm from "./components/RequestToTravelForm";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 
@@ -21,7 +22,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 }*/
 
 function App() {
-  return <AuthorityToTravelForm />;
+  return <RequestToTravelForm />;
 }
 
 export default App;

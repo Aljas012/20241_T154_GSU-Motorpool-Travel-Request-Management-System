@@ -1,21 +1,10 @@
-.checkbox-border {
-  position: relative;
-
+.custom-checkbox input[type="checkbox"] {
+  border: 2px solid black; /* Add your desired border */
+  width: 18px; /* Adjust the size if needed */
+  height: 18px;
+  border-radius: 3px; /* Optional: Rounded corners */
 }
 
-.checkbox-border input[type="checkbox"] {
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  border: 1px solid #000000; /* Border around the checkbox */
-  border-radius: 4px; /* Optional: for rounded corners */
-  width: 16px; /* Width of the checkbox */
-  height: 16px; /* Height of the checkbox */
-  appearance: none; /* Remove default checkbox style */
-}
-
-.checkbox-border input[type="checkbox"]:checked {
-  background-color: #007bff; /* Change background when checked */
-  border: 1px solid #007bff; /* Border color when checked */
+.custom-checkbox input[type="checkbox"]:checked {
+  border-color: green; /* You can change the border color when checked */
 }
