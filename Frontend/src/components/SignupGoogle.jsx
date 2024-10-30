@@ -39,7 +39,7 @@ function SignupGoogle() {
               <Card.Body>
                 <Form style={{ padding: "1.2rem" }}>
                   <InputGroup className="mb-3">
-                    <Form.Control
+                    <Form.Control id="email"
                       type="email" // Specify type for email
                       placeholder="Institutional Email"
                       aria-label="Email"
@@ -61,7 +61,7 @@ function SignupGoogle() {
                   </InputGroup>
 
                   <InputGroup className="mb-3">
-                    <Form.Control
+                    <Form.Control id="password"
                       type="password" // Specify type for password
                       placeholder="Password"
                       aria-label="Password"
