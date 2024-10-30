@@ -105,7 +105,7 @@ function LandingPage() {
                 <InputGroup.Text>
                   <FontAwesomeIcon icon={faUser} size="lg" fixedWidth />
                 </InputGroup.Text>
-                <Form.Control
+                <Form.Control id="email"
                   size="lg"
                   type="email" // Use lowercase 'email'
                   placeholder="Email"
@@ -118,7 +118,7 @@ function LandingPage() {
                 <InputGroup.Text>
                   <FontAwesomeIcon icon={faLock} size="lg" fixedWidth />
                 </InputGroup.Text>
-                <Form.Control
+                <Form.Control id="password"
                   size="lg"
                   type="password"
                   placeholder="Password"

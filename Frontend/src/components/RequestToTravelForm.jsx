@@ -87,7 +87,7 @@ function RequestToTravelForm() {
                     }}
                   >
                     <Container>
-                      <Form>
+                      <Form id="RTT_form">
                         {/** 1ST LABEL */}
                         <div
                           style={{
@@ -109,7 +109,7 @@ function RequestToTravelForm() {
                             Name of Organization
                           </h6>
 
-                          <Form.Control
+                          <Form.Control id="organization"
                             type="text"
                             placeholder="Organization"
                             style={{
@@ -141,7 +141,7 @@ function RequestToTravelForm() {
                             Requestor:
                           </h6>
 
-                          <Form.Control
+                          <Form.Control id="requestor"
                             type="text"
                             placeholder="Full Name"
                             style={{
@@ -174,7 +174,7 @@ function RequestToTravelForm() {
                             Contact Number:
                           </h6>
 
-                          <Form.Control
+                          <Form.Control id="contact"
                             type="text"
                             placeholder="Optional"
                             style={{
@@ -227,8 +227,8 @@ function RequestToTravelForm() {
                               marginLeft: "6.4rem",
                             }}
                           >
-                            <Form.Select
-                              aria-label="Select Month"
+                            <Form.Select id="month"
+                              aria-label="Select Month" 
                               style={{
                                 marginRight: "0.5rem",
                                 width: "7rem",
@@ -252,7 +252,7 @@ function RequestToTravelForm() {
                               <option value="12">December</option>
                             </Form.Select>
 
-                            <Form.Select
+                            <Form.Select id="day"
                               aria-label="Select Day"
                               style={{
                                 marginRight: "0.5rem",
@@ -269,7 +269,7 @@ function RequestToTravelForm() {
                               ))}
                             </Form.Select>
 
-                            <Form.Select
+                            <Form.Select id="year"
                               aria-label="Select Year"
                               style={{
                                 width: "7rem",
@@ -317,7 +317,7 @@ function RequestToTravelForm() {
                               marginLeft: "6.4rem",
                             }}
                           >
-                            <Form.Control
+                            <Form.Control id="time"
                               type="text"
                               placeholder="H"
                               style={{
@@ -344,7 +344,7 @@ function RequestToTravelForm() {
                             >
                               :
                             </span>{" "}
-                            <Form.Control
+                            <Form.Control id="M"
                               type="text"
                               placeholder="M"
                               style={{
@@ -361,7 +361,7 @@ function RequestToTravelForm() {
                                 }
                               }}
                             />
-                            <Form.Select
+                            <Form.Select id="period"
                               aria-label="Select Period"
                               style={{
                                 marginLeft: ".7rem",
