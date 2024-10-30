@@ -120,7 +120,7 @@ function AuthorityToTravelForm({ children }) {
                       {/* First Card.Body on the left */}
                       <div style={{ flex: 1, padding: "1rem" }}>
                         <Container>
-                          <Form>
+                          <Form id = "ATT_form">
                             {/* SCHEDULE */}
                             <div
                               style={{ display: "flex", alignItems: "center" }}
@@ -148,7 +148,7 @@ function AuthorityToTravelForm({ children }) {
                                   marginLeft: "6.4rem",
                                 }}
                               >
-                                <Form.Select
+                                <Form.Select id = "month"
                                   aria-label="Select Month"
                                   style={{
                                     marginRight: "0.5rem",
@@ -172,7 +172,7 @@ function AuthorityToTravelForm({ children }) {
                                   <option value="12">December</option>
                                 </Form.Select>
 
-                                <Form.Select
+                                <Form.Select id="day"
                                   aria-label="Select Day"
                                   style={{
                                     marginRight: "0.5rem",
@@ -189,7 +189,7 @@ function AuthorityToTravelForm({ children }) {
                                   ))}
                                 </Form.Select>
 
-                                <Form.Select
+                                <Form.Select id="year"
                                   aria-label="Select Year"
                                   style={{
                                     width: "7rem",
@@ -231,7 +231,7 @@ function AuthorityToTravelForm({ children }) {
                                 Name of the Requestor:
                               </h6>
 
-                              <Form.Control
+                              <Form.Control id="name"
                                 type="text"
                                 placeholder="Full Name"
                                 style={{
@@ -266,7 +266,7 @@ function AuthorityToTravelForm({ children }) {
                                 Position/Designation:
                               </h6>
 
-                              <Form.Control
+                              <Form.Control id="role"
                                 type="text"
                                 placeholder="Role"
                                 style={{
@@ -301,7 +301,7 @@ function AuthorityToTravelForm({ children }) {
                                 Official Station:
                               </h6>
 
-                              <Form.Control
+                              <Form.Control id="office"
                                 type="text"
                                 placeholder="Office"
                                 style={{
@@ -336,7 +336,7 @@ function AuthorityToTravelForm({ children }) {
                                 Purpose of Travel:
                               </h6>
 
-                              <Form.Control
+                              <Form.Control id="description"
                                 type="text"
                                 placeholder="Description"
                                 style={{
@@ -371,7 +371,7 @@ function AuthorityToTravelForm({ children }) {
                                 Destination:
                               </h6>
 
-                              <Form.Control
+                              <Form.Control id="destination"
                                 type="text"
                                 placeholder="Location"
                                 style={{
@@ -410,7 +410,7 @@ function AuthorityToTravelForm({ children }) {
                                 </span>
                               </h6>
 
-                              <Form.Control
+                              <Form.Control id="travel_time"
                                 type="text"
                                 placeholder="Optional"
                                 style={{
@@ -445,7 +445,7 @@ function AuthorityToTravelForm({ children }) {
                                 Fund Source:
                               </h6>
 
-                              <Form.Control
+                              <Form.Control id="fund_source"
                                 type="text"
                                 placeholder="Optional"
                                 style={{
@@ -480,7 +480,7 @@ function AuthorityToTravelForm({ children }) {
                                 Authority To Travel No:
                               </h6>
 
-                              <Form.Control
+                              <Form.Control id="att_no."
                                 type="text"
                                 placeholder="No."
                                 style={{
@@ -569,8 +569,8 @@ function AuthorityToTravelForm({ children }) {
                           </h4>
 
                           <div style={{ marginTop: "1.4rem" }}>
-                            <Form>
-                              <Form.Group
+                            <Form id="approval">
+                              <Form.Group 
                                 className="mb-3"
                                 controlId="name"
                                 style={{
@@ -609,7 +609,7 @@ function AuthorityToTravelForm({ children }) {
                           </h6>
 
                           <div style={{ marginTop: "2rem" }}>
-                            <Form>
+                            <Form id="others"> 
                               <Form.Group
                                 className="mb-3"
                                 controlId="name"
@@ -637,7 +637,7 @@ function AuthorityToTravelForm({ children }) {
                           </div>
 
                           <div style={{ marginTop: "2rem" }}>
-                            <Form>
+                            <Form id="dean"> 
                               <Form.Group
                                 className="mb-3"
                                 controlId="name"
