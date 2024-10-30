@@ -10,72 +10,80 @@ import {
   Button,
 } from "react-bootstrap";
 
-import NavbarComponent from "./NavBarComponents";
-import "./SignupGoogle.css";
+import NavbarComponent from "../components/NavBarComponents";
+import "../styles/SignupGoogle.css";
 
 function SignupGoogle() {
   return (
     <>
+      {/** HEADER */}
       <NavbarComponent />
 
+      {/** BODY */}
       <Container>
         <Row>
+          {/** FIRST COLUMN / LEFT SIDE */}
           <Col>
             <img
               src="./images/PICT1.png"
               alt="pict1"
-              className="img-fluid" // Makes the image responsive
+              className="img-fluid"
               style={{
                 maxWidth: "25rem",
                 height: "auto",
                 marginTop: "5rem",
                 marginLeft: "2rem  ",
-              }} // Adjust max width as needed
+              }}
             />
           </Col>
 
+          {/** SECONDD COLUMN / RIGHT SIDE */}
           <Col>
             <Card style={{ backgroundColor: "#F1F1F1", marginTop: "5rem" }}>
               <Card.Body>
                 <Form style={{ padding: "1.2rem" }}>
+                  {/** EMAIL INPUT FIELD */}
                   <InputGroup className="mb-3">
-                    <Form.Control id="email"
-                      type="email" // Specify type for email
+                    <Form.Control
+                      id="email"
+                      type="email"
                       placeholder="Institutional Email"
                       aria-label="Email"
                       aria-describedby="basic-addon1"
                       style={{
-                        backgroundColor: "#0760A1", // Set background color
-                        color: "white", // Set text color
-                        fontFamily: "Helvetica", // Set font family
-                        border: "none", // Eliminate border
-                        padding: "1rem", // Increase padding for larger field
-                        fontSize: "1.rem", // Increase font size
-                        height: "2.8rem", // Set a larger height
+                        backgroundColor: "#0760A1",
+                        color: "white",
+                        fontFamily: "Helvetica",
+                        border: "none",
+                        padding: "1rem",
+                        fontSize: "1.rem",
+                        height: "2.8rem",
                       }}
-                      className="custom-email-input" // Apply custom class for placeholder
-                      autoComplete="off" // Disable autofill
+                      className="custom-email-input"
+                      autoComplete="off"
                       readOnly
-                      onFocus={(e) => e.target.removeAttribute('readonly')} // Remove readonly on focus
+                      onFocus={(e) => e.target.removeAttribute("readonly")}
                     />
                   </InputGroup>
 
+                  {/** PASSWORD INPUT FIELD */}
                   <InputGroup className="mb-3">
-                    <Form.Control id="password"
-                      type="password" // Specify type for password
+                    <Form.Control
+                      id="password"
+                      type="password"
                       placeholder="Password"
                       aria-label="Password"
                       aria-describedby="basic-addon2"
                       style={{
-                        backgroundColor: "#0760A1", // Set background color
-                        color: "white", // Set text color
-                        fontFamily: "Helvetica", // Set font family
-                        border: "none", // Eliminate border
-                        padding: "1rem", // Increase padding for larger field
-                        fontSize: "1.rem", // Increase font size
-                        height: "2.8rem", // Set a larger height
+                        backgroundColor: "#0760A1",
+                        color: "white",
+                        fontFamily: "Helvetica",
+                        border: "none",
+                        padding: "1rem",
+                        fontSize: "1.rem",
+                        height: "2.8rem",
                       }}
-                      className="custom-email-input " // Apply custom class for placeholder
+                      className="custom-email-input"
                     />
                   </InputGroup>
 
@@ -86,9 +94,9 @@ function SignupGoogle() {
                       backgroundColor: "#0760A1",
                       fontFamily: "Helvetica",
                       border: "none",
-                      fontSize: "1rem", // Increase font size
-                      height: "2.8rem", // Set a larger height
-                      borderRadius: "1.5rem", // Rounded corners
+                      fontSize: "1rem",
+                      height: "2.8rem",
+                      borderRadius: "1.5rem",
                     }}
                   >
                     Create Account
@@ -120,9 +128,10 @@ function SignupGoogle() {
                     />
                   </div>
 
+                  {/** SIGN UP WITH GOOGLE */}
                   <Button
                     type="submit"
-                    className="w-100 d-flex align-items-center justify-content-center mb-2" // Added justify-content-center
+                    className="w-100 d-flex align-items-center justify-content-center mb-2"
                     style={{
                       backgroundColor: "#F1F1F1",
                       fontFamily: "Helvetica",
@@ -131,17 +140,17 @@ function SignupGoogle() {
                       height: "2.8rem",
                       borderRadius: "1.5rem",
                       color: "#0760A1",
-                      paddingLeft: "0.5rem", // Optional: Add some left padding
+                      paddingLeft: "0.5rem",
                     }}
                   >
                     <img
-                      src="./images/GOOGLE_LOGO.png" // Replace with your actual image path
+                      src="./images/GOOGLE_LOGO.png"
                       alt="Google Logo"
                       style={{
-                        width: "28px", // Adjust size as needed
+                        width: "28px",
                         height: "28px",
                         marginLeft: "0.5rem",
-                        flexShrink: 0, // Prevent the image from shrinking
+                        flexShrink: 0,
                       }}
                     />
                     <span
@@ -153,7 +162,6 @@ function SignupGoogle() {
                     >
                       Sign up with Google
                     </span>{" "}
-                    {/* Centered text */}
                   </Button>
 
                   <div
@@ -167,6 +175,7 @@ function SignupGoogle() {
                       This site is protected by reCAPTCHA
                     </p>
                     <p style={{ margin: 0 }}>
+                      {/** GOOGLE PRIVACY  */}
                       <a
                         href="https://policies.google.com/privacy"
                         style={{
@@ -180,6 +189,7 @@ function SignupGoogle() {
                         Google Privacy
                       </a>
                       <span style={{ margin: "0 0.25rem" }}>and</span>
+                      {/** TERMS OF SERVICE  */}
                       <a
                         href="https://policies.google.com/terms"
                         style={{
@@ -199,14 +209,16 @@ function SignupGoogle() {
               </Card.Body>
             </Card>
           </Col>
+
+          {/** ALREADY HAVE AN ACCOUNT */}
           <div className="text-center">
             <h6 style={{ color: "#767676", marginTop: "5rem" }}>
               Already have an Account?{" "}
               <a
-                href="/login" // Replace with your actual login URL
+                href="/login"
                 style={{
                   color: "#CD8800",
-                  textDecoration: "none", // Remove underline
+                  textDecoration: "none",
                 }}
               >
                 Log in

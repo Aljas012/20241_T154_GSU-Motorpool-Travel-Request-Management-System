@@ -1,4 +1,4 @@
-import React, { useState } from "react"; // Combine the import
+import React, { useState } from "react";
 import {
   Navbar,
   Container,
@@ -8,10 +8,10 @@ import {
   Card,
   Button,
 } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; // Corrected import
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons"; // Corrected import
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
-import "./AuthorityToTravelForm.css";
+import "../styles/AuthorityToTravelForm.css";
 
 function AuthorityToTravelForm({ children }) {
   // State to track which checkbox is checked
@@ -43,6 +43,7 @@ function AuthorityToTravelForm({ children }) {
 
   return (
     <>
+      {/** HEADER */}
       <Navbar
         style={{
           backgroundColor: "#0760A1",
@@ -55,15 +56,16 @@ function AuthorityToTravelForm({ children }) {
             <h4 className="text-white fw-bold mb-0">Authority To Travel</h4>
             <h5 className="text-white mb-0">Request Management System</h5>
           </div>
-          {children} {/* This allows for additional content to be added */}
         </Container>
       </Navbar>
 
+      {/** BODY */}
       <main>
         <Container>
           <Row>
             <Col>
               <div>
+                {/** BACK BUTTON */}
                 <button
                   onClick={handleClick} // Handle click event
                   style={{
@@ -93,6 +95,7 @@ function AuthorityToTravelForm({ children }) {
                     marginTop: "1rem",
                     paddingBottom: "1rem",
                     marginBottom: "3rem",
+                    backgroundColor: "#F7F7F7",
                   }}
                 >
                   <Card.Header>
@@ -112,16 +115,16 @@ function AuthorityToTravelForm({ children }) {
                     style={{
                       display: "flex",
                       alignItems: "stretch",
-                      backgroundColor: "#F7F7F7",
                     }}
                   >
-                    {/*FIRT COLUMN */}
+                    {/* FIRST COLUMN */}
                     <Col md={7}>
-                      {/* First Card.Body on the left */}
+                    
+                      {/* CARD.BODY LEFT SIDE */}
                       <div style={{ flex: 1, padding: "1rem" }}>
                         <Container>
-                          <Form id = "ATT_form">
-                            {/* SCHEDULE */}
+                          <Form id="ATT_form">
+                            {/* DATE OF TRAVEL */}
                             <div
                               style={{ display: "flex", alignItems: "center" }}
                             >
@@ -140,7 +143,6 @@ function AuthorityToTravelForm({ children }) {
                                 Date of travel:
                               </h6>
 
-                              {/* Wrap selects in a div to align them horizontally */}
                               <div
                                 style={{
                                   display: "flex",
@@ -148,14 +150,16 @@ function AuthorityToTravelForm({ children }) {
                                   marginLeft: "6.4rem",
                                 }}
                               >
-                                <Form.Select id = "month"
+                                {/** MONTH */}
+                                <Form.Select
+                                  id="month"
                                   aria-label="Select Month"
                                   style={{
                                     marginRight: "0.5rem",
                                     width: "7rem",
-                                    border: "1px solid #000000", // Add border
-                                    borderRadius: "4px", // Optional: to add rounded corners
-                                  }} // Set width here
+                                    border: "1px solid #000000",
+                                    borderRadius: "4px",
+                                  }}
                                 >
                                   <option>Month</option>
                                   <option value="1">January</option>
@@ -172,14 +176,16 @@ function AuthorityToTravelForm({ children }) {
                                   <option value="12">December</option>
                                 </Form.Select>
 
-                                <Form.Select id="day"
+                                {/** DAY */}
+                                <Form.Select
+                                  id="day"
                                   aria-label="Select Day"
                                   style={{
                                     marginRight: "0.5rem",
                                     width: "7rem",
-                                    border: "1px solid #000000", // Add border
-                                    borderRadius: "4px", // Optional: to add rounded corners
-                                  }} // Set width here
+                                    border: "1px solid #000000",
+                                    borderRadius: "4px",
+                                  }}
                                 >
                                   <option>Day</option>
                                   {[...Array(31)].map((_, index) => (
@@ -189,16 +195,17 @@ function AuthorityToTravelForm({ children }) {
                                   ))}
                                 </Form.Select>
 
-                                <Form.Select id="year"
+                                {/** YEAR */}
+                                <Form.Select
+                                  id="year"
                                   aria-label="Select Year"
                                   style={{
                                     width: "7rem",
-                                    border: "1px solid #000000", // Add border
+                                    border: "1px solid #000000",
                                     borderRadius: "4px",
-                                  }} // Set width here
+                                  }}
                                 >
                                   <option>Year</option>
-                                  {/* Assuming years is an array defined in your component */}
                                   {years.map((year) => (
                                     <option key={year} value={year}>
                                       {year}
@@ -231,7 +238,9 @@ function AuthorityToTravelForm({ children }) {
                                 Name of the Requestor:
                               </h6>
 
-                              <Form.Control id="name"
+                              {/** INPUT FIELD */}
+                              <Form.Control
+                                id="name"
                                 type="text"
                                 placeholder="Full Name"
                                 style={{
@@ -266,7 +275,9 @@ function AuthorityToTravelForm({ children }) {
                                 Position/Designation:
                               </h6>
 
-                              <Form.Control id="role"
+                              {/** INPUT FIELD */}
+                              <Form.Control
+                                id="role"
                                 type="text"
                                 placeholder="Role"
                                 style={{
@@ -301,7 +312,9 @@ function AuthorityToTravelForm({ children }) {
                                 Official Station:
                               </h6>
 
-                              <Form.Control id="office"
+                              {/** INPUT FIELD */}
+                              <Form.Control
+                                id="office"
                                 type="text"
                                 placeholder="Office"
                                 style={{
@@ -336,7 +349,9 @@ function AuthorityToTravelForm({ children }) {
                                 Purpose of Travel:
                               </h6>
 
-                              <Form.Control id="description"
+                              {/** INPUT FIELD */}
+                              <Form.Control
+                                id="description"
                                 type="text"
                                 placeholder="Description"
                                 style={{
@@ -371,7 +386,9 @@ function AuthorityToTravelForm({ children }) {
                                 Destination:
                               </h6>
 
-                              <Form.Control id="destination"
+                              {/** INPUT FIELD */}
+                              <Form.Control
+                                id="destination"
                                 type="text"
                                 placeholder="Location"
                                 style={{
@@ -410,7 +427,9 @@ function AuthorityToTravelForm({ children }) {
                                 </span>
                               </h6>
 
-                              <Form.Control id="travel_time"
+                              {/** INPUT FIELD */}
+                              <Form.Control
+                                id="travel_time"
                                 type="text"
                                 placeholder="Optional"
                                 style={{
@@ -445,7 +464,9 @@ function AuthorityToTravelForm({ children }) {
                                 Fund Source:
                               </h6>
 
-                              <Form.Control id="fund_source"
+                              {/** INPUT FIELD */}
+                              <Form.Control
+                                id="fund_source"
                                 type="text"
                                 placeholder="Optional"
                                 style={{
@@ -480,7 +501,9 @@ function AuthorityToTravelForm({ children }) {
                                 Authority To Travel No:
                               </h6>
 
-                              <Form.Control id="att_no."
+                              {/** INPUT FIELD */}
+                              <Form.Control
+                                id="att_no."
                                 type="text"
                                 placeholder="No."
                                 style={{
@@ -555,8 +578,11 @@ function AuthorityToTravelForm({ children }) {
                         </Container>
                       </div>
                     </Col>
-                    {/* 2ND COLUMN */}
+
+                    {/* SECOND COLUMN */}
                     <Col md={5}>
+
+                      {/** CARD.BODY RIGHT SIDE */}
                       <Container style={{ marginTop: "1rem" }}>
                         <div>
                           <h4
@@ -568,9 +594,10 @@ function AuthorityToTravelForm({ children }) {
                             Recommending Approval:
                           </h4>
 
+                          {/** CHAIRPERSON */}
                           <div style={{ marginTop: "1.4rem" }}>
                             <Form id="approval">
-                              <Form.Group 
+                              <Form.Group
                                 className="mb-3"
                                 controlId="name"
                                 style={{
@@ -579,6 +606,7 @@ function AuthorityToTravelForm({ children }) {
                                   borderRadius: "4px",
                                 }}
                               >
+                                {/** INPUT FIELD */}
                                 <Form.Control
                                   type="text"
                                   placeholder="Please input the name"
@@ -596,20 +624,22 @@ function AuthorityToTravelForm({ children }) {
                             </h6>
                           </div>
 
+                          {/** OTHERS? PLEASE SPECIFY */}
                           <h6
                             onClick={handleClickh6}
                             style={{
                               color: "#0760A1",
                               fontFamily: "Helvetica",
                               fontWeight: "500",
-                              cursor: "pointer", // Change cursor to pointer to indicate it's clickable
+                              cursor: "pointer",
                             }}
                           >
                             Others? Please Specify
                           </h6>
 
+                          {/** DEAN/UNIT HEAD */}
                           <div style={{ marginTop: "2rem" }}>
-                            <Form id="others"> 
+                            <Form id="others">
                               <Form.Group
                                 className="mb-3"
                                 controlId="name"
@@ -619,6 +649,7 @@ function AuthorityToTravelForm({ children }) {
                                   borderRadius: "4px",
                                 }}
                               >
+                                {/** INPUT FIELD */}
                                 <Form.Control
                                   type="text"
                                   placeholder="Name of the Dean/UH"
@@ -636,8 +667,9 @@ function AuthorityToTravelForm({ children }) {
                             </h6>
                           </div>
 
+                          {/** VPAA/VPAF/VPREI/VPCASS */}
                           <div style={{ marginTop: "2rem" }}>
-                            <Form id="dean"> 
+                            <Form id="dean">
                               <Form.Group
                                 className="mb-3"
                                 controlId="name"
@@ -647,6 +679,7 @@ function AuthorityToTravelForm({ children }) {
                                   borderRadius: "4px",
                                 }}
                               >
+                                {/** INPUT FIELD */}
                                 <Form.Control
                                   type="text"
                                   placeholder="Please input the name"
@@ -664,6 +697,7 @@ function AuthorityToTravelForm({ children }) {
                             </h6>
                           </div>
 
+                          {/** EXPORT TO PDF */}
                           <Button
                             style={{
                               width: "20rem", // Same width as the Form.Group

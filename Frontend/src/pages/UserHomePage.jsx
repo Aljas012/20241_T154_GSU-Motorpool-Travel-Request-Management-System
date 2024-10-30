@@ -1,15 +1,5 @@
 import React from "react";
-import {
-  Navbar,
-  Container,
-  Row,
-  Col,
-  Form,
-  InputGroup,
-  Card,
-  Button,
-  ListGroup,
-} from "react-bootstrap";
+import { Navbar, Container, Row, Col, Form, Card } from "react-bootstrap";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -17,20 +7,22 @@ import {
   faBell,
 } from "@fortawesome/free-regular-svg-icons";
 
-import FooterComponent from "./FooterComponents";
+import FooterComponent from "../components/FooterComponents";
 
 function UserLandingPage() {
   const handleButtonClickATT = () => {
     // Replace with the path to your file
-    window.location.href = "/path-to-your-file";
+    window.location.href = "/f";
   };
 
   const handleButtonClickRTT = () => {
     // Replace with the path to your file
     window.location.href = "/f";
   };
+
   return (
     <>
+      {/** HEADER */}
       <Navbar style={{ backgroundColor: "#0760A1", fontFamily: "Helvetica" }}>
         <Container className="d-flex justify-content-between align-items-center">
           <div className="text-left">
@@ -39,25 +31,22 @@ function UserLandingPage() {
             <h5 className="text-white mb-0">Request Management System</h5>
           </div>
           <div>
-            {/* Clickable FontAwesome Icon */}
             <button
               style={{ backgroundColor: "transparent", border: "none" }}
-              onClick={() => alert("Bell Icon Clicked!")} // Replace this with your desired functionality
+              onClick={() => alert("Bell Icon Clicked!")}
             >
-              <FontAwesomeIcon
-                icon={faBell}
-                className="text-white"
-                size="2x" // Adjust size: "lg", "2x", "3x", "4x", etc.
-              />
+              <FontAwesomeIcon icon={faBell} className="text-white" size="2x" />
             </button>
           </div>
         </Container>
       </Navbar>
 
+      {/** BODY */}
       <main>
         <Container style={{ minHeight: "80vh" }}>
           <Row>
             <Row className="d-flex align-items-center mt-3">
+              {/** DEPARTMENT OG OFFICE CODE / UPPER LEFT */}
               <Col>
                 <div style={{ marginTop: "1rem" }}>
                   <h5
@@ -76,6 +65,7 @@ function UserLandingPage() {
                 </div>
               </Col>
 
+              {/** NAVIGATIONS / UPPER RIGHT */}
               <Col className="d-flex justify-content-center">
                 <a
                   href="/home"
@@ -89,6 +79,7 @@ function UserLandingPage() {
                 >
                   Home
                 </a>
+
                 <a
                   href="/about"
                   style={{
@@ -101,6 +92,7 @@ function UserLandingPage() {
                 >
                   About
                 </a>
+
                 <a
                   href="/user-guide"
                   style={{
@@ -113,6 +105,7 @@ function UserLandingPage() {
                 >
                   User Guide
                 </a>
+
                 <a
                   href="/request"
                   style={{
@@ -125,6 +118,7 @@ function UserLandingPage() {
                 >
                   Request
                 </a>
+
                 <a
                   href="/profile"
                   style={{
@@ -141,6 +135,7 @@ function UserLandingPage() {
             </Row>
 
             <Row>
+              {/** FIRST COLUMN / LEFT SIDE */}
               <Col>
                 <h6 style={{ fontFamily: "Helvetica", marginTop: "1rem" }}>
                   Results for{" "}
@@ -152,20 +147,22 @@ function UserLandingPage() {
                 <div
                   style={{
                     display: "flex",
-                    flexDirection: "row", // Stack items horizontally
-                    alignItems: "center", // Align them vertically
+                    flexDirection: "row",
+                    alignItems: "center",
                   }}
                 >
                   <img
                     src="./images/WEATHER_ICON.png"
                     alt="weatherIcon"
-                    style={{ width: "55px", height: "auto" }} // Adjust size as needed
+                    style={{ width: "55px", height: "auto" }}
                   />
+
+                  {/** DIRI TUNG SA WEATHER/TEMPERATURE */}
                   <h6
                     style={{
                       fontFamily: "Helvetica",
                       fontWeight: "500",
-                      marginLeft: "0.8rem", // Space between image and text
+                      marginLeft: "0.8rem",
                       marginTop: "5px",
                       fontSize: "50px",
                     }}
@@ -178,8 +175,8 @@ function UserLandingPage() {
                       style={{
                         fontFamily: "Helvetica",
                         fontWeight: "400",
-                        marginLeft: "0.8rem", // Space between temperature and Celsius symbol
-                        fontSize: "16px", // Slightly smaller than temperature value
+                        marginLeft: "0.8rem",
+                        fontSize: "16px",
                       }}
                     >
                       °C
@@ -188,8 +185,8 @@ function UserLandingPage() {
                       style={{
                         fontFamily: "Helvetica",
                         fontWeight: "400",
-                        marginLeft: "2px", // Space between Celsius and Fahrenheit
-                        fontSize: "16px", // Slightly smaller than temperature value
+                        marginLeft: "2px",
+                        fontSize: "16px",
                       }}
                     >
                       |°F
@@ -233,20 +230,22 @@ function UserLandingPage() {
                   </div>
                 </div>
 
+                {/** DIRI TUNG CALENDAR */}
                 <div style={{ margin: "2rem 0 2rem 0" }}>
                   <Card style={{ width: "70%", height: "20rem" }}>
-                    <Card.Body></Card.Body>
+                    <Card.Body>{/** DIRI DAPAT */} </Card.Body>
                   </Card>
                 </div>
               </Col>
 
+              {/** SECOND COLUMN / RIGHT SIDE */}
               <Col>
                 <Form id="userlandingpage">
                   <div
                     style={{
                       display: "flex",
-                      flexDirection: "column", // Stack elements vertically
-                      alignItems: "start", // Center items horizontally
+                      flexDirection: "column",
+                      alignItems: "start",
                       marginTop: "2rem",
                     }}
                   >
@@ -257,7 +256,7 @@ function UserLandingPage() {
                           fontWeight: "600",
                           margin: 0,
                           color: "#0760A1",
-                          textAlign: "start", // Center the text
+                          textAlign: "start",
                         }}
                       >
                         GOOD DAY BUKSUAN
@@ -267,7 +266,7 @@ function UserLandingPage() {
                           fontFamily: "Helvetica",
                           fontWeight: "500",
                           margin: 0,
-                          textAlign: "start", // Center the text
+                          textAlign: "start",
                         }}
                       >
                         Hope you have a great day!
@@ -277,8 +276,8 @@ function UserLandingPage() {
                     <div
                       style={{
                         display: "flex",
-                        flexDirection: "column", // Stack elements vertically
-                        alignItems: "center", // Center items horizontally
+                        flexDirection: "column",
+                        alignItems: "center",
                         marginTop: "0.5rem",
                         marginLeft: "6rem",
                       }}
@@ -286,15 +285,16 @@ function UserLandingPage() {
                       <div
                         style={{
                           display: "flex",
-                          flexDirection: "column", // Keep the main direction as column
-                          alignItems: "flex-start", // Align items to the start
+                          flexDirection: "column",
+                          alignItems: "flex-start",
                           marginTop: "3rem",
                         }}
                       >
+                        {/** FIRST BUTTON SECTION / ATT */}
                         <div
                           style={{
-                            display: "flex", // Flex container for image and button
-                            alignItems: "center", // Center items vertically
+                            display: "flex",
+                            alignItems: "center",
                           }}
                         >
                           <div
@@ -302,7 +302,7 @@ function UserLandingPage() {
                               position: "relative",
                               display: "inline-block",
                               marginTop: "8px",
-                              marginRight: "0.5rem", // Space between image and button
+                              marginRight: "0.5rem",
                             }}
                           >
                             <img
@@ -320,9 +320,9 @@ function UserLandingPage() {
                                 left: "50%",
                                 transform: "translate(-50%, -50%)",
                                 fontFamily: "Helvetica",
-                                color: "#FFFFFF", // Change the color as needed
-                                fontWeight: "600", // Make the number bold
-                                fontSize: "1.3rem", // Adjust font size as needed
+                                color: "#FFFFFF",
+                                fontWeight: "600",
+                                fontSize: "1.3rem",
                               }}
                             >
                               1
@@ -363,36 +363,35 @@ function UserLandingPage() {
                         style={{
                           fontFamily: "Helvetica",
                           color: "#0760A1",
-                          marginTop: "0.5rem", // Adjust spacing as needed
-                          textAlign: "center", // Center the text
-                          width: "100%", // Optional: to take full width of the container
+                          marginTop: "0.5rem", 
+                          textAlign: "center",
+                          width: "100%",
                           marginLeft: "5.2rem",
                         }}
                       >
                         Request authorization for official travel
                       </h6>
 
-                      {/* Second Button Section */}
+                      {/* SECOND BUTTON SECTION / RTT */}
                       <div
                         style={{
                           display: "flex",
-                          flexDirection: "column", // Keep the main direction as column
-                          alignItems: "flex-start", // Align items to the start
+                          flexDirection: "column",
+                          alignItems: "flex-start",
                         }}
                       >
                         <div
                           style={{
-                            display: "flex", // Flex container for image and button
-                            alignItems: "center", // Center items vertically
+                            display: "flex",
+                            alignItems: "center",
                           }}
                         >
-                          {/* IMAGE 2 */}
                           <div
                             style={{
                               position: "relative",
                               display: "inline-block",
                               marginTop: "8px",
-                              marginRight: "0.5rem", // Space between image and button
+                              marginRight: "0.5rem",
                             }}
                           >
                             <img
@@ -410,9 +409,9 @@ function UserLandingPage() {
                                 left: "50%",
                                 transform: "translate(-50%, -50%)",
                                 fontFamily: "Helvetica",
-                                color: "#FFFFFF", // Change the color as needed
-                                fontWeight: "600", // Make the number bold
-                                fontSize: "1.3rem", // Adjust font size as needed
+                                color: "#FFFFFF",
+                                fontWeight: "600",
+                                fontSize: "1.3rem",
                               }}
                             >
                               2
@@ -469,6 +468,7 @@ function UserLandingPage() {
         </Container>
       </main>
 
+      {/** FOOTER */}
       <FooterComponent />
     </>
   );

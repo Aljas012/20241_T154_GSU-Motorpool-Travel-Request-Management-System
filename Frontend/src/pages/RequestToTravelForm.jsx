@@ -1,4 +1,4 @@
-import React, { useState } from "react"; // Combine the import
+import React, { useState } from "react";
 import {
   Navbar,
   Container,
@@ -8,8 +8,9 @@ import {
   Card,
   Button,
 } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; // Corrected import
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons"; // Corrected import
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 function RequestToTravelForm() {
   const handleClick = () => {
@@ -27,6 +28,7 @@ function RequestToTravelForm() {
 
   return (
     <>
+      {/** HEADER */}
       <Navbar
         style={{
           backgroundColor: "#0760A1",
@@ -42,21 +44,23 @@ function RequestToTravelForm() {
         </Container>
       </Navbar>
 
+      {/** BODY */}
       <main>
         <Container>
           <Row>
             <div>
+              {/** BACK BUTTON */}
               <button
-                onClick={handleClick} // Handle click event
+                onClick={handleClick}
                 style={{
-                  backgroundColor: "#0760A1", // Blue background color for the button
-                  color: "#FFFFFF", // Text color (icon color will inherit this)
-                  cursor: "pointer", // Change cursor to pointer to indicate clickability
-                  display: "flex", // Use flex to center the icon
-                  alignItems: "center", // Center vertically
-                  justifyContent: "center", // Center horizontally
-                  border: "none", // Remove border
-                  borderRadius: "4px", // Optional: Rounded corners
+                  backgroundColor: "#0760A1",
+                  color: "#FFFFFF",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  border: "none",
+                  borderRadius: "4px",
                   width: "3rem",
                   height: "2rem",
                   marginTop: "1rem",
@@ -69,13 +73,14 @@ function RequestToTravelForm() {
               </button>
             </div>
 
+            {/** FIRST COLUMN / LEFT SIDE */}
             <Col md={7}>
               <div>
                 <Card
                   style={{
                     marginTop: "1rem",
                     paddingBottom: "1rem",
-                    marginBottom: "3rem",
+                    marginBottom: ".8rem",
                     backgroundColor: "#F7F7F7",
                     height: "22.4rem",
                   }}
@@ -88,7 +93,7 @@ function RequestToTravelForm() {
                   >
                     <Container>
                       <Form id="RTT_form">
-                        {/** 1ST LABEL */}
+                        {/** OFFICE/DEPARTMENT/UNIT NAME OF ORGANIZATION */}
                         <div
                           style={{
                             display: "flex",
@@ -109,7 +114,8 @@ function RequestToTravelForm() {
                             Name of Organization
                           </h6>
 
-                          <Form.Control id="organization"
+                          <Form.Control
+                            id="organization"
                             type="text"
                             placeholder="Organization"
                             style={{
@@ -120,7 +126,8 @@ function RequestToTravelForm() {
                             }}
                           />
                         </div>
-                        {/** 2ND LABEL */}
+
+                        {/** REQUESTOR */}
                         <div
                           style={{
                             display: "flex",
@@ -141,7 +148,8 @@ function RequestToTravelForm() {
                             Requestor:
                           </h6>
 
-                          <Form.Control id="requestor"
+                          <Form.Control
+                            id="requestor"
                             type="text"
                             placeholder="Full Name"
                             style={{
@@ -153,7 +161,7 @@ function RequestToTravelForm() {
                           />
                         </div>
 
-                        {/** 3RD LABEL */}
+                        {/** CONTACT NUMBER */}
                         <div
                           style={{
                             display: "flex",
@@ -174,7 +182,8 @@ function RequestToTravelForm() {
                             Contact Number:
                           </h6>
 
-                          <Form.Control id="contact"
+                          <Form.Control
+                            id="contact"
                             type="text"
                             placeholder="Optional"
                             style={{
@@ -198,7 +207,7 @@ function RequestToTravelForm() {
                           </h5>
                         </div>
 
-                        {/** 4TH LABEL */}
+                        {/** DATE */}
                         <div
                           style={{
                             display: "flex",
@@ -219,7 +228,6 @@ function RequestToTravelForm() {
                             Date:
                           </h6>
 
-                          {/* Wrap selects in a div to align them horizontally */}
                           <div
                             style={{
                               display: "flex",
@@ -227,15 +235,17 @@ function RequestToTravelForm() {
                               marginLeft: "6.4rem",
                             }}
                           >
-                            <Form.Select id="month"
-                              aria-label="Select Month" 
+                            {/** MONTH */}
+                            <Form.Select
+                              id="month"
+                              aria-label="Select Month"
                               style={{
                                 marginRight: "0.5rem",
                                 width: "7rem",
-                                border: "1px solid #000000", // Add border
-                                borderRadius: "4px", // Optional: to add rounded corners
+                                border: "1px solid #000000",
+                                borderRadius: "4px",
                                 marginLeft: "4.4rem",
-                              }} // Set width here
+                              }}
                             >
                               <option>Month</option>
                               <option value="1">January</option>
@@ -252,14 +262,16 @@ function RequestToTravelForm() {
                               <option value="12">December</option>
                             </Form.Select>
 
-                            <Form.Select id="day"
+                            {/** DAY */}
+                            <Form.Select
+                              id="day"
                               aria-label="Select Day"
                               style={{
                                 marginRight: "0.5rem",
                                 width: "7rem",
-                                border: "1px solid #000000", // Add border
-                                borderRadius: "4px", // Optional: to add rounded corners
-                              }} // Set width here
+                                border: "1px solid #000000",
+                                borderRadius: "4px",
+                              }}
                             >
                               <option>Day</option>
                               {[...Array(31)].map((_, index) => (
@@ -269,16 +281,17 @@ function RequestToTravelForm() {
                               ))}
                             </Form.Select>
 
-                            <Form.Select id="year"
+                            {/** YEAR */}
+                            <Form.Select
+                              id="year"
                               aria-label="Select Year"
                               style={{
                                 width: "7rem",
-                                border: "1px solid #000000", // Add border
+                                border: "1px solid #000000",
                                 borderRadius: "4px",
-                              }} // Set width here
+                              }}
                             >
                               <option>Year</option>
-                              {/* Assuming years is an array defined in your component */}
                               {years.map((year) => (
                                 <option key={year} value={year}>
                                   {year}
@@ -288,7 +301,7 @@ function RequestToTravelForm() {
                           </div>
                         </div>
 
-                        {/** 5TH LABEL */}
+                        {/** TIME */}
                         <div
                           style={{
                             display: "flex",
@@ -309,7 +322,6 @@ function RequestToTravelForm() {
                             Time:
                           </h6>
 
-                          {/* Wrap selects in a div to align them horizontally */}
                           <div
                             style={{
                               display: "flex",
@@ -317,7 +329,9 @@ function RequestToTravelForm() {
                               marginLeft: "6.4rem",
                             }}
                           >
-                            <Form.Control id="time"
+                            {/** HOUR */}
+                            <Form.Control
+                              id="time"
                               type="text"
                               placeholder="H"
                               style={{
@@ -344,7 +358,9 @@ function RequestToTravelForm() {
                             >
                               :
                             </span>{" "}
-                            <Form.Control id="M"
+                            {/** MINUTE */}
+                            <Form.Control
+                              id="M"
                               type="text"
                               placeholder="M"
                               style={{
@@ -361,19 +377,21 @@ function RequestToTravelForm() {
                                 }
                               }}
                             />
-                            <Form.Select id="period"
+                            {/** AM OR PM */}
+                            <Form.Select
+                              id="period"
                               aria-label="Select Period"
                               style={{
                                 marginLeft: ".7rem",
                                 width: "3.8rem",
-                                border: "1px solid #000000", // Add border
-                                borderRadius: "4px", // Optional: to add rounded corners
-                                paddingRight: "1.5rem", // Optional: adjust padding since the arrow is hidden
-                                background: "transparent", // Set background to transparent
-                                backgroundImage: "none", // Remove any background image (arrow)
-                                appearance: "none", // Hides the arrow
-                                WebkitAppearance: "none", // For Safari
-                                MozAppearance: "none", // For Firefox
+                                border: "1px solid #000000",
+                                borderRadius: "4px",
+                                paddingRight: "1.5rem",
+                                background: "transparent",
+                                backgroundImage: "none",
+                                appearance: "none",
+                                WebkitAppearance: "none",
+                                MozAppearance: "none",
                               }}
                             >
                               <option value="AM">AM</option>
@@ -388,13 +406,14 @@ function RequestToTravelForm() {
               </div>
             </Col>
 
+            {/** SECOND COLUMN / RIGHT SIDE */}
             <Col md={5}>
               <div>
                 <Card
                   style={{
                     marginTop: "1rem",
                     paddingBottom: "1rem",
-                    marginBottom: "3rem",
+                    marginBottom: ".8rem",
                     backgroundColor: "#F7F7F7",
                     height: "22.4rem",
                   }}
@@ -411,6 +430,7 @@ function RequestToTravelForm() {
                       Upload the Approved Authority To Travel form
                     </h6>
 
+                    {/** TO UPLOAD THE FILE */}
                     <div
                       style={{
                         display: "flex",
@@ -427,33 +447,34 @@ function RequestToTravelForm() {
                         Browse File
                       </h6>
 
-                      {/* Images aligned horizontally with the second H6 */}
+                      {/** UTROHUNON / DAPAT MA CLICK TO UPLOAD A FILE */}
                       <img
-                        src="./images/UP1_ICON.png" // Replace with your image path
-                        alt="Upp" // Provide an appropriate alt text
+                        src="./images/UP1_ICON.png"
+                        alt="Upp"
                         style={{
-                          width: "auto", // Adjust width as necessary
-                          height: "1.2rem", // Set height as needed
-                          marginLeft: "0.5rem", // Optional: space between text and image
+                          width: "auto",
+                          height: "1.2rem",
+                          marginLeft: "0.5rem",
                           marginBottom: "0.6rem",
                         }}
                       />
 
+                      {/** UTROHUNON / DAPAT MA CLICK TO UPLOAD A FILE */}
                       <img
-                        src="./images/UPP2_ICON.png" // Replace with your image path
-                        alt="Upp" // Provide an appropriate alt text
+                        src="./images/UPP2_ICON.png"
+                        alt="Upp"
                         style={{
-                          width: "auto", // Adjust width as necessary
-                          height: "1.2rem", // Set height as needed
-                          marginLeft: "0.5rem", // Optional: space between images
+                          width: "auto",
+                          height: "1.2rem",
+                          marginLeft: "0.5rem",
                           marginBottom: "0.6rem",
                           marginRight: "13rem",
                         }}
                       />
                     </div>
 
-                    {/* New container for input and button, aligned vertically */}
                     <div>
+                      {/** FIELD PATA SA i-UPLOAD NA FILE */}
                       <Form.Control
                         type="text"
                         placeholder="PANGALAN_DAW_SA_FILE.jpg"
@@ -463,23 +484,23 @@ function RequestToTravelForm() {
                           width: "22rem",
                           border: "1px solid #000000",
                           borderRadius: "4px",
-                          marginBottom: "1rem", // Space between input and button
+                          marginBottom: "1rem",
                         }}
                       />
 
                       <Button
                         style={{
-                          width: "22rem", // Same width as the Form.Group
+                          width: "22rem",
                           backgroundColor: "#CD8800",
                           border: "0",
                         }}
                       >
                         <span
                           style={{
-                            display: "inline-block", // or 'block' if you want it to take the full width
+                            display: "inline-block",
                             fontFamily: "Helvetica",
                             fontWeight: "500",
-                            textAlign: "center", // Optional: center text within the span
+                            textAlign: "center",
                           }}
                         >
                           Send ATT and RTT
@@ -491,6 +512,7 @@ function RequestToTravelForm() {
               </div>
             </Col>
 
+            {/** PARA SA UBOS NA CARD */}
             <Row style={{ margin: "0", padding: "0" }}>
               <Col md={12}>
                 <div>
@@ -516,6 +538,7 @@ function RequestToTravelForm() {
                           Travel Details
                         </h5>
 
+                        {/** INPUT FIELD  */}
                         <Form>
                           <Form.Group controlId="travelDetails">
                             <Form.Control
@@ -531,8 +554,9 @@ function RequestToTravelForm() {
                         </Form>
 
                         <Row>
+                          {/** COLUMN PARA SA LOWER LEFT */}
                           <Col>
-                            {/** 6TH LABEL */}
+                            {/** DATE OF TRAVEL */}
                             <div
                               style={{
                                 display: "flex",
@@ -546,7 +570,6 @@ function RequestToTravelForm() {
                                 Date of Travel:
                               </h6>
 
-                              {/* Wrap selects in a div to align them horizontally */}
                               <div
                                 style={{
                                   display: "flex",
@@ -554,15 +577,16 @@ function RequestToTravelForm() {
                                   marginLeft: "1rem",
                                 }}
                               >
+                                {/** MONTH */}
                                 <Form.Select
                                   aria-label="Select Month"
                                   style={{
                                     marginRight: "0.5rem",
                                     width: "7rem",
-                                    border: "1px solid #000000", // Add border
-                                    borderRadius: "4px", // Optional: to add rounded corners
+                                    border: "1px solid #000000",
+                                    borderRadius: "4px",
                                     marginLeft: "4.4rem",
-                                  }} // Set width here
+                                  }}
                                 >
                                   <option>Month</option>
                                   <option value="1">January</option>
@@ -579,6 +603,7 @@ function RequestToTravelForm() {
                                   <option value="12">December</option>
                                 </Form.Select>
 
+                                {/** DAY */}
                                 <Form.Select
                                   aria-label="Select Day"
                                   style={{
@@ -596,6 +621,7 @@ function RequestToTravelForm() {
                                   ))}
                                 </Form.Select>
 
+                                {/** MONTH */}
                                 <Form.Select
                                   aria-label="Select Year"
                                   style={{
@@ -615,7 +641,7 @@ function RequestToTravelForm() {
                               </div>
                             </div>
 
-                            {/** 7TH LABEL */}
+                            {/** DESTINATION */}
                             <div
                               style={{
                                 display: "flex",
@@ -629,6 +655,7 @@ function RequestToTravelForm() {
                                 Destination:
                               </h6>
 
+                              {/** INPUT FIELD */}
                               <Form.Control
                                 type="text"
                                 placeholder="Malaybalay City, Bukidnon"
@@ -642,8 +669,9 @@ function RequestToTravelForm() {
                             </div>
                           </Col>
 
+                          {/** COLUMN PARA SA LOWER RIGHT */}
                           <Col>
-                            {/** 8TH LABEL */}
+                            {/** EXPECTED DEPARTURE TIME  */}
                             <div
                               style={{
                                 display: "flex",
@@ -656,6 +684,7 @@ function RequestToTravelForm() {
                               >
                                 Expected Departure Time:
                               </h6>
+                              {/** HOURS */}
                               <Form.Control
                                 type="text"
                                 placeholder="H"
@@ -683,6 +712,7 @@ function RequestToTravelForm() {
                               >
                                 :
                               </span>{" "}
+                              {/** MINUTES */}
                               <Form.Control
                                 type="text"
                                 placeholder="M"
@@ -700,19 +730,20 @@ function RequestToTravelForm() {
                                   }
                                 }}
                               />
+                              {/** AM OR PM */}
                               <Form.Select
                                 aria-label="Select Period"
                                 style={{
                                   marginLeft: ".7rem",
                                   width: "3.8rem",
-                                  border: "1px solid #000000", // Add border
-                                  borderRadius: "4px", // Optional: to add rounded corners
-                                  paddingRight: "1.5rem", // Optional: adjust padding since the arrow is hidden
-                                  background: "transparent", // Set background to transparent
-                                  backgroundImage: "none", // Remove any background image (arrow)
-                                  appearance: "none", // Hides the arrow
-                                  WebkitAppearance: "none", // For Safari
-                                  MozAppearance: "none", // For Firefox
+                                  border: "1px solid #000000",
+                                  borderRadius: "4px",
+                                  paddingRight: "1.5rem",
+                                  background: "transparent",
+                                  backgroundImage: "none",
+                                  appearance: "none",
+                                  WebkitAppearance: "none",
+                                  MozAppearance: "none",
                                 }}
                               >
                                 <option value="AM">AM</option>
@@ -720,7 +751,7 @@ function RequestToTravelForm() {
                               </Form.Select>
                             </div>
 
-                            {/** 9TH LABEL */}
+                            {/** EXPECTED ARRIVAL TIME */}
                             <div
                               style={{
                                 display: "flex",
@@ -733,6 +764,7 @@ function RequestToTravelForm() {
                               >
                                 Expected Arrival Time:
                               </h6>
+                              {/** HOURS */}
                               <Form.Control
                                 type="text"
                                 placeholder="H"
@@ -760,6 +792,7 @@ function RequestToTravelForm() {
                               >
                                 :
                               </span>{" "}
+                              {/** MINUTES */}
                               <Form.Control
                                 type="text"
                                 placeholder="M"
@@ -777,19 +810,20 @@ function RequestToTravelForm() {
                                   }
                                 }}
                               />
+                              {/** AM OR PM */}
                               <Form.Select
                                 aria-label="Select Period"
                                 style={{
                                   marginLeft: ".7rem",
                                   width: "3.8rem",
-                                  border: "1px solid #000000", // Add border
-                                  borderRadius: "4px", // Optional: to add rounded corners
-                                  paddingRight: "1.5rem", // Optional: adjust padding since the arrow is hidden
-                                  background: "transparent", // Set background to transparent
-                                  backgroundImage: "none", // Remove any background image (arrow)
-                                  appearance: "none", // Hides the arrow
-                                  WebkitAppearance: "none", // For Safari
-                                  MozAppearance: "none", // For Firefox
+                                  border: "1px solid #000000",
+                                  borderRadius: "4px",
+                                  paddingRight: "1.5rem",
+                                  background: "transparent",
+                                  backgroundImage: "none",
+                                  appearance: "none",
+                                  WebkitAppearance: "none",
+                                  MozAppearance: "none",
                                 }}
                               >
                                 <option value="AM">AM</option>
@@ -797,7 +831,7 @@ function RequestToTravelForm() {
                               </Form.Select>
                             </div>
 
-                            {/** 10TH LABEL */}
+                            {/** EXPECTED RETURN DATE */}
                             <div
                               style={{
                                 display: "flex",
@@ -810,6 +844,7 @@ function RequestToTravelForm() {
                               >
                                 Expected Return Date:
                               </h6>
+                              {/** MONTH */}
                               <Form.Control
                                 type="text"
                                 placeholder="M"
@@ -837,6 +872,7 @@ function RequestToTravelForm() {
                               >
                                 /
                               </span>{" "}
+                              {/** DAYS */}
                               <Form.Control
                                 type="text"
                                 placeholder="D"
@@ -863,6 +899,7 @@ function RequestToTravelForm() {
                               >
                                 /
                               </span>{" "}
+                              {/** YEARS */}
                               <Form.Control
                                 type="text"
                                 placeholder="Y"
@@ -882,7 +919,7 @@ function RequestToTravelForm() {
                               />
                             </div>
 
-                            {/**11TH LABEL */}
+                            {/** EXPECTED ARRIVAL TIME */}
                             <div
                               style={{
                                 display: "flex",
@@ -895,6 +932,7 @@ function RequestToTravelForm() {
                               >
                                 Expected Arrival Time:
                               </h6>
+                              {/** HOURS */}
                               <Form.Control
                                 type="text"
                                 placeholder="H"
@@ -922,6 +960,7 @@ function RequestToTravelForm() {
                               >
                                 :
                               </span>{" "}
+                              {/** MINUTES */}
                               <Form.Control
                                 type="text"
                                 placeholder="M"
@@ -939,19 +978,20 @@ function RequestToTravelForm() {
                                   }
                                 }}
                               />
+                              {/** AM OR PM */}
                               <Form.Select
                                 aria-label="Select Period"
                                 style={{
                                   marginLeft: ".7rem",
                                   width: "3.8rem",
-                                  border: "1px solid #000000", // Add border
-                                  borderRadius: "4px", // Optional: to add rounded corners
-                                  paddingRight: "1.5rem", // Optional: adjust padding since the arrow is hidden
-                                  background: "transparent", // Set background to transparent
-                                  backgroundImage: "none", // Remove any background image (arrow)
-                                  appearance: "none", // Hides the arrow
-                                  WebkitAppearance: "none", // For Safari
-                                  MozAppearance: "none", // For Firefox
+                                  border: "1px solid #000000",
+                                  borderRadius: "4px",
+                                  paddingRight: "1.5rem",
+                                  background: "transparent",
+                                  backgroundImage: "none",
+                                  appearance: "none",
+                                  WebkitAppearance: "none",
+                                  MozAppearance: "none",
                                 }}
                               >
                                 <option value="AM">AM</option>

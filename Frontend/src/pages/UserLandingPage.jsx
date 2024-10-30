@@ -2,9 +2,9 @@ import React from "react";
 import { Container, Row, Col, Form, Button, InputGroup } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faLock } from "@fortawesome/free-solid-svg-icons";
-import "../App.css";
+import "../styles/UserLandingPage.css";
 
-function LandingPage() {
+function UserLandingPage() {
   const leftImageStyle = {
     backgroundImage: "url('/images/GSU_BG.png')",
     backgroundSize: "58% 100%",
@@ -35,7 +35,7 @@ function LandingPage() {
     position: "relative",
     zIndex: 3,
     padding: "20px",
-    height: "100%", // Added height to allow vertical centering
+    height: "100%",
   };
 
   const headerStyle = {
@@ -52,13 +52,14 @@ function LandingPage() {
         style={contentStyle}
         className="justify-content-center align-items-center h-100"
       >
+        {/** FIRST COLUMN / LEFT SIDE */}
         <Col
           xs={{ span: 12, offset: 0 }}
-          md={{ span: 6, offset: 0 }} // Shift column to center more on medium screens
-          lg={{ span: 4, offset: 0 }} // Shift column to center more on large screens
+          md={{ span: 6, offset: 0 }}
+          lg={{ span: 4, offset: 0 }}
           className="text-left"
         >
-          <div style={{marginBottom: "2rem"}}>
+          <div style={{ marginBottom: "2rem" }}>
             <Form id="landingpage">
               <h2
                 style={{
@@ -101,24 +102,28 @@ function LandingPage() {
                 Sign-in to your account!
               </h4>
 
+              {/** EMAIL INPUT FIELD */}
               <InputGroup className="mb-3 mt-2 input-shadow">
                 <InputGroup.Text>
                   <FontAwesomeIcon icon={faUser} size="lg" fixedWidth />
                 </InputGroup.Text>
-                <Form.Control id="email"
+                <Form.Control
+                  id="email"
                   size="lg"
-                  type="email" // Use lowercase 'email'
+                  type="email"
                   placeholder="Email"
                   aria-label="Email"
                   aria-describedby="basic-addon1"
                 />
               </InputGroup>
 
+              {/** PASSWORD INPUT FIELD */}
               <InputGroup className="mb-3 input-shadow">
                 <InputGroup.Text>
                   <FontAwesomeIcon icon={faLock} size="lg" fixedWidth />
                 </InputGroup.Text>
-                <Form.Control id="password"
+                <Form.Control
+                  id="password"
                   size="lg"
                   type="password"
                   placeholder="Password"
@@ -131,11 +136,12 @@ function LandingPage() {
                 variant="primary"
                 size="lg"
                 type="submit"
-                className="w-100" // Ensures button is full width
+                className="w-100"
               >
                 Login
               </Button>
 
+              {/** SIGN IN WITH GOOGLE */}
               <h5
                 className="text-center mt-3"
                 style={{ fontFamily: "Helvetica", color: "#767676" }}
@@ -160,12 +166,13 @@ function LandingPage() {
                 </a>
               </h5>
 
+              {/** FORGOT PASSWORD */}
               <h5
                 className="text-center mt-5"
                 style={{ fontFamily: "Helvetica", color: "#767676" }}
               >
                 <a
-                  href="/forgot-password" // Replace with the actual URL for the Forgot Password page
+                  href="/forgot-password"
                   style={{
                     color: "#767676",
                     textDecoration: "none",
@@ -179,15 +186,15 @@ function LandingPage() {
           </div>
         </Col>
 
+        {/** SECOND COLUMN / RIGHT SIDE */}
         <Col
           xs={{ span: 12, offset: 0 }}
-          md={{ span: 6, offset: 2 }} // Shift column to center more on medium screens
-          lg={{ span: 4, offset: 2 }} // Shift column to center more on large screens
+          md={{ span: 6, offset: 2 }}
+          lg={{ span: 4, offset: 2 }}
           className="text-left"
         >
           <div style={{ marginLeft: "4.5rem", textAlign: "left" }}>
             {" "}
-            {/* Ensure text alignment */}
             <h4
               style={{
                 color: "white",
@@ -209,25 +216,27 @@ function LandingPage() {
             >
               Welcome Back!
             </h3>
+
+            {/** SIGN UP PORTION */}
             <Button
               variant="primary"
               type="submit"
-              className="d-flex align-items-center justify-content-center" // Removed mx-auto for consistent alignment
+              className="d-flex align-items-center justify-content-center"
               style={{
                 fontFamily: "Helvetica",
                 padding: "0.75rem 1.5rem",
                 fontSize: "1.25rem",
                 height: "4rem",
-                width: "25rem", // Ensure this width is responsive
-                marginTop: "1rem", // Add some margin on top to separate from h3
+                width: "25rem",
+                marginTop: "1rem",
                 marginBottom: "2rem",
-                borderRadius: "1.5rem", // Rounded corners
+                borderRadius: "1.5rem",
               }}
             >
               <img
-                src="./images/BSU_LOGO.png" // Replace with your image source
-                alt="Login Icon" // Provide an appropriate alt text
-                style={{ width: "38px", height: "38px", marginRight: "10px" }} // Adjust size and margin as needed
+                src="./images/BSU_LOGO.png"
+                alt="Login Icon"
+                style={{ width: "38px", height: "38px", marginRight: "10px" }}
               />
               No account yet? Signup
             </Button>
@@ -238,4 +247,4 @@ function LandingPage() {
   );
 }
 
-export default LandingPage;
+export default UserLandingPage;
