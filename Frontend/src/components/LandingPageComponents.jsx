@@ -59,7 +59,7 @@ function LandingPage() {
           className="text-left"
         >
           <div style={{marginBottom: "2rem"}}>
-            <Form>
+            <Form id="landingpage">
               <h2
                 style={{
                   ...headerStyle,
