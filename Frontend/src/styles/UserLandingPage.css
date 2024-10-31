@@ -1,0 +1,22 @@
+/* App.css */
+body {
+    margin: 0; /* Remove default margin */
+  }
+  
+  footer {
+    /* If you want the footer to always be at the bottom of the viewport */
+    position: relative;
+    bottom: 0;
+    width: 100%;
+  }
+  
+  footer h6 {
+    margin: 0; /* Remove default margin */
+  }
+  
+
+  .input-shadow {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 0.5rem; /* Optional: adjust the border radius */
+  }
+  

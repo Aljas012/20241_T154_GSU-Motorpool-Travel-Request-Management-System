@@ -1,0 +1,11 @@
+.custom-checkbox input[type="checkbox"] {
+    border: 1px solid black; /* Add your desired border */
+    width: 18px; /* Adjust the size if needed */
+    height: 18px;
+    border-radius: 3px; /* Optional: Rounded corners */
+  }
+  
+  .custom-checkbox input[type="checkbox"]:checked {
+    border-color: rgb(0, 117, 128); /* You can change the border color when checked */
+  }
+  
