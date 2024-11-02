@@ -6,9 +6,10 @@ function FooterComponent() {
     <footer
       style={{
         backgroundColor: "#0760A1",
-        position: "relative",
+        position: "fixed",
         bottom: "0",
         width: "100%",
+        zIndex: "10",
       }}
       className="text-white py-3"
     >
@@ -28,4 +29,5 @@ function FooterComponent() {
     </footer>
   );
 }
+
 export default FooterComponent;

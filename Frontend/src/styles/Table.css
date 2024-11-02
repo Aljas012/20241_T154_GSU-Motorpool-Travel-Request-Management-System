@@ -1,0 +1,17 @@
+table {
+    width: 100%;
+  }
+  
+  
+  tbody {
+    display: block; /* Allow scrolling */
+    max-height: 200px; /* Set max height for the body */
+    overflow-y: auto; /* Enable vertical scrolling */
+  }
+  
+  tr {
+    display: table; /* Ensure table rows display correctly */
+    width: 100%; /* Full width for table */
+    table-layout: fixed; /* Prevent column width adjustment */
+  }
+  

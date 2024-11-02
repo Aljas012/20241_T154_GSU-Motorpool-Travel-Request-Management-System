@@ -7,6 +7,7 @@ import {
   faBell,
 } from "@fortawesome/free-regular-svg-icons";
 
+import NavBarWithBellComponent from "../components/NavBarWithBellComponents";
 import FooterComponent from "../components/FooterComponents";
 
 function UserLandingPage() {
@@ -23,23 +24,7 @@ function UserLandingPage() {
   return (
     <>
       {/** HEADER */}
-      <Navbar style={{ backgroundColor: "#0760A1", fontFamily: "Helvetica" }}>
-        <Container className="d-flex justify-content-between align-items-center">
-          <div className="text-left">
-            <h4 className="text-white fw-bold mb-0">BUKSU</h4>
-            <h4 className="text-white fw-bold mb-0">GSU MOTORPOOL</h4>
-            <h5 className="text-white mb-0">Request Management System</h5>
-          </div>
-          <div>
-            <button
-              style={{ backgroundColor: "transparent", border: "none" }}
-              onClick={() => alert("Bell Icon Clicked!")}
-            >
-              <FontAwesomeIcon icon={faBell} className="text-white" size="2x" />
-            </button>
-          </div>
-        </Container>
-      </Navbar>
+      <NavBarWithBellComponent />
 
       {/** BODY */}
       <main>
@@ -363,7 +348,7 @@ function UserLandingPage() {
                         style={{
                           fontFamily: "Helvetica",
                           color: "#0760A1",
-                          marginTop: "0.5rem", 
+                          marginTop: "0.5rem",
                           textAlign: "center",
                           width: "100%",
                           marginLeft: "5.2rem",

@@ -59,7 +59,7 @@ function SignupGoogle() {
                         fontSize: "1.rem",
                         height: "2.8rem",
                       }}
-                      className="custom-email-input"
+                      className="custom-input"
                       autoComplete="off"
                       readOnly
                       onFocus={(e) => e.target.removeAttribute("readonly")}
@@ -83,7 +83,7 @@ function SignupGoogle() {
                         fontSize: "1.rem",
                         height: "2.8rem",
                       }}
-                      className="custom-email-input"
+                      className="custom-input"
                     />
                   </InputGroup>
 
@@ -212,13 +212,22 @@ function SignupGoogle() {
 
           {/** ALREADY HAVE AN ACCOUNT */}
           <div className="text-center">
-            <h6 style={{ color: "#767676", marginTop: "5rem" }}>
+            <h6
+              style={{
+                color: "#767676",
+                marginTop: "5rem",
+                fontFamily: "Helvetica",
+                fontWeight: "600",
+              }}
+            >
               Already have an Account?{" "}
               <a
                 href="/login"
                 style={{
                   color: "#CD8800",
                   textDecoration: "none",
+                  fontFamily: "Helvetica",
+                  fontWeight: "600",
                 }}
               >
                 Log in

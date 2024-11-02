@@ -11,7 +11,7 @@
 }
 
 
-.custom-email-input::placeholder {
+.custom-input::placeholder {
     color: white; /* Set placeholder font color to white */
     opacity: 1; /* Ensure full opacity for placeholder */
   }
