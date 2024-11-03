@@ -4,6 +4,14 @@ const request_form_data = require('../MODELS/request_form_model')
 const bcrypt = require('bcrypt');
 
 
+const getAllUsers = async (req, res) => {
+    try {
+        const users = await user_data.find(); // Fetch all users
+        res.status(200).json(users); // Return the users in the response
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to retrieve users: ' + error.message });
+    }
+};
 
 
 
@@ -91,4 +99,4 @@ const createRequestForm = async (req, res) => {
 };
 
 
-module.exports = { create_user, login_user,createTravelForm, createRequestForm }
+module.exports = { getAllUsers  ,create_user, login_user,createTravelForm, createRequestForm }
