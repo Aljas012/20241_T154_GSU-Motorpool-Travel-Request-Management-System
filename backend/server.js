@@ -19,9 +19,9 @@ app.use('/admin', adminRoutes); // User routes
 
 
 // connect to db
-mongoose.connect(process.env.MONGODB_URI)
+mongoose.connect(process.env.MONGODB_URI )
     .then(() => {
-        app.listen(process.env.PORT, () => {
+        app.listen(process.env.PORT || 8000, () => {
             console.log('connected to the database & listening on port ' + process.env.PORT)
         })
     })
