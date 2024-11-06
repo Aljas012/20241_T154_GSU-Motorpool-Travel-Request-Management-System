@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { Container, Row, Col, Form, Button, InputGroup } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faLock } from "@fortawesome/free-solid-svg-icons";
-import "../styles/UserLandingPage.css";
+import { useNavigate } from "react-router-dom"; // Fixed missing import
+import "../styles/LandingPage.css";
 
 function UserLandingPage() {
   const navigate = useNavigate();
@@ -63,13 +64,13 @@ function UserLandingPage() {
 
       const json = await response.json();
       if (!response.ok) {
-        setError(json.error); // Show error if signup fails
+        setError(json.error); // Show error if login fails
       } else {
-        // Clear the form and reset state if signup is successful
+        // Clear the form and reset state if login is successful
         setEmail("");
         setPassword("");
         setError(null);
-        console.log("user logged in");
+        console.log("User logged in");
         navigate("/user/homepage");
       }
     } catch (err) {
@@ -93,7 +94,7 @@ function UserLandingPage() {
           lg={{ span: 4, offset: 0 }}
         >
           <div style={{ marginBottom: "2rem" }}>
-            <Form id="landingpage">
+            <Form id="landingpage" onSubmit={handleSubmit}>
               <h2
                 style={{
                   ...headerStyle,
@@ -134,6 +135,7 @@ function UserLandingPage() {
               >
                 Sign-in to your account!
               </h4>
+
               {/** EMAIL INPUT FIELD */}
               <InputGroup className="mb-3 mt-2 input-shadow">
                 <InputGroup.Text>
@@ -147,10 +149,11 @@ function UserLandingPage() {
                   aria-label="Email"
                   aria-describedby="basic-addon1"
                   autoComplete="current-email"
-                  onChange={(e) => setEmail(e.target.value)} // Updating email state on change
-                  value={email} // Binding state to input field
+                  onChange={(e) => setEmail(e.target.value)}
+                  value={email}
                 />
               </InputGroup>
+
               {/** PASSWORD INPUT FIELD */}
               <InputGroup className="mb-3 input-shadow">
                 <InputGroup.Text>
@@ -164,10 +167,11 @@ function UserLandingPage() {
                   aria-label="Password"
                   aria-describedby="basic-addon1"
                   autoComplete="current-password"
-                  onChange={(e) => setPassword(e.target.value)} // Updating email state on change
-                  value={password} // Binding state to input field
+                  onChange={(e) => setPassword(e.target.value)}
+                  value={password}
                 />
               </InputGroup>
+
               <Button
                 variant="primary"
                 size="lg"
@@ -176,7 +180,15 @@ function UserLandingPage() {
               >
                 Login
               </Button>
-
+              {error && (
+                <div
+                  className="alert alert-danger mt-3"
+                  role="alert"
+                  style={{ textAlign: "center" }}
+                >
+                  {error}
+                </div>
+              )}
               {/** SIGN IN WITH GOOGLE */}
               <h5
                 className="text-center mt-3"
@@ -198,7 +210,7 @@ function UserLandingPage() {
                   <span style={{ color: "#12B347" }}>o</span>
                   <span style={{ color: "#0F993E" }}>g</span>
                   <span style={{ color: "#167EE6" }}>l</span>
-                  <span style={{ color: "##167EE6" }}>e</span>
+                  <span style={{ color: "#167EE6" }}>e</span>
                 </a>
               </h5>
 
@@ -216,7 +228,7 @@ function UserLandingPage() {
                 >
                   Login as Admin
                 </a>
-              </h6>
+              </h5>
 
               {/** FORGOT PASSWORD */}
               <h6
@@ -234,7 +246,7 @@ function UserLandingPage() {
                   Forgot Password?
                 </a>
               </h6>
-            </div>
+            </Form>
           </div>
         </Col>
 
@@ -266,10 +278,11 @@ function UserLandingPage() {
             >
               Welcome Back!
             </h3>
+
             {/** SIGN UP PORTION */}
             <Button
               variant="primary"
-              type="button" // Change to type "button"
+              type="button"
               className="d-flex align-items-center justify-content-center"
               style={{
                 fontFamily: "Helvetica",
@@ -281,7 +294,7 @@ function UserLandingPage() {
                 marginBottom: "2rem",
                 borderRadius: "1.5rem",
               }}
-              onClick={() => navigate("/user/signup_google")} // Navigate to signup page
+              onClick={() => navigate("/user/signup_google")}
             >
               <img
                 src="./images/BSU_LOGO.png"
