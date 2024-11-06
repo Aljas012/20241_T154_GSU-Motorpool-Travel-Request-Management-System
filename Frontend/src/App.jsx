@@ -12,18 +12,27 @@ import AboutUs from "./pages/AboutUs";
 import UserGuide from "./pages/UserGuide";
 import Request from "./pages/Request";
 
-{
-  /** GSU's SUPERVISOR INTERFACES */
-}
-
-{
-  /** GSU's HEAD INTERFACES */
-}
-
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 function App() {
-  return <Request />;
+  return (
+    <div>
+      <BrowserRouter>
+        <Routes>
+          <Route index element={<UserLandingPage />} />
+          <Route path="/user/homepage" element={<UserHomePage />} />
+          <Route path="/user/signup_google" element={<SignupGoogle />} />
+          <Route path="/user/att_forms" element={<AuthorityToTravelForm />} />
+          <Route path="/user/request_forms" element={<RequestToTravelForm />} />
+          <Route path="/user/forgot_password" element={<ForgotPassword />} />
+          <Route path="/user/recover_account" element={<RecoverAccount />} />
+          <Route path="/user/about_us" element={<AboutUs />} />
+          <Route path="/user/user_guide" element={<UserGuide />} />
+          <Route path="/user/request" element={<Request />} />
+        </Routes>
+      </BrowserRouter>
+    </div>
+  );
 }
 
 export default App;
