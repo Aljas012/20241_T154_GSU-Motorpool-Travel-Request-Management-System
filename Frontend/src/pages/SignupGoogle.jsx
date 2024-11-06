@@ -9,6 +9,8 @@ import {
   InputGroup,
   Card,
   Button,
+  DropdownButton,
+  Dropdown,
 } from "react-bootstrap";
 import NavbarComponent from "../components/NavBarComponents";
 import "../styles/SignupGoogle.css";
@@ -74,8 +76,8 @@ function SignupGoogle() {
           <Col>
             <Card style={{ backgroundColor: "#F1F1F1", marginTop: "5rem" }}>
               <Card.Body>
-                <Form style={{ padding: "1.2rem" }} onSubmit={handleSubmit}>
-                  {/* EMAIL INPUT FIELD */}
+                <Form style={{ padding: "1.2rem" }}>
+                  {/** EMAIL INPUT FIELD */}
                   <InputGroup className="mb-3">
                     <Form.Control
                       id="email"
@@ -94,7 +96,7 @@ function SignupGoogle() {
                         fontSize: "1rem",
                         height: "2.8rem",
                       }}
-                      className="custom-email-input"
+                      className="custom-input"
                       autoComplete="off"
                     />
                   </InputGroup>
@@ -117,7 +119,7 @@ function SignupGoogle() {
                         fontSize: "1rem",
                         height: "2.8rem",
                       }}
-                      className="custom-email-input"
+                      className="custom-input"
                     />
                   </InputGroup>
                   <Button
@@ -251,7 +253,14 @@ function SignupGoogle() {
 
           {/* ALREADY HAVE AN ACCOUNT */}
           <div className="text-center">
-            <h6 style={{ color: "#767676", marginTop: "5rem" }}>
+            <h6
+              style={{
+                color: "#767676",
+                marginTop: "5rem",
+                fontFamily: "Helvetica",
+                fontWeight: "600",
+              }}
+            >
               Already have an Account?{" "}
               <a
                 href="#"
@@ -262,6 +271,8 @@ function SignupGoogle() {
                 style={{
                   color: "#CD8800",
                   textDecoration: "none",
+                  fontFamily: "Helvetica",
+                  fontWeight: "600",
                 }}
               >
                 Log in
