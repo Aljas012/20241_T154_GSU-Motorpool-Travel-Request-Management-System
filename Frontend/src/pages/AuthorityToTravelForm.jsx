@@ -12,6 +12,8 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
+import ATTNav from "../components/ATT_Nav";
+
 import "../styles/AuthorityToTravelForm.css";
 
 function AuthorityToTravelForm({ children }) {
@@ -41,22 +43,9 @@ function AuthorityToTravelForm({ children }) {
 
   return (
     <>
-      {/** HEADER */}
-      <Navbar
-        style={{
-          backgroundColor: "#0760A1",
-          fontFamily: "Helvetica",
-          height: "97.5px",
-        }}
-      >
-        <Container className="d-flex flex-column align-items-start">
-          <div className="text-left">
-            <h4 className="text-white fw-bold mb-0">Authority To Travel</h4>
-            <h5 className="text-white mb-0">Request Management System</h5>
-          </div>
-        </Container>
-      </Navbar>
 
+    <ATTNav></ATTNav>
+      
       {/** BODY */}
       <main>
         <Container>

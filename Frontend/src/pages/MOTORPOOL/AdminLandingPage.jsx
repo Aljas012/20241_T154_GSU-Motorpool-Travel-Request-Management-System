@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { Container, Row, Col, Form, Button, InputGroup } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faLock } from "@fortawesome/free-solid-svg-icons";
-import "../styles/UserLandingPage.css";
+import "../../styles/LandingPage.css";
 
-function UserLandingPage() {
-  const navigate = useNavigate();
+function AdminLandingPage() {
   const leftImageStyle = {
     backgroundImage: "url('/images/GSU_BG.png')",
     backgroundSize: "58% 100%",
@@ -44,39 +43,6 @@ function UserLandingPage() {
     fontFamily: "Helvetica",
   };
 
-  const [email, setEmail] = useState(""); // For email input
-  const [password, setPassword] = useState(""); // For password input
-  const [error, setError] = useState(null); // For handling errors
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const data = { email, password };
-
-    try {
-      const response = await fetch("http://localhost:8000/user/login", {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      const json = await response.json();
-      if (!response.ok) {
-        setError(json.error); // Show error if signup fails
-      } else {
-        // Clear the form and reset state if signup is successful
-        setEmail("");
-        setPassword("");
-        setError(null);
-        console.log("user logged in");
-        navigate("/user/homepage");
-      }
-    } catch (err) {
-      setError("An error occurred, please try again."); // Catch network errors
-    }
-  };
-
   return (
     <Container fluid style={{ position: "relative", height: "100vh" }}>
       <div style={leftImageStyle}></div>
@@ -92,7 +58,7 @@ function UserLandingPage() {
           md={{ span: 6, offset: 0 }}
           lg={{ span: 4, offset: 0 }}
         >
-          <div style={{ marginBottom: "2rem" }}>
+          <div>
             <Form id="landingpage">
               <h2
                 style={{
@@ -134,6 +100,7 @@ function UserLandingPage() {
               >
                 Sign-in to your account!
               </h4>
+
               {/** EMAIL INPUT FIELD */}
               <InputGroup className="mb-3 mt-2 input-shadow">
                 <InputGroup.Text>
@@ -146,11 +113,9 @@ function UserLandingPage() {
                   placeholder="Email"
                   aria-label="Email"
                   aria-describedby="basic-addon1"
-                  autoComplete="current-email"
-                  onChange={(e) => setEmail(e.target.value)} // Updating email state on change
-                  value={email} // Binding state to input field
                 />
               </InputGroup>
+
               {/** PASSWORD INPUT FIELD */}
               <InputGroup className="mb-3 input-shadow">
                 <InputGroup.Text>
@@ -163,11 +128,9 @@ function UserLandingPage() {
                   placeholder="Password"
                   aria-label="Password"
                   aria-describedby="basic-addon1"
-                  autoComplete="current-password"
-                  onChange={(e) => setPassword(e.target.value)} // Updating email state on change
-                  value={password} // Binding state to input field
                 />
               </InputGroup>
+
               <Button
                 variant="primary"
                 size="lg"
@@ -176,34 +139,11 @@ function UserLandingPage() {
               >
                 Login
               </Button>
+            </Form>
 
-              {/** SIGN IN WITH GOOGLE */}
-              <h5
-                className="text-center mt-3"
-                style={{ fontFamily: "Helvetica", color: "#767676" }}
-              >
-                or sign in with{" "}
-                <a
-                  href=""
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    fontFamily: "Helvetica",
-                    fontWeight: "bold",
-                    textDecoration: "none",
-                  }}
-                >
-                  <span style={{ color: "#FF4B26" }}>G</span>
-                  <span style={{ color: "#FFD500" }}>o</span>
-                  <span style={{ color: "#12B347" }}>o</span>
-                  <span style={{ color: "#0F993E" }}>g</span>
-                  <span style={{ color: "#167EE6" }}>l</span>
-                  <span style={{ color: "##167EE6" }}>e</span>
-                </a>
-              </h5>
-
-              {/** FORGOT PASSWORD */}
-              <h5
+            <div>
+              {/** LOG IN AS ADMIN */}
+              <h6
                 className="text-center mt-5"
                 style={{ fontFamily: "Helvetica", color: "#767676" }}
               >
@@ -214,7 +154,7 @@ function UserLandingPage() {
                     fontFamily: "Helvetica",
                   }}
                 >
-                  Login as Admin
+                  Login as User
                 </a>
               </h6>
 
@@ -238,58 +178,27 @@ function UserLandingPage() {
           </div>
         </Col>
 
-        {/** SECOND COLUMN / RIGHT SIDE */}
         <Col
           xs={{ span: 12, offset: 0 }}
           md={{ span: 6, offset: 2 }}
           lg={{ span: 4, offset: 2 }}
         >
-          <div style={{ marginLeft: "4.5rem", textAlign: "left" }}>
-            <h4
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <img
+              src="../images/BukSULOGO.png"
+              alt="SVG Icon"
               style={{
-                color: "white",
-                fontFamily: "Helvetica",
-                fontStyle: "italic",
-                fontWeight: 600,
-                margin: 0,
+                width: "50%",
+                height: "auto",
+                filter: "invert(100%) grayscale(100%)",
               }}
-            >
-              Educate. Innovate. Lead
-            </h4>
-            <h3
-              style={{
-                color: "white",
-                fontFamily: "Helvetica",
-                fontWeight: 700,
-                fontSize: "2rem",
-              }}
-            >
-              Welcome Back!
-            </h3>
-            {/** SIGN UP PORTION */}
-            <Button
-              variant="primary"
-              type="button" // Change to type "button"
-              className="d-flex align-items-center justify-content-center"
-              style={{
-                fontFamily: "Helvetica",
-                padding: "0.75rem 1.5rem",
-                fontSize: "1.25rem",
-                height: "4rem",
-                width: "25rem",
-                marginTop: "1rem",
-                marginBottom: "2rem",
-                borderRadius: "1.5rem",
-              }}
-              onClick={() => navigate("/user/signup_google")} // Navigate to signup page
-            >
-              <img
-                src="./images/BSU_LOGO.png"
-                alt="Login Icon"
-                style={{ width: "38px", height: "38px", marginRight: "10px" }}
-              />
-              No account yet? Signup
-            </Button>
+            />
           </div>
         </Col>
       </Row>
@@ -297,4 +206,4 @@ function UserLandingPage() {
   );
 }
 
-export default UserLandingPage;
+export default AdminLandingPage;

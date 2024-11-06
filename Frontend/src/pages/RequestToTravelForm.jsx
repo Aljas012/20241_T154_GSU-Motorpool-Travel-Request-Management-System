@@ -12,6 +12,8 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
+import RTTNav from "../components/RTT_Nav";
+
 function RequestToTravelForm() {
   const handleClick = () => {
     alert("Left arrow clicked!"); // Replace with your desired action
@@ -29,20 +31,7 @@ function RequestToTravelForm() {
   return (
     <>
       {/** HEADER */}
-      <Navbar
-        style={{
-          backgroundColor: "#0760A1",
-          fontFamily: "Helvetica",
-          height: "97.5px",
-        }}
-      >
-        <Container className="d-flex flex-column align-items-start">
-          <div className="text-left">
-            <h4 className="text-white fw-bold mb-0">Request To Travel</h4>
-            <h5 className="text-white mb-0">Request Management System</h5>
-          </div>
-        </Container>
-      </Navbar>
+      <RTTNav></RTTNav>
 
       {/** BODY */}
       <main>
@@ -520,7 +509,7 @@ function RequestToTravelForm() {
                     style={{
                       marginTop: "1rem",
                       paddingBottom: "1rem",
-                      marginBottom: "3rem",
+                      marginBottom: "1rem",
                       backgroundColor: "#F7F7F7",
                     }}
                   >
@@ -756,7 +745,7 @@ function RequestToTravelForm() {
                               style={{
                                 display: "flex",
                                 alignItems: "center",
-                                marginTop: "1rem",
+                                marginTop: ".5rem",
                               }}
                             >
                               <h6
@@ -836,7 +825,7 @@ function RequestToTravelForm() {
                               style={{
                                 display: "flex",
                                 alignItems: "center",
-                                marginTop: "1rem",
+                                marginTop: ".5rem",
                               }}
                             >
                               <h6
@@ -924,7 +913,7 @@ function RequestToTravelForm() {
                               style={{
                                 display: "flex",
                                 alignItems: "center",
-                                marginTop: "1rem",
+                                marginTop: ".5rem",
                               }}
                             >
                               <h6
@@ -1000,6 +989,53 @@ function RequestToTravelForm() {
                             </div>
                           </Col>
                         </Row>
+                      </Card.Body>
+                    </Container>
+                  </Card>
+                </div>
+              </Col>
+            </Row>
+
+            {/** PARA SA PINAKA UBOS NA CARD */}
+            <Row style={{ margin: "0", padding: "0" }}>
+              <Col md={12}>
+                <div>
+                  <Card
+                    style={{
+                      marginTop: "1rem",
+                      paddingBottom: "1rem",
+                      marginBottom: "3rem",
+                      backgroundColor: "#F7F7F7",
+                    }}
+                  >
+                    <Container>
+                      <Card.Body>
+                        <h5
+                          style={{
+                            fontFamily: "Helvetica",
+                            fontWeight: "600",
+                            borderBottom: "2px solid #000", // Adjust the color and thickness as needed
+                            paddingBottom: "0.5rem", // Add some space below the text
+                            marginBottom: "1rem",
+                          }}
+                        >
+                          Purpose of Travel
+                        </h5>
+
+                        {/** INPUT FIELD  */}
+                        <Form>
+                          <Form.Group controlId="travelDetails">
+                            <Form.Control
+                              as="textarea"
+                              rows={3}
+                              placeholder="Details..." // Placeholder text
+                              style={{
+                                border: "1px solid #000000",
+                                borderRadius: "4px",
+                              }}
+                            />
+                          </Form.Group>
+                        </Form>
                       </Card.Body>
                     </Container>
                   </Card>

@@ -5,7 +5,7 @@ function FooterComponent() {
   return (
     <footer
       style={{
-        backgroundColor: "#0760A1",
+        background: "linear-gradient(90deg, #0760A1 0%, #02233B 100%)",
         position: "fixed",
         bottom: "0",
         width: "100%",

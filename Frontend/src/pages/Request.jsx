@@ -25,34 +25,35 @@ function Request() {
 
   return (
     <>
-      <NavBarWithBellComponents />;
+      <NavBarWithBellComponents />
       <main>
         <Container>
           <Row>
             <Col>
               <div>
-                {/** BACK BUTTON */}
-                <Button
-                  onClick={handleClick} // Handle click event
-                  style={{
-                    backgroundColor: "#0760A1", // Blue background color for the button
-                    color: "#FFFFFF", // Text color (icon color will inherit this)
-                    cursor: "pointer", // Change cursor to pointer to indicate clickability
-                    display: "flex", // Use flex to center the icon
-                    alignItems: "center", // Center vertically
-                    justifyContent: "center", // Center horizontally
-                    border: "none", // Remove border
-                    borderRadius: "4px", // Optional: Rounded corners
-                    width: "3rem",
-                    height: "2rem",
-                  }}
-                >
-                  <FontAwesomeIcon
-                    icon={faArrowLeft} // Use the left arrow icon
-                    style={{ color: "#FFFFFF", width: "28px", height: "auto" }} // Set icon color to white
-                  />
-                </Button>
-              </div>
+              {/** BACK BUTTON */}
+              <button
+                onClick={handleClick}
+                style={{
+                  backgroundColor: "#0760A1",
+                  color: "#FFFFFF",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  border: "none",
+                  borderRadius: "4px",
+                  width: "3rem",
+                  height: "2rem",
+                  marginTop: "1rem",
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={faArrowLeft} // Use the left arrow icon
+                  style={{ color: "#FFFFFF", width: "28px", height: "auto" }} // Set icon color to white
+                />
+              </button>
+            </div>
 
               <div style={{ marginTop: "1rem" }}>
                 <Table
@@ -72,7 +73,7 @@ function Request() {
                         colSpan={4}
                         style={{
                           color: "#0760A1",
-                          textAlign: "start",
+                          textAlign: "start", 
                           paddingLeft: "1.5rem", // Adjust this value to move it further to the right
                           backgroundColor: "#F1F1F1",
                         }}
@@ -131,74 +132,6 @@ function Request() {
                         Pending
                       </td>
                     </tr>
-                    <tr>
-                      <td
-                        style={{
-                          color: "#0760A1",
-                          backgroundColor: "#F1F1F1",
-                        }}
-                      >
-                        9:35 am
-                      </td>
-                      <td
-                        style={{ color: "#0760A1", backgroundColor: "#F1F1F1" }}
-                      >
-                        6/12/2024
-                      </td>
-                      <td
-                        style={{ color: "#0760A1", backgroundColor: "#F1F1F1" }}
-                      >
-                        <a
-                          href="/details" // Change this to the appropriate link
-                          style={{
-                            color: "#0760A1",
-                            textDecoration: "underline",
-                            cursor: "pointer",
-                          }}
-                        >
-                          View Details
-                        </a>
-                      </td>
-                      <td
-                        style={{ color: "#CD8800", backgroundColor: "#F1F1F1" }}
-                      >
-                        Pending
-                      </td>
-                    </tr>
-                    <tr>
-                      <td
-                        style={{
-                          color: "#0760A1",
-                          backgroundColor: "#F1F1F1",
-                        }}
-                      >
-                        9:35 am
-                      </td>
-                      <td
-                        style={{ color: "#0760A1", backgroundColor: "#F1F1F1" }}
-                      >
-                        6/12/2024
-                      </td>
-                      <td
-                        style={{ color: "#0760A1", backgroundColor: "#F1F1F1" }}
-                      >
-                        <a
-                          href="/details" // Change this to the appropriate link
-                          style={{
-                            color: "#0760A1",
-                            textDecoration: "underline",
-                            cursor: "pointer",
-                          }}
-                        >
-                          View Details
-                        </a>
-                      </td>
-                      <td
-                        style={{ color: "#CD8800", backgroundColor: "#F1F1F1" }}
-                      >
-                        Pending
-                      </td>
-                    </tr>
 
                     <tr>
                       <td
@@ -269,111 +202,7 @@ function Request() {
                         Pending
                       </td>
                     </tr>
-
-                    <tr>
-                      <td
-                        style={{
-                          color: "#0760A1",
-                          backgroundColor: "#F1F1F1",
-                        }}
-                      >
-                        9:35 am
-                      </td>
-                      <td
-                        style={{ color: "#0760A1", backgroundColor: "#F1F1F1" }}
-                      >
-                        6/12/2024
-                      </td>
-                      <td
-                        style={{ color: "#0760A1", backgroundColor: "#F1F1F1" }}
-                      >
-                        <a
-                          href="/details" // Change this to the appropriate link
-                          style={{
-                            color: "#0760A1",
-                            textDecoration: "underline",
-                            cursor: "pointer",
-                          }}
-                        >
-                          View Details
-                        </a>
-                      </td>
-                      <td
-                        style={{ color: "#CD8800", backgroundColor: "#F1F1F1" }}
-                      >
-                        Pending
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td
-                        style={{
-                          color: "#0760A1",
-                          backgroundColor: "#F1F1F1",
-                        }}
-                      >
-                        9:35 am
-                      </td>
-                      <td
-                        style={{ color: "#0760A1", backgroundColor: "#F1F1F1" }}
-                      >
-                        6/12/2024
-                      </td>
-                      <td
-                        style={{ color: "#0760A1", backgroundColor: "#F1F1F1" }}
-                      >
-                        <a
-                          href="/details" // Change this to the appropriate link
-                          style={{
-                            color: "#0760A1",
-                            textDecoration: "underline",
-                            cursor: "pointer",
-                          }}
-                        >
-                          View Details
-                        </a>
-                      </td>
-                      <td
-                        style={{ color: "#CD8800", backgroundColor: "#F1F1F1" }}
-                      >
-                        Pending
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td
-                        style={{
-                          color: "#0760A1",
-                          backgroundColor: "#F1F1F1",
-                        }}
-                      >
-                        9:35 am
-                      </td>
-                      <td
-                        style={{ color: "#0760A1", backgroundColor: "#F1F1F1" }}
-                      >
-                        6/12/2024
-                      </td>
-                      <td
-                        style={{ color: "#0760A1", backgroundColor: "#F1F1F1" }}
-                      >
-                        <a
-                          href="/details" // Change this to the appropriate link
-                          style={{
-                            color: "#0760A1",
-                            textDecoration: "underline",
-                            cursor: "pointer",
-                          }}
-                        >
-                          View Details
-                        </a>
-                      </td>
-                      <td
-                        style={{ color: "#CD8800", backgroundColor: "#F1F1F1" }}
-                      >
-                        Pending
-                      </td>
-                    </tr>   
+                   
                   </tbody>
                 </Table>
               </div>
