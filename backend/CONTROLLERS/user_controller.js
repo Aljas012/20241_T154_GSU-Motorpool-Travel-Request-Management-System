@@ -10,49 +10,57 @@ const { Document, Packer, Paragraph, TextRun, Header,ImageRun} = require('docx')
 
 
 const create_account = async (req, res) => {  // Create user function (for signup)
-    const { email, password, name } = req.body;
+    const { name, email, password } = req.body;
+    
     try {
-
-        let emptyFields = []
-
-        if(!email)
-        {
-            emptyFields.push('email')
-        }
-         
-        if(!password)
-            {
-                emptyFields.push('password')
-            }
-         
-        if(!name)
-            {
-                    emptyFields.push('name')
-            }
+        // Check for missing fields
+        let emptyFields = [];
         
-        if (!password || password.trim() === '') { //i check if ang input field is null
-            return res.status(400).json({ error: 'Password is required' });
+        if (!name || name.trim() === '') {
+            emptyFields.push('name');
         }
-        if (!email || email.trim() === '') { //i check if ang input field is null
-            return res.status(400).json({ error: 'Email is required' });
+        
+        if (!email || email.trim() === '') {
+            emptyFields.push('email');
         }
-        if (!name || name.trim() === '') { //i check if ang input field is null
-            return res.status(400).json({ error: 'Name is required' });
+        
+        if (!password || password.trim() === '') {
+            emptyFields.push('password');
         }
 
-        // Check if the email already exists
+        // If any fields are empty, return an error with the list of missing fields
+        if (emptyFields.length > 0) {
+            return res.status(400).json({ 
+                error: `Please fill in the following fields: ${emptyFields.join(', ')}` 
+            });
+        }
+
+        // Validate email format using regex (simplified example)
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ error: 'Invalid email format' });
+        }
+
+        // Check if the email already exists in the database
         const existingUser = await user_data.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ error: 'Email already in use' });
         }
-        
-        // Hash the password before storing it
+
+        // Hash the password before saving to the database
         const hashedPassword = await bcrypt.hash(password, 12);
 
-        // add to database
-        const userInfo = await user_data.create({ email, password: hashedPassword, name });
-        res.status(201).json({ message: 'User created successfully', user: userInfo });
+        // Save the new user to the database
+        const userInfo = await user_data.create({ name, email, password: hashedPassword });
+        
+        // Return success response
+        res.status(201).json({ 
+            message: 'User created successfully', 
+            user: { name: userInfo.name, email: userInfo.email } // Return a subset of the user info to avoid exposing the password
+        });
+
     } catch (error) {
+        console.error(error); // It's a good practice to log the error to the server console
         res.status(500).json({ error: 'Failed to create user: ' + error.message });
     }
 };

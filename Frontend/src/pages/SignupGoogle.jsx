@@ -17,16 +17,22 @@ import "../styles/SignupGoogle.css";
 
 function SignupGoogle() {
   // Correctly using useState to handle form inputs
+  const [name, setName] = useState("");
   const [email, setEmail] = useState(""); // For email input
   const [password, setPassword] = useState(""); // For password input
   const [error, setError] = useState(null); // For handling errors
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Fix typo: It should be 'preventDefault' (not 'prevenDefault')
-    const data = { email, password };
+    if (!name || !email || !password) {
+      setError("Please fill in all the fields");
+      return; // Prevent form submission if any field is empty
+    }
+
+    const data = { name, email, password };
 
     try {
-      const response = await fetch("/user/signup", {
+      const response = await fetch("http://localhost:8000/user/signup", {
         method: "POST",
         body: JSON.stringify(data),
         headers: {
@@ -39,10 +45,12 @@ function SignupGoogle() {
         setError(json.error); // Show error if signup fails
       } else {
         // Clear the form and reset state if signup is successful
+        setName("");
         setEmail("");
         setPassword("");
         setError(null);
         console.log("New user account added");
+        navigate("/");
       }
     } catch (err) {
       setError("An error occurred, please try again."); // Catch network errors
@@ -76,8 +84,30 @@ function SignupGoogle() {
           <Col>
             <Card style={{ backgroundColor: "#F1F1F1", marginTop: "5rem" }}>
               <Card.Body>
-                <Form style={{ padding: "1.2rem" }}>
+                <Form onSubmit={handleSubmit} style={{ padding: "1.2rem" }}>
                   {/** EMAIL INPUT FIELD */}
+                  <InputGroup className="mb-3">
+                    <Form.Control
+                      id="name"
+                      type="name"
+                      placeholder="Full name"
+                      aria-label="Name"
+                      aria-describedby="basic-addon1"
+                      onChange={(e) => setName(e.target.value)} // Updating email state on change
+                      value={name} // Binding state to input field
+                      style={{
+                        backgroundColor: "#0760A1",
+                        color: "white",
+                        fontFamily: "Helvetica",
+                        border: "none",
+                        padding: "1rem",
+                        fontSize: "1rem",
+                        height: "2.8rem",
+                      }}
+                      className="custom-input"
+                      autoComplete="off"
+                    />
+                  </InputGroup>
                   <InputGroup className="mb-3">
                     <Form.Control
                       id="email"
@@ -138,11 +168,9 @@ function SignupGoogle() {
                   </Button>
                   {error && (
                     <div
-                      style={{
-                        color: "red",
-                        marginTop: "1rem",
-                        textAlign: "center",
-                      }}
+                      className="alert alert-danger mt-3"
+                      role="alert"
+                      style={{ textAlign: "center" }}
                     >
                       {error}
                     </div>
@@ -162,9 +190,9 @@ function SignupGoogle() {
                         backgroundColor: "#00000080",
                       }}
                     />
-                    <h7 style={{ margin: "0 1rem" }} className="text-center">
+                    <h6 style={{ margin: "0 1rem" }} className="text-center">
                       or
-                    </h7>
+                    </h6>
                     <div
                       style={{
                         flex: 1,
