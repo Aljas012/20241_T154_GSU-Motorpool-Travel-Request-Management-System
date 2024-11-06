@@ -2,9 +2,9 @@ import React from "react";
 import { Container, Row, Col, Form, Button, InputGroup } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faLock } from "@fortawesome/free-solid-svg-icons";
-import "../styles/LandingPage.css";
+import "../../styles/LandingPage.css";
 
-function UserLandingPage() {
+function AdminLandingPage() {
   const leftImageStyle = {
     backgroundImage: "url('/images/GSU_BG.png')",
     backgroundSize: "58% 100%",
@@ -141,32 +141,7 @@ function UserLandingPage() {
               </Button>
             </Form>
 
-            <div >
-              {/** SIGN IN WITH GOOGLE */}
-              <h5
-                className="text-center mt-3"
-                style={{ fontFamily: "Helvetica", color: "#767676" }}
-              >
-                or sign in with{" "}
-                <a
-                  href=""
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    fontFamily: "Helvetica",
-                    fontWeight: "bold",
-                    textDecoration: "none",
-                  }}
-                >
-                  <span style={{ color: "#FF4B26" }}>G</span>
-                  <span style={{ color: "#FFD500" }}>o</span>
-                  <span style={{ color: "#12B347" }}>o</span>
-                  <span style={{ color: "#0F993E" }}>g</span>
-                  <span style={{ color: "#167EE6" }}>l</span>
-                  <span style={{ color: "##167EE6" }}>e</span>
-                </a>
-              </h5>
-
+            <div>
               {/** LOG IN AS ADMIN */}
               <h6
                 className="text-center mt-5"
@@ -179,7 +154,7 @@ function UserLandingPage() {
                     fontFamily: "Helvetica",
                   }}
                 >
-                  Login as Admin
+                  Login as User
                 </a>
               </h6>
 
@@ -203,58 +178,27 @@ function UserLandingPage() {
           </div>
         </Col>
 
-        {/** SECOND COLUMN / RIGHT SIDE */}
         <Col
           xs={{ span: 12, offset: 0 }}
           md={{ span: 6, offset: 2 }}
           lg={{ span: 4, offset: 2 }}
         >
-          <div style={{ marginLeft: "4.5rem", textAlign: "left" }}>
-            {" "}
-            <h4
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <img
+              src="../images/BukSULOGO.png"
+              alt="SVG Icon"
               style={{
-                color: "white",
-                fontFamily: "Helvetica",
-                fontStyle: "italic",
-                fontWeight: 600,
-                margin: 0,
+                width: "50%",
+                height: "auto",
+                filter: "invert(100%) grayscale(100%)",
               }}
-            >
-              Educate. Innovate. Lead
-            </h4>
-            <h3
-              style={{
-                color: "white",
-                fontFamily: "Helvetica",
-                fontWeight: 700,
-                fontSize: "2rem",
-              }}
-            >
-              Welcome Back!
-            </h3>
-            {/** SIGN UP PORTION */}
-            <Button
-              variant="primary"
-              type="submit"
-              className="d-flex align-items-center justify-content-center"
-              style={{
-                fontFamily: "Helvetica",
-                padding: "0.75rem 1.5rem",
-                fontSize: "1.25rem",
-                height: "4rem",
-                width: "25rem",
-                marginTop: "1rem",
-                marginBottom: "2rem",
-                borderRadius: "1.5rem",
-              }}
-            >
-              <img
-                src="./images/BSU_LOGO.png"
-                alt="Login Icon"
-                style={{ width: "38px", height: "38px", marginRight: "10px" }}
-              />
-              No account yet? Signup
-            </Button>
+            />
           </div>
         </Col>
       </Row>
@@ -262,4 +206,4 @@ function UserLandingPage() {
   );
 }
 
-export default UserLandingPage;
+export default AdminLandingPage;
