@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Navbar,
   Container,
@@ -14,6 +15,7 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import "../styles/AuthorityToTravelForm.css";
 
 function AuthorityToTravelForm({ children }) {
+  const navigate = useNavigate();
   // State to track which checkbox is checked
   const [checked, setChecked] = useState("");
 
@@ -22,10 +24,6 @@ function AuthorityToTravelForm({ children }) {
     const { id } = event.target;
     // If the same checkbox is clicked, uncheck it; otherwise, check the clicked checkbox
     setChecked(id === checked ? "" : id);
-  };
-
-  const handleClick = () => {
-    alert("Left arrow clicked!"); // Replace with your desired action
   };
 
   const handleClickh6 = () => {
@@ -67,7 +65,7 @@ function AuthorityToTravelForm({ children }) {
               <div>
                 {/** BACK BUTTON */}
                 <button
-                  onClick={handleClick} // Handle click event
+                  // Handle click event
                   style={{
                     backgroundColor: "#0760A1", // Blue background color for the button
                     color: "#FFFFFF", // Text color (icon color will inherit this)
@@ -119,7 +117,6 @@ function AuthorityToTravelForm({ children }) {
                   >
                     {/* FIRST COLUMN */}
                     <Col md={7}>
-                    
                       {/* CARD.BODY LEFT SIDE */}
                       <div style={{ flex: 1, padding: "1rem" }}>
                         <Container>
@@ -581,7 +578,6 @@ function AuthorityToTravelForm({ children }) {
 
                     {/* SECOND COLUMN */}
                     <Col md={5}>
-
                       {/** CARD.BODY RIGHT SIDE */}
                       <Container style={{ marginTop: "1rem" }}>
                         <div>

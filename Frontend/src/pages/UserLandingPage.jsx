@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { Container, Row, Col, Form, Button, InputGroup } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faLock } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import "../styles/UserLandingPage.css";
 
 function UserLandingPage() {
+  const navigate = useNavigate();
   const leftImageStyle = {
     backgroundImage: "url('/images/GSU_BG.png')",
     backgroundSize: "58% 100%",
@@ -43,6 +45,39 @@ function UserLandingPage() {
     fontFamily: "Helvetica",
   };
 
+  const [email, setEmail] = useState(""); // For email input
+  const [password, setPassword] = useState(""); // For password input
+  const [error, setError] = useState(null); // For handling errors
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const data = { email, password };
+
+    try {
+      const response = await fetch("http://localhost:8000/user/login", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const json = await response.json();
+      if (!response.ok) {
+        setError(json.error); // Show error if signup fails
+      } else {
+        // Clear the form and reset state if signup is successful
+        setEmail("");
+        setPassword("");
+        setError(null);
+        console.log("user logged in");
+        navigate("/user/homepage");
+      }
+    } catch (err) {
+      setError("An error occurred, please try again."); // Catch network errors
+    }
+  };
+
   return (
     <Container fluid style={{ position: "relative", height: "100vh" }}>
       <div style={leftImageStyle}></div>
@@ -60,7 +95,9 @@ function UserLandingPage() {
           className="text-left"
         >
           <div style={{ marginBottom: "2rem" }}>
-            <Form id="landingpage">
+            <Form id="landingpage" onSubmit={handleSubmit}>
+              {" "}
+              {/* Attach handleLogin to onSubmit */}
               <h2
                 style={{
                   ...headerStyle,
@@ -101,7 +138,6 @@ function UserLandingPage() {
               >
                 Sign-in to your account!
               </h4>
-
               {/** EMAIL INPUT FIELD */}
               <InputGroup className="mb-3 mt-2 input-shadow">
                 <InputGroup.Text>
@@ -114,9 +150,11 @@ function UserLandingPage() {
                   placeholder="Email"
                   aria-label="Email"
                   aria-describedby="basic-addon1"
+                  autoComplete="current-email"
+                  onChange={(e) => setEmail(e.target.value)} // Updating email state on change
+                  value={email} // Binding state to input field
                 />
               </InputGroup>
-
               {/** PASSWORD INPUT FIELD */}
               <InputGroup className="mb-3 input-shadow">
                 <InputGroup.Text>
@@ -129,9 +167,11 @@ function UserLandingPage() {
                   placeholder="Password"
                   aria-label="Password"
                   aria-describedby="basic-addon1"
+                  autoComplete="current-password"
+                  onChange={(e) => setPassword(e.target.value)} // Updating email state on change
+                  value={password} // Binding state to input field
                 />
               </InputGroup>
-
               <Button
                 variant="primary"
                 size="lg"
@@ -140,7 +180,15 @@ function UserLandingPage() {
               >
                 Login
               </Button>
-
+              {error && (
+                <div
+                  className="alert alert-danger mt-3"
+                  role="alert"
+                  style={{ textAlign: "center" }}
+                >
+                  {error}
+                </div>
+              )}
               {/** SIGN IN WITH GOOGLE */}
               <h5
                 className="text-center mt-3"
@@ -165,7 +213,6 @@ function UserLandingPage() {
                   <span style={{ color: "##167EE6" }}>e</span>
                 </a>
               </h5>
-
               {/** FORGOT PASSWORD */}
               <h5
                 className="text-center mt-5"
@@ -194,7 +241,6 @@ function UserLandingPage() {
           className="text-left"
         >
           <div style={{ marginLeft: "4.5rem", textAlign: "left" }}>
-            {" "}
             <h4
               style={{
                 color: "white",
@@ -220,7 +266,7 @@ function UserLandingPage() {
             {/** SIGN UP PORTION */}
             <Button
               variant="primary"
-              type="submit"
+              type="button" // Change to type "button"
               className="d-flex align-items-center justify-content-center"
               style={{
                 fontFamily: "Helvetica",
@@ -232,6 +278,7 @@ function UserLandingPage() {
                 marginBottom: "2rem",
                 borderRadius: "1.5rem",
               }}
+              onClick={() => navigate("/user/signup_google")} // Navigate to signup page
             >
               <img
                 src="./images/BSU_LOGO.png"

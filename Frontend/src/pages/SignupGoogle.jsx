@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Navbar,
   Container,
@@ -9,40 +10,72 @@ import {
   Card,
   Button,
 } from "react-bootstrap";
-
 import NavbarComponent from "../components/NavBarComponents";
 import "../styles/SignupGoogle.css";
 
 function SignupGoogle() {
+  // Correctly using useState to handle form inputs
+  const [email, setEmail] = useState(""); // For email input
+  const [password, setPassword] = useState(""); // For password input
+  const [error, setError] = useState(null); // For handling errors
+
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Fix typo: It should be 'preventDefault' (not 'prevenDefault')
+    const data = { email, password };
+
+    try {
+      const response = await fetch("/user/signup", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json", // Headers should be plural: 'headers'
+        },
+      });
+
+      const json = await response.json();
+      if (!response.ok) {
+        setError(json.error); // Show error if signup fails
+      } else {
+        // Clear the form and reset state if signup is successful
+        setEmail("");
+        setPassword("");
+        setError(null);
+        console.log("New user account added");
+      }
+    } catch (err) {
+      setError("An error occurred, please try again."); // Catch network errors
+    }
+  };
+  const navigate = useNavigate();
   return (
     <>
-      {/** HEADER */}
+      {/* HEADER */}
       <NavbarComponent />
 
-      {/** BODY */}
+      {/* BODY */}
       <Container>
         <Row>
-          {/** FIRST COLUMN / LEFT SIDE */}
+          {/* FIRST COLUMN / LEFT SIDE */}
           <Col>
             <img
               src="./images/PICT1.png"
               alt="pict1"
               className="img-fluid"
               style={{
-                maxWidth: "25rem",
+                maxWidth: "100%",
                 height: "auto",
                 marginTop: "5rem",
-                marginLeft: "2rem  ",
+                marginLeft: "2rem",
               }}
             />
           </Col>
 
-          {/** SECONDD COLUMN / RIGHT SIDE */}
+          {/* SECOND COLUMN / RIGHT SIDE */}
           <Col>
             <Card style={{ backgroundColor: "#F1F1F1", marginTop: "5rem" }}>
               <Card.Body>
-                <Form style={{ padding: "1.2rem" }}>
-                  {/** EMAIL INPUT FIELD */}
+                <Form style={{ padding: "1.2rem" }} onSubmit={handleSubmit}>
+                  {/* EMAIL INPUT FIELD */}
                   <InputGroup className="mb-3">
                     <Form.Control
                       id="email"
@@ -50,23 +83,22 @@ function SignupGoogle() {
                       placeholder="Institutional Email"
                       aria-label="Email"
                       aria-describedby="basic-addon1"
+                      onChange={(e) => setEmail(e.target.value)} // Updating email state on change
+                      value={email} // Binding state to input field
                       style={{
                         backgroundColor: "#0760A1",
                         color: "white",
                         fontFamily: "Helvetica",
                         border: "none",
                         padding: "1rem",
-                        fontSize: "1.rem",
+                        fontSize: "1rem",
                         height: "2.8rem",
                       }}
                       className="custom-email-input"
                       autoComplete="off"
-                      readOnly
-                      onFocus={(e) => e.target.removeAttribute("readonly")}
                     />
                   </InputGroup>
-
-                  {/** PASSWORD INPUT FIELD */}
+                  {/* PASSWORD INPUT FIELD */}
                   <InputGroup className="mb-3">
                     <Form.Control
                       id="password"
@@ -74,19 +106,20 @@ function SignupGoogle() {
                       placeholder="Password"
                       aria-label="Password"
                       aria-describedby="basic-addon2"
+                      onChange={(e) => setPassword(e.target.value)} // Updating password state on change
+                      value={password} // Binding state to input field
                       style={{
                         backgroundColor: "#0760A1",
                         color: "white",
                         fontFamily: "Helvetica",
                         border: "none",
                         padding: "1rem",
-                        fontSize: "1.rem",
+                        fontSize: "1rem",
                         height: "2.8rem",
                       }}
                       className="custom-email-input"
                     />
                   </InputGroup>
-
                   <Button
                     type="submit"
                     className="w-100"
@@ -101,6 +134,17 @@ function SignupGoogle() {
                   >
                     Create Account
                   </Button>
+                  {error && (
+                    <div
+                      style={{
+                        color: "red",
+                        marginTop: "1rem",
+                        textAlign: "center",
+                      }}
+                    >
+                      {error}
+                    </div>
+                  )}
 
                   <div
                     style={{
@@ -127,10 +171,8 @@ function SignupGoogle() {
                       }}
                     />
                   </div>
-
-                  {/** SIGN UP WITH GOOGLE */}
                   <Button
-                    type="submit"
+                    type="button" // This should not be a 'submit' button, since it's for Google login
                     className="w-100 d-flex align-items-center justify-content-center mb-2"
                     style={{
                       backgroundColor: "#F1F1F1",
@@ -161,9 +203,8 @@ function SignupGoogle() {
                       }}
                     >
                       Sign up with Google
-                    </span>{" "}
+                    </span>
                   </Button>
-
                   <div
                     className="d-flex flex-column justify-content-center align-items-center"
                     style={{
@@ -175,7 +216,6 @@ function SignupGoogle() {
                       This site is protected by reCAPTCHA
                     </p>
                     <p style={{ margin: 0 }}>
-                      {/** GOOGLE PRIVACY  */}
                       <a
                         href="https://policies.google.com/privacy"
                         style={{
@@ -189,7 +229,6 @@ function SignupGoogle() {
                         Google Privacy
                       </a>
                       <span style={{ margin: "0 0.25rem" }}>and</span>
-                      {/** TERMS OF SERVICE  */}
                       <a
                         href="https://policies.google.com/terms"
                         style={{
@@ -210,12 +249,16 @@ function SignupGoogle() {
             </Card>
           </Col>
 
-          {/** ALREADY HAVE AN ACCOUNT */}
+          {/* ALREADY HAVE AN ACCOUNT */}
           <div className="text-center">
             <h6 style={{ color: "#767676", marginTop: "5rem" }}>
               Already have an Account?{" "}
               <a
-                href="/login"
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault(); // Prevent the default link behavior
+                  navigate("/"); // Redirect to the index (homepage)
+                }}
                 style={{
                   color: "#CD8800",
                   textDecoration: "none",

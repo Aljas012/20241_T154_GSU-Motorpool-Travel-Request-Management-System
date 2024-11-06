@@ -1,15 +1,31 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { Navbar, Container, Row, Col, Form, Card } from "react-bootstrap";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowAltCircleRight,
   faBell,
 } from "@fortawesome/free-regular-svg-icons";
-
 import FooterComponent from "../components/FooterComponents";
 
 function UserLandingPage() {
+  const navigate = useNavigate();
+  // const [weather, setWeather] = useState(null);
+  // useEffect(() => {
+  //   const fetchdata = async () => {
+  //     const response = await fetch("http://localhost:8000/user/api/weather");
+  //     const json = await response.json();
+  //     if (!response.ok) {
+  //     }
+  //     if (response.ok) {
+  //       setWeather(json);
+  //       console.log("success connecting weather api");
+  //     }
+  //   };
+  //   fetchdata();
+  // }, []);
+
   const handleButtonClickATT = () => {
     // Replace with the path to your file
     window.location.href = "/f";
@@ -330,7 +346,7 @@ function UserLandingPage() {
                           </div>
 
                           <button
-                            onClick={handleButtonClickATT}
+                            onClick={() => navigate("/user/att_forms")}
                             style={{
                               padding: "0.5rem 1rem",
                               background:
@@ -363,7 +379,7 @@ function UserLandingPage() {
                         style={{
                           fontFamily: "Helvetica",
                           color: "#0760A1",
-                          marginTop: "0.5rem", 
+                          marginTop: "0.5rem",
                           textAlign: "center",
                           width: "100%",
                           marginLeft: "5.2rem",
