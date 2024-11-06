@@ -26,7 +26,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 
 
 function App() {
-  return <MotorpoolHomePage />;
+  return <AdminLandingPage />;
 }
 
 export default App;
