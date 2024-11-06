@@ -10,7 +10,7 @@ const { Document, Packer, Paragraph, TextRun, Header,ImageRun} = require('docx')
 
 
 const create_account = async (req, res) => {  // Create user function (for signup)
-    const { name, email, password } = req.body;
+    const { name, email, password,office_code } = req.body;
     
     try {
         // Check for missing fields
@@ -27,6 +27,10 @@ const create_account = async (req, res) => {  // Create user function (for signu
         if (!password || password.trim() === '') {
             emptyFields.push('password');
         }
+        if (!office_code || office_code.trim() === '') {
+            emptyFields.push('office_code');
+        }
+
 
         // If any fields are empty, return an error with the list of missing fields
         if (emptyFields.length > 0) {
@@ -51,12 +55,12 @@ const create_account = async (req, res) => {  // Create user function (for signu
         const hashedPassword = await bcrypt.hash(password, 12);
 
         // Save the new user to the database
-        const userInfo = await user_data.create({ name, email, password: hashedPassword });
+        const userInfo = await user_data.create({ name, email, password: hashedPassword ,office_code});
         
         // Return success response
         res.status(201).json({ 
             message: 'User created successfully', 
-            user: { name: userInfo.name, email: userInfo.email } // Return a subset of the user info to avoid exposing the password
+            user: { name: userInfo.name, email: userInfo.email,office_code } // Return a subset of the user info to avoid exposing the password
         });
 
     } catch (error) {
