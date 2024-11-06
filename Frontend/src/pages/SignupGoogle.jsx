@@ -8,6 +8,8 @@ import {
   InputGroup,
   Card,
   Button,
+  DropdownButton,
+  Dropdown,
 } from "react-bootstrap";
 
 import NavbarComponent from "../components/NavBarComponents";
@@ -41,7 +43,51 @@ function SignupGoogle() {
           <Col>
             <Card style={{ backgroundColor: "#F1F1F1", marginTop: "5rem" }}>
               <Card.Body>
-                <Form style={{ padding: "1.2rem" }}>
+                <Form style={{ padding: "1rem" }}>
+                  <div style={{ display: "flex" }}>
+                    <InputGroup className="mb-3">
+                      {/* NAME INPUT FIELD */}
+                      <Form.Control
+                        id="email"
+                        type="text"
+                        placeholder="Name"
+                        aria-label="Name"
+                        aria-describedby="basic-addon1"
+                        style={{
+                          backgroundColor: "#0760A1",
+                          color: "white",
+                          fontFamily: "Helvetica",
+                          border: "none",
+                          padding: "1rem",
+                          fontSize: "1rem",
+                          height: "2.8rem",
+                          width: "60%", // Increase the width of the input field to make it larger than the select
+                        }}
+                        className="custom-input"
+                        autoComplete="off"
+                        readOnly
+                        onFocus={(e) => e.target.removeAttribute("readonly")}
+                      />
+                    </InputGroup>
+
+                    <Form.Select
+                      id="MART"
+                      aria-label="Office"
+                      style={{
+                        marginLeft: ".5rem",
+                        border: "1px solid #0760A1", // Adds the border in #0760A1
+                        color: "#0760A1", // Sets the text color to #0760A1
+                        height: "2.8rem", // Matches the height of the input field
+                        width: "40%", // Adjust the width of the select to be smaller than the input
+                      }}
+                    >
+                      <option>Office</option>
+                      <option value="1">OneOneOneOneOneOneOneOneOne</option>
+                      <option value="2">Two</option>
+                      <option value="3">Three</option>
+                    </Form.Select>
+                  </div>
+
                   {/** EMAIL INPUT FIELD */}
                   <InputGroup className="mb-3">
                     <Form.Control
