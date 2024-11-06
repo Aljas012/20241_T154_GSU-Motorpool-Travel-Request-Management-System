@@ -27,10 +27,10 @@ function SignupGoogle() {
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Fix typo: It should be 'preventDefault' (not 'prevenDefault')
-    // if (!name || !email || !password || office_code) {
-    //   setError("Please fill in all the fields");
-    //   return; // Prevent form submission if any field is empty
-    // }
+    if (!name || !email || !password || office_code) {
+      setError("Please fill in all the fields");
+      return; // Prevent form submission if any field is empty
+    }
 
     const data = { name, email, password, office_code };
     try {
@@ -448,14 +448,9 @@ function SignupGoogle() {
                   </Button>
                   {error && (
                     <div
-                      style={{
-                        color: "red",
-                        marginTop: "1.5rem",
-                        textAlign: "center",
-                        border: "1px solid red",
-                        borderRadius: "5px",
-                        padding: 5,
-                      }}
+                      className="alert alert-danger mt-3"
+                      role="alert"
+                      style={{ textAlign: "center" }}
                     >
                       {error}
                     </div>
@@ -580,7 +575,7 @@ function SignupGoogle() {
             >
               Already have an Account?{" "}
               <a
-                href="/login"
+                href="/"
                 style={{
                   color: "#CD8800",
                   textDecoration: "none",
