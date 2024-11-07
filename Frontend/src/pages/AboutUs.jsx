@@ -11,13 +11,17 @@ import {
 
 import NavBarWithBellComponents from "../components/NavBarWithBellComponents";
 import FooterComponent from "../components/FooterComponents";
-
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 function AboutUs() {
+  const navigate = useNavigate();
+  const userInfo = JSON.parse(localStorage.getItem("user_info")); // Parse the stored JSON
+  const id = userInfo.user_id; // Access the correct key for the user ID
+
   const handleClick = () => {
-    alert("Left arrow clicked!"); // Replace with your desired action
+    navigate(`/user/id=${id}/homepage`);
   };
 
   return (
@@ -53,36 +57,41 @@ function AboutUs() {
                 </Button>
               </div>
 
-              <div style={{textAlign: "center"}}>
+              <div style={{ textAlign: "center" }}>
                 <h2
                   style={{
                     fontFamily: "Helvetica",
                     fontWeight: "600",
                     color: "#CD8800",
-                    padding: "1rem 0 1.5rem 0"
+                    padding: "1rem 0 1.5rem 0",
                   }}
                 >
                   About Us
                 </h2>
 
-                <div style={{ fontFamily: "Helvetica", textAlign: "justify", padding: "0 21rem 0 21rem" }}>
+                <div
+                  style={{
+                    fontFamily: "Helvetica",
+                    textAlign: "justify",
+                    padding: "0 21rem 0 21rem",
+                  }}
+                >
                   <p>
-                    The Motorpool Unit of BUKIDNON State University (BSU) is
+                    The Motorpool Unit of Bukidnon State University (BSU) is
                     dedicated to providing reliable and efficient transportation
                     services to support our university community. As an integral
-                    part of BSU's campus operations, we manage and maintain the
+                    part of BSU’s campus operations, we manage and maintain the
                     university's fleet of vehicles to ensure safe, timely, and
-                    professional transportation services for academic
-                    activities, administrative functions, and official
-                    university events.
+                    professional transportation for academic activities,
+                    administrative functions, and official university events.
                   </p>
 
                   <p>
                     Our unit takes pride in delivering excellent service through
                     proper vehicle maintenance, professional fleet management,
                     and responsive scheduling. We work tirelessly to support
-                    BSU's mission by facilitating the mobility needs of our
-                    faculty, staff, and students while maintaining the highest
+                    BSU’s mission by addressing the mobility needs of our
+                    faculty, staff, and students, while maintaining the highest
                     standards of safety and efficiency.
                   </p>
                 </div>
