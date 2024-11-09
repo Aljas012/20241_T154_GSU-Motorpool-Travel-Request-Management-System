@@ -1,0 +1,280 @@
+body {
+  margin: 0; /* Remove default margin */
+}
+
+.user-landing-page {
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.background-container {
+  position: absolute;
+  min-height: 100vh;
+  width: 100%;
+  background-image: url("../ASSETS/LandingPageBG.svg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/** TEXT */
+.textGradient {
+  background: linear-gradient(to right, #0760a1, #065894, #02233b);
+  -webkit-background-clip: text; /* For WebKit browsers */
+  background-clip: text; /* For modern browsers */
+  -webkit-text-fill-color: transparent; /* Makes the text transparent so background shows */
+}
+
+.textFont {
+  font-family: Helvetica;
+  font-weight: 700;
+}
+
+.textFont1 {
+  font-family: Helvetica;
+  color: #767676;
+}
+
+.textFont2 {
+  font-family: Helvetica;
+  color: rgb(40, 40, 40); /* Text color */
+  text-decoration: none;
+}
+
+.textFont3 {
+  font-family: Helvetica;
+  font-size: 14px;
+  color: #767676;
+  text-decoration: none;
+}
+
+.textFont4 {
+  font-family: Helvetica;
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: #ffffff;
+  font-style: italic;
+}
+
+.textFont5 {
+  font-family: Helvetica;
+  font-weight: 600;
+  color: #ffffff;
+}
+.textPadding {
+  padding: 0;
+  margin: 0;
+}
+
+.textSize1 {
+  font-size: 1.4rem;
+}
+
+.textSize2 {
+  font-size: 1.6rem;
+}
+
+/** COLORS */
+.colorOrange {
+  color: #cd8800;
+}
+
+.colorGray {
+  color: #767676;
+}
+
+.colorWhite {
+  color: #ffffff;
+}
+
+/** PLACEHOLDER */
+.customInputField {
+  text-align: left; /* Aligns text to the left */
+  background-color: #ebebeb; /* Corrected syntax for background color */
+
+  height: 3.5rem;
+  width: 100%;
+  font-size: 16px; /* Adjust font size */
+  padding: 0.5rem; /* Adjust padding */
+
+  padding-left: 3.8rem;
+
+  border: none;
+  box-shadow: 0px 4px 8px #00000040; /* Adds shadow around the box */
+  outline: none;
+
+}
+.customInputField::placeholder {
+  color: #76767680; /* Set the placeholder color to gray with 50% opacity */
+  text-align: start; /* Center the placeholder text */
+}
+
+/** ALIGNMENT*/
+.alignCenter {
+  display: flex;
+  align-items: center;
+}
+
+.alignCenter1 {
+  justify-content: center;
+  justify-items: center;
+  align-items: center;
+}
+
+.alignCenter2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.divCenter {
+  display: flex; /* Enable Flexbox */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  height: 100vh; /* Ensure the div takes up the full height of its parent */
+}
+
+.divCenter1 {
+  display: flex; /* Enable Flexbox */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  height: 100vh;
+}
+
+/** BUTTON */
+.customButton {
+  height: 3.5rem;
+  width: 100%;
+  background-color: #1a7fc8;
+  border: none;
+  color: white;
+  font-size: 1.2rem; /* Adjust font size as needed */
+
+  font-family: "Helvetica";
+}
+
+.customButton:hover {
+  background-color: #06598f; /* Darker shade of blue */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow for effect */
+  cursor: pointer; /* Change cursor to pointer on hover */
+}
+
+.customButton:active {
+  background-color: #054a79; /* Change to an even darker shade of blue when clicked */
+  transform: scale(
+    0.8
+  ); /* Slightly shrink the button to simulate pressing effect */
+}
+
+.customButton1 {
+  height: 4rem;
+  width: 100%;
+  border: none;
+  color: white;
+  background-color: #1a7fc8;
+  border-radius: 1.5rem;
+  padding: 0 3rem 0 3rem;
+
+  font-family: "Helvetica";
+  font-size: 1.1rem;
+}
+
+.customButton1:hover {
+  background-color: #06598f; /* Darker shade of blue */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow for effect */
+  cursor: pointer; /* Change cursor to pointer on hover */
+}
+
+.customButton1:active {
+  background-color: #054a79; /* Change to an even darker shade of blue when clicked */
+  transform: scale(
+    0.9
+  ); /* Slightly shrink the button to simulate pressing effect */
+}
+
+/** ICON */
+.iconStyle {
+  padding-left: 0.8rem;
+  color: #1480cc;
+  font-size: 1.8rem;
+  position: absolute;
+}
+
+.iconStyle1 {
+  width: auto;
+  height: 6vh;
+  padding-right: 1rem;
+}
+
+/** KA-ARTEHAN */
+@keyframes customBounce {
+  0% {
+    transform: translateX(0);
+  }
+  30% {
+    transform: translateX(5px); /* Move 5px to the right */
+  }
+  50% {
+    transform: translateX(-1px); /* Move 5px to the left */
+  }
+}
+
+.customBounce {
+  animation: customBounce 1.5s ease-in-out infinite; /* Adjust the duration (1.5s) and timing (ease-in-out) */
+}
+
+/* Initial state for each letter */
+.google-animation .google-letter {
+  display: inline-block;
+  transition: transform 0.3s ease, margin 0.3s ease;
+}
+
+/* Hover effect: zoom in with added margin */
+.google-animation:hover .google-letter {
+  transform: scale(1.5); /* Slight zoom */
+  margin-left: 16px; /* Add spacing between letters only on hover */
+}
+
+/* Click effect */
+.google-animation:active .google-letter {
+  animation: click-animation 0.2s forwards;
+}
+
+.effects-link .letter {
+  display: inline-block;
+  transition: transform 0.3s ease, margin 0.3s ease;
+}
+
+.effects-link:hover .letter {
+  transform: scale(1); /* Slightly scale the link on hover */
+  margin-left: 4px;
+}
+
+/* Click effect - Add active state for when the link is clicked */
+.effects-link:active .letter {
+  animation: click-animation 0.2s forwards;
+}
+
+@keyframes click-animation {
+  0% {
+    transform: scale(0.9); /* Scale down on click */
+  }
+  50% {
+    transform: scale(1.1); /* Scale up for a quick pop */
+  }
+  100% {
+    transform: scale(1); /* Return to normal size */
+  }
+}
+
+/** REMOVE UNDERLINE ON 'a' TAG*/
+.noLine {
+  text-decoration: none;
+}
+
+/** */
+.margin {
+  margin-right: 2rem;
+}

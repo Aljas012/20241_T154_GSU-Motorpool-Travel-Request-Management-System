@@ -1,0 +1,162 @@
+.backgroundImage {
+  width: auto;
+  height: 30rem;
+}
+
+/** ALIGNMENT ************************************************/
+.align {
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+}
+
+.align1 {
+  flex-direction: column; /* Stack the content vertically */
+  align-items: center; /* Center horizontally */
+  justify-content: center; /* Center vertically */
+  text-align: center; /* Ensure text is centered within the paragraphs */
+}
+
+.align2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 1rem 0;
+}
+
+.fullHeight {
+  height: 100vh; /* Full viewport height */
+  align-items: center; /* Center vertically */
+  justify-content: center; /* Center horizontally */
+}
+
+.tunga {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/** FORM ************************************************/
+.form {
+  padding: 2rem 2rem 1rem 2rem;
+  border: 1px solid #0760a1;
+  border-radius: 6px;
+  background-color: #f1f1f1;
+}
+
+/** MARGIN/PADDING ************************************************/
+.noMargin {
+  margin: 0;
+  padding: 0;
+}
+
+.customPad {
+  padding: 0 2rem 0 2rem;
+
+  margin-bottom: 0.4rem;
+}
+
+/** KA-ARTHENAN ************************************************/
+.line {
+  flex: 1;
+  height: 0.8px;
+  background-color: #00000080;
+}
+
+/** INPUT FIELDS COLOR ************************************************/
+/* Target the input field (text input) */
+.form-control {
+  background-color: #0760a1; /* Set background color */
+  color: #fff; /* Optional: Set text color to white */
+  height: 3.5rem;
+  width: 100%;
+}
+
+/* Target the select dropdown */
+.form-select {
+  border-color: #0760a1; /* Set background color */
+  color: #0760a1; /* Optional: Set text color to white */
+  margin-left: 4px;
+  width: 70%;
+
+  font-family: Helvetica;
+}
+
+/* Target the placeholder text color */
+.form-control::placeholder {
+  color: #fff; /* Set placeholder text color to white */
+  font-family: Helvetica;
+  
+  padding-left: 1rem;
+}
+
+/** BUTTONS ************************************************/
+.customButton {
+  background-color: #0760a1;
+  color: #fff;
+  border-radius: 1.7rem;
+
+  height: 3.5rem;
+  width: 100%;
+
+  font-family: Helvetica;
+}
+
+.customButton1 {
+  background-color: #fff;
+  color: #0760a1;
+
+  border-radius: 1.7rem;
+  border: 1px solid #0760a1;
+
+  height: 3.5rem;
+  width: 100%;
+
+  font-family: Helvetica;
+}
+
+/** ICONS ************************************************/
+.customIcon {
+  font-size: 2rem;
+  color: #2b90d8; /* White color for the icon */
+}
+
+/** FONT ************************************************/
+.customP {
+  font-family: Helvetica;
+  font-size: 14px;
+}
+
+.customP a {
+  text-decoration: none; /* Removes the underline */
+  color: #000000;
+  font-weight: 600;
+}
+
+.customP1 {
+  font-family: Helvetica;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.customP1 a {
+  text-decoration: none; /* Removes the underline */
+  color: #cd8800;
+
+}
+
+.effects .letter {
+  display: inline-block;
+  transition: transform 0.3s ease, margin 0.3s ease;
+}
+
+.effects:hover .letter {
+  transform: scale(1.1); /* Slightly scale the link on hover */
+  margin-left: 4px;
+}
+
+/* Click effect - Add active state for when the link is clicked */
+.effects:active .letter {
+  animation: click-animation 0.5s forwards;
+}
