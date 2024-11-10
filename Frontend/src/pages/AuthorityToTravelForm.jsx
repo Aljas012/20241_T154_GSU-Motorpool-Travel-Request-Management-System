@@ -18,7 +18,7 @@ import ATTNav from "../components/ATT_Nav";
 
   function AuthorityToTravelForm({ children }) {
     const navigate = useNavigate();
-
+    
 
 
     const   [name,setName] = useState("");
@@ -51,10 +51,19 @@ import ATTNav from "../components/ATT_Nav";
     // Handle checkbox click
     const handleCheckboxChange = (event) => {
       const { id } = event.target;
+      
       if (id === "withGovernmentVehicle") {
-        setCheckedWithVehicle(!checkedWithVehicle); // Toggle state for "with vehicle"
+        // If the "withVehicle" checkbox is checked, set it to true and "withoutVehicle" to false
+        setCheckedWithVehicle(!checkedWithVehicle);
+        if (!checkedWithVehicle) {
+          setCheckedWithoutVehicle(false);
+        }
       } else if (id === "withoutGovernmentVehicle") {
-        setCheckedWithoutVehicle(!checkedWithoutVehicle); // Toggle state for "without vehicle"
+        // If the "withoutVehicle" checkbox is checked, set it to true and "withVehicle" to false
+        setCheckedWithoutVehicle(!checkedWithoutVehicle);
+        if (!checkedWithoutVehicle) {
+          setCheckedWithVehicle(false);
+        }
       }
     };
     
@@ -652,35 +661,35 @@ import ATTNav from "../components/ATT_Nav";
                                   marginLeft: "6.5rem",
                                 }}
                               >
-                               <Form.Check
-                                  type="checkbox"
-                                  id="withGovernmentVehicle"
-                                  label={
-                                    <span style={{ fontSize: "12px" }}>
-                                      With Government Vehicle
-                                    </span>
-                                  }
-                                  className="custom-checkbox"
-                                  style={{ marginRight: "1rem" }} // Add spacing between checkboxes
-                                  checked={checkedWithVehicle} // Checked if the state matches
-                                  onChange={handleCheckboxChange} // Handle state change
-                                />
-
                                 <Form.Check
-                                  type="checkbox"
-                                  id="withoutGovernmentVehicle"
-                                  label={
-                                    <span style={{ fontSize: "12px" }}>
-                                      Without Government Vehicle
-                                    </span>
-                                  }
-                                  className="custom-checkbox"
-                                  checked={checkedWithoutVehicle}// Checked if the state matches
-                                  onChange={handleCheckboxChange} // Handle state change
-                                />
+                                    type="checkbox"
+                                    id="withGovernmentVehicle"
+                                    label={
+                                      <span style={{ fontSize: "12px" }}>
+                                        With Government Vehicle
+                                      </span>
+                                    }
+                                    className="custom-checkbox"
+                                    style={{ marginRight: "1rem" }} // Add spacing between checkboxes
+                                    checked={checkedWithVehicle} // Checked if the state matches
+                                    onChange={handleCheckboxChange} // Handle state change
+                                  />
+
+                                  <Form.Check
+                                    type="checkbox"
+                                    id="withoutGovernmentVehicle"
+                                    label={
+                                      <span style={{ fontSize: "12px" }}>
+                                        Without Government Vehicle
+                                      </span>
+                                    }
+                                    className="custom-checkbox"
+                                    checked={checkedWithoutVehicle}// Checked if the state matches
+                                    onChange={handleCheckboxChange} // Handle state change
+                                  />
+                                </div>
                               </div>
-                            </div>
-                          </Form>
+                            </Form>
                         </Container>
                       </div>
                     </Col>
