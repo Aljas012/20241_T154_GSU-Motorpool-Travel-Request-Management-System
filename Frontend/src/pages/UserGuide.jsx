@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Navbar,
   Container,
@@ -16,8 +17,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 function UserGuide() {
+  const navigate = useNavigate();
+  const userInfo = JSON.parse(localStorage.getItem("user_info")); // Parse the stored JSON
+  const id = userInfo.user_id; // Access the correct key for the user ID
   const handleClick = () => {
-    alert("Left arrow clicked!"); // Replace with your desired action
+    navigate(`/user/id=${id}/homepage`);
   };
 
   return (
@@ -306,7 +310,7 @@ function UserGuide() {
                         margin: "0",
                       }}
                     >
-                      3. Verify the file/photo name appears in the field 
+                      3. Verify the file/photo name appears in the field
                     </h6>
 
                     <h6
@@ -316,11 +320,9 @@ function UserGuide() {
                         margin: "0",
                       }}
                     >
-                      4. Click “Send ATT and RTT” to submit your complete request
+                      4. Click “Send ATT and RTT” to submit your complete
+                      request
                     </h6>
-
-                    
-
                   </div>
                 </div>
               </div>

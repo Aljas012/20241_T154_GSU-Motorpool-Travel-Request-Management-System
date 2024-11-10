@@ -4,38 +4,43 @@ const request_form_data = require('../MODELS/request_form_model')
 const bcrypt = require('bcrypt');
 const generateToken = require('../MIDDLEWARES/token_generator')
 const jwt = require('jsonwebtoken');    
+const fs = require('fs');
+const path = require('path');
+const PDFDocument = require('pdfkit');
 require('dotenv').config();
-const { Document, Packer, Paragraph, TextRun, Header,ImageRun} = require('docx'); 
+ 
 
 
 
 const create_account = async (req, res) => {  // Create user function (for signup)
-    const { name, email, password,office_code } = req.body;
+    const { name, email, password,office_code,college_name } = req.body;
     
     try {
         // Check for missing fields
         let emptyFields = [];
         
         if (!name || name.trim() === '') {
-            emptyFields.push('name');
+            emptyFields.push('Name');
         }
         
         if (!email || email.trim() === '') {
-            emptyFields.push('email');
+            emptyFields.push('Email');
         }
         
         if (!password || password.trim() === '') {
-            emptyFields.push('password');
+            emptyFields.push('Password');
         }
         if (!office_code || office_code.trim() === '') {
-            emptyFields.push('office_code');
+            emptyFields.push('and Office Code');
+        }
+        if (!college_name || college_name.trim() === '') {
+            emptyFields.push('and College Name');
         }
 
-
-        // If any fields are empty, return an error with the list of missing fields
+        //return an error with the list of missing fields
         if (emptyFields.length > 0) {
             return res.status(400).json({ 
-                error: `Please fill in the following fields: ${emptyFields.join(', ')}` 
+                error: `Please fill in all required fields: ( ${emptyFields.join(' , ')} )` 
             });
         }
 
@@ -55,12 +60,12 @@ const create_account = async (req, res) => {  // Create user function (for signu
         const hashedPassword = await bcrypt.hash(password, 12);
 
         // Save the new user to the database
-        const userInfo = await user_data.create({ name, email, password: hashedPassword ,office_code});
+        const userInfo = await user_data.create({ name, email, password: hashedPassword ,office_code,college_name});
         
         // Return success response
         res.status(201).json({ 
             message: 'User created successfully', 
-            user: { name: userInfo.name, email: userInfo.email,office_code } // Return a subset of the user info to avoid exposing the password
+            user: { name: userInfo.name, email: userInfo.email,office_code,college_name } // Return a subset of the user info to avoid exposing the password
         });
 
     } catch (error) {
@@ -71,25 +76,27 @@ const create_account = async (req, res) => {  // Create user function (for signu
 
 
 const login_user = async (req, res) => {  
+
     const { email, password } = req.body; 
     console.log('Received email:', email);
     console.log('Received password:', password);
     try {
         // Check if the email exists
         const user = await user_data.findOne({ email });
-
         if (!user) {return res.status(401).json({ error: 'Invalid email or password' }); }
 
         // Compare the password with the hashed password in the database
         const isMatch = await bcrypt.compare(password, user.password);
+        console.log('Password match:', isMatch); // Check if the passwords match
         if (!isMatch) { return res.status(401).json({ error: 'Invalid email or password' }); }
-
+        console.log(email)
+        console.log(password)
         // Generate a JWT token  expires in 1 day
-        const token = generateToken(user._id);
+        const token = generateToken(user._id, user.office_code,user.college_name, user.name, user.email);
 
-        console.log('welcome user')
-        res.status(200).json({ message: 'Welcome user', token,user: { email: user.email, name: user.name },});
-
+console.log(token)
+         res.status(200).json({ message: 'Welcome user', token,user: {user_id:user._id, email: user.email, name: user.name ,office_code:user.office_code,college_name:user.college_name},}); 
+        
     } catch (error) {res.status(500).json({ error: 'Login failed: ' + error.message });}
 };
 
@@ -125,6 +132,45 @@ const changePassword = async (req, res) => {
 };
 
 
+const updateProfile = async (req, res) => {
+    const { inputName, inputEmail, inputOffice, newCode } = req.body; // Retrieve new fields from the request body
+    const { id } = req.params; // Get user ID from the request parameters
+
+    try {
+        // Find the user by ID
+        const user = await user_data.findById(id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        // Update user information only if new data is provided
+        if (inputName && inputName.trim() !== "") {
+            user.name = inputName; // Update name if provided
+        }
+        if (inputEmail && inputEmail.trim() !== "") {
+            user.email = inputEmail; // Update email if provided
+        }
+        if (inputOffice && inputOffice.trim() !== "") {
+            user.college_name = inputOffice; // Update college name if provided
+        }
+        if (newCode && newCode.trim() !== "") {
+            user.office_code = newCode; // Update office code if provided
+        }
+
+        // Save the updated user
+        await user.save();
+        res.status(200).json({ message: 'User information updated successfully!' });
+
+    } catch (error) {
+        console.error('Error updating user:', error); // Log the error for debugging
+        return res.status(500).json({ message: 'An error occurred while updating user information.' });
+    }
+};
+
+
+
+
+
 const createTravelForm = async (req, res) => { // AUTHORITY TO TRAVEL FORM
     const { name, position, office_code, purpose_travel, department,destination, travel_time_period, auth_travel_number,use_vehicle, chair_person_name, dean_name, vpaa_name,userId  } = req.body;
 
@@ -135,15 +181,6 @@ const createTravelForm = async (req, res) => { // AUTHORITY TO TRAVEL FORM
             return res.status(404).json({ error: 'User not found.' });
         }
 
-        // Check for duplicate requestor name and travel number
-        const existingRequestor = await travel_form_data.findOne({ name });
-        const authtravelNumber = await travel_form_data.findOne({ auth_travel_number });
-        if (existingRequestor) {
-            return res.status(400).json({ error: 'Requestor name already exists.' });
-        }
-        if (authtravelNumber) {
-            return res.status(400).json({ error: 'Authentication travel number already exists.' });
-        }
 
         // Create the travel form with a reference to the user
         const formInfo = await travel_form_data.create({
@@ -214,78 +251,221 @@ const weatherAPI = async (req,res) =>
             humidity: weatherData.main.humidity,
             windSpeed: weatherData.wind.speed,
         };
-
+        console.log(location);
         res.json(filteredData);
     } catch (error) {
         console.error('Error fetching weather data:', error);
         res.status(500).json({ message: 'Error fetching weather data' });
     }
 }
+const generatePdf = async (req, res) => {
+    const buksuLogoPath = path.join(__dirname, '..', 'word needed images', 'Screenshot 2024-10-31 003315.png'); // Check if this path is correct
+    const checkedBoxPath = path.join(__dirname, '..', 'word needed images', 'checked box.png');
+    const nullcheckedBoxPath = path.join(__dirname, '..', 'word needed images', 'null box.png');
+
+    const {
+        name,
+        position,
+        purpose_travel,
+        department,
+        station,
+        dateDay,
+        dateYear,
+        dateMonth,
+        destination,
+        fundSource,
+        travel_time_period,
+        auth_travel_number,
+        checkedWithVehicle,
+        checkedWithoutVehicle,
+        chairperson_name,
+        dean_name,
+        vpaa_name,
+    } = req.body;
+    let requestDate = dateMonth +" "+ dateDay +" "+ dateYear;
+
+    const font = 'Helvetica';
+
+    
+
+    const pdfPath = path.join(__dirname, '..', 'generated_pdfs', 'Authority to travel.pdf');
+
+    // Create a writable stream to save the PDF
+
+    const doc = new PDFDocument({ size: 'A4' });
 
 
+    // Set headers for the response before piping the document
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename="AuthorityToTravel.pdf"'); 
 
+    // Pipe the document to the response
+    doc.pipe(res);
+    doc.font(font);
 
-const wordGenerator = async (req, res) => {
-    const fs = require('fs');
-    const buksuLogo = fs.readFileSync('backend/word needed images/Screenshot 2024-10-31 003315.png');
-    const nullCheckBox = '☐';
-    const checkedCheckBox = '☑';
-    const withVehicle = isNull; // Replace `isNull` with the actual check
+    // Get the width and height after the page is added
+    const { width, height } = doc.page;
+    let yPosition = 25;
+    let xPosition = 55;
 
-    let textContent;
-    if (withVehicle) {
-        textContent = 'Use of Vehicle: ' + checkedCheckBox + ' with government vehicle  ' + nullCheckBox + ' without government vehicle';
+    const dateWidth = doc.widthOfString(`Date: `);
+    const authTravelNumberWidth = doc.widthOfString(`Authority Travel No. ${auth_travel_number}`);
+    const leftX = 30;  // Position of Date text
+    const rightX = width - authTravelNumberWidth - 50;  // Position of Authority Travel No. text (right-aligned)
+
+    // Check if the logo file exists and add it to the PDF
+    if (fs.existsSync(buksuLogoPath)) {
+        doc.image(buksuLogoPath, xPosition, yPosition, { width: 60, height: 60 });
     } else {
-        textContent = 'Use of Vehicle: ' + nullCheckBox + ' with government vehicle  ' + checkedCheckBox + ' without government vehicle';
+        console.warn("Logo image not found at path:", buksuLogoPath);
     }
 
-    const letterContent = new Document({
-        headers: {
-            default: new Header({
-                children: [
-                    new Paragraph({
-                        children: [
-                                    new ImageRun({data: buksuLogo, transformation: {width: 100,height: 100,},}),
-                                    new TextRun({ text: 'BUKIDNON STATE UNIVERSITY', bold: true,size: 24,})
-                                   ], alignment: 'center',
-                                 }),
-                    new Paragraph({ text: 'Fortich St. Malaybalay City', alignment: 'center', size: 12 }),
-                    new Paragraph({ text: 'Tel (088) 813-5681 to 5663', alignment: 'center', size: 12 }),
-                    new Paragraph({ text: 'www.buksu.edu.ph', alignment: 'center', size: 12 }),
-                    new Paragraph({ text: 'buksupreoffice@buksu.edu.ph', alignment: 'center', size: 12 })
-                ]
-            })
-        },
-        children: [
-            new Paragraph({ text: 'AUTHORITY TO TRAVEL', alignment: 'center', size: 15 }),
-            new Paragraph({ text: `Authority Travel No. ${auth_travel_number}`, alignment: 'right', size: 12 }),
-            new Paragraph({ text: `Date: ${date}`, alignment: 'left', size: 12 }),
-            new Paragraph({ text: `NAME: ${name}`, alignment: 'left', size: 12 }),
-            new Paragraph({ text: `Position/Designation: ${position}`, alignment: 'left', size: 12 }),
-            new Paragraph({ text: `Official Station: ${department}`, alignment: 'left', size: 12 }),
-            new Paragraph({ text: `Purpose: ${purpose_travel}`, alignment: 'left', size: 12 }),
-            new Paragraph({ text: `Destination: ${destination}`, alignment: 'left', size: 15 }),
-            new Paragraph({ text: `Period Covered (Inclusive of travel time): ${travel_time_period}`, alignment: 'left', size: 15 }),
-            new Paragraph({ text: `Estimated Expenses: `, alignment: 'left', size: 15 }),
-            new Paragraph({ text: `Fund Source: ${fundSource}`, alignment: 'left', size: 15 }),
-            new Paragraph({ text: textContent, alignment: 'left', size: 15 }),
-            new Paragraph({ text: '\nFull designation', alignment: 'left', size: 15 }),
-            new Paragraph({ text: '\nDEAN', alignment: 'left', size: 15 }),
-            new Paragraph({ text: '\nVPAA', alignment: 'left', size: 15 }),
-            new Paragraph({ text: 'APPROVED: ', alignment: 'justify', size: 15 }),
-            new Paragraph({ text: `${nullCheckBox} Official Business`, alignment: 'left', size: 12 }),
-            new Paragraph({ text: `${nullCheckBox} Official Time Only`, alignment: 'left', size: 12 }),
-            new Paragraph({ text: `${nullCheckBox} Reimbursement of Actual Transportation`, alignment: 'left', size: 12 }),
-            new Paragraph({ text: `${nullCheckBox} Travel expenses Maybe Allowed Subject to Availability of Funds`, alignment: 'left', size: 12 }),
-            new Paragraph({ text: 'JOY M. MIRASOL PhD', alignment: 'justify', size: 20 }),
-            new Paragraph({ text: 'University President', alignment: 'justify', size: 12 })
-        ]
+  
+   
+    // Draw University Name and contact info (center-aligned)
+    xPosition += 28
+    doc.font('Helvetica-Bold').fontSize(25); 
+    doc.text('BUKIDNON STATE UNIVERSITY', xPosition,yPosition ,{ align: 'center'});
+
+
+    yPosition += 33
+    doc.font('Helvetica').fontSize(7)
+    doc.text(
+        'Fortich St. Malaybalay City   Tel (088) 813-5681 to 5663     www.buksu.edu.ph     buksupreoffice@buksu.edu.ph', 
+        50, // Starting X position
+        yPosition, // Starting Y position
+        { width: width - 100, align: 'center'}  // Wrap text if it's too wide
+    );
+
+    yPosition += 10
+    xPosition += 55
+    doc.font('Helvetica').fontSize(7)
+    doc.text(
+        '8700 Bukidnon                      Tel Fax (088) 813-2717', 
+        xPosition, // Starting X position
+        yPosition, // Starting Y position
+        { width: width - 100}  // Wrap text if it's too wide
+    );
+
+    doc.moveTo(50, yPosition+30)  // Starting point (x = 50, y = yPosition)
+    .lineTo(width - 50, yPosition+30)  // Ending point (x = width - 50, y = yPosition)
+    .stroke();  // This draws the line
+    
+    // Title "AUTHORITY TO TRAVEL"
+    yPosition += 50
+    xPosition -= 30
+
+
+    doc.font('Helvetica-Bold').fontSize(17); 
+    doc.text('AUTHORITY TO TRAVEL',50,yPosition, { align: 'center'});
+
+
+    doc.image(nullcheckedBoxPath,328,590,{ width: 14, height: 14})
+    doc.image(nullcheckedBoxPath,328,610,{ width: 14, height: 14})
+    doc.image(nullcheckedBoxPath,328,630,{ width: 14, height: 14})
+    doc.image(nullcheckedBoxPath,328,650,{ width: 14, height: 14})
+    
+    // Add Travel Info
+    const travelInfoY = 200;  // Vertical position for travel info
+
+    yPosition += 60;
+    xPosition = 50
+    doc.font('Helvetica').fontSize(12)
+    doc.text(`Date:          ${requestDate}` ,xPosition,yPosition);  // Date aligned to the left
+    xPosition  += 300
+    doc.text(`Authority Travel No.       ${auth_travel_number}`,xPosition,yPosition);  // Auth Travel No. aligned to the right
+    
+    // Other travel information
+    yPosition += 70;
+    xPosition = 50
+    doc.text(`Name:                                      ${name}`,xPosition,yPosition);
+    yPosition += 20
+    doc.text(`Position/Designation:              ${position}`,xPosition ,yPosition);
+    yPosition += 20
+    doc.text(`Official Station:                         ${station}`,xPosition,yPosition);
+    yPosition += 20
+    doc.text(`Purpose:                                  ${purpose_travel}`, xPosition, yPosition);
+    yPosition += 20 
+    doc.text(`Destination:                              ${destination}`, xPosition,yPosition);
+    yPosition += 20  
+    doc.text(`Period Covered:                        ${travel_time_period}`, xPosition, yPosition);
+    yPosition += 20 
+    doc.text(`Fund Source:                              ${fundSource}`, xPosition, yPosition);
+
+  
+
+    if (checkedWithVehicle) {
+        console.log('with vehicle');
+        doc.image(checkedBoxPath, xPosition + 80, yPosition + 17, { width: 15, height: 15 });
+        doc.image(nullcheckedBoxPath, xPosition + 225, yPosition + 17, { width: 15, height: 15 });
+    } else if (checkedWithoutVehicle) {
+        console.log('without vehicle');
+        doc.image(nullcheckedBoxPath, xPosition + 80, yPosition + 17, { width: 15, height: 15 });
+        doc.image(checkedBoxPath, xPosition + 225, yPosition + 17, { width: 15, height: 15 });
+    } 
+    else {
+         console.log('no checkbox selected');
+         doc.image(nullcheckedBoxPath, xPosition + 225, yPosition + 17, { width: 15, height: 15 });
+         doc.image(nullcheckedBoxPath, xPosition + 80, yPosition + 17, { width: 15, height: 15 });
+     }
+
+    yPosition += 20
+    doc.text('Use of Vehicle:     with government vehicle     without government vehicle', xPosition, yPosition);
+
+    // Signature lines
+    yPosition += 45
+    doc.text(`${chairperson_name}`,xPosition, yPosition);
+    yPosition += 20
+    doc.font('Helvetica-Oblique').text('Full designation: ', xPosition, yPosition);
+    yPosition += 25
+    doc.text(`${dean_name}`,xPosition,yPosition);
+    yPosition += 20
+    doc.font('Helvetica-Oblique').text('DEAN', xPosition, yPosition);
+    yPosition += 25
+    doc.text(`${vpaa_name}`,xPosition, yPosition);
+    yPosition += 20
+    doc.font('Helvetica-Oblique').text('VPAA', xPosition, yPosition);
+
+    // Approval section
+    yPosition += 30
+    xPosition += 230
+    doc.font('Helvetica').text('APPROVED:', xPosition,yPosition);
+    yPosition += 20
+    xPosition += 60
+    doc.fontSize(10)
+    doc.text(` Official Business`, xPosition, yPosition);
+    yPosition += 20
+    doc.text(` Official Time Only`, xPosition, yPosition);
+    yPosition += 20
+    doc.text(` Reimbursement of Actual Transportation`, xPosition, yPosition);
+    yPosition += 20
+    doc.text(` Travel expenses Maybe Allowed Subject  to Availability of Funds`, xPosition, yPosition);
+
+    doc.fontSize(11)
+    yPosition += 80
+    doc.font('Helvetica').text('JOY M. MIRASOL PhD', 50, yPosition, {align:'center'});
+    yPosition += 15
+    doc.text('University President', 50, yPosition,{align:'center'});
+
+    // Finalize the PDF document
+    doc.end();
+
+    // Log message after the PDF is generated
+    doc.on('finish', () => {
+        console.log('PDF generated successfully!');
     });
 
-    // Return or save the document as needed
+    doc.on('error', (err) => {
+        console.error('PDF generation error:', err);
+        res.status(500).json({ message: 'PDF generation unsuccessful!' });
+    });
 };
 
 
 
 
-module.exports = {weatherAPI ,create_account, login_user,createTravelForm, createRequestForm,wordGenerator,changePassword }
+
+
+
+
+module.exports = {weatherAPI ,create_account, login_user,createTravelForm, createRequestForm,changePassword, updateProfile ,generatePdf}

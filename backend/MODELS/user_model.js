@@ -7,8 +7,7 @@ const user_schema = new Schema({
     email: { type: String, required: true },
     password: { type: String, required: false },
     office_code:{type: String, required: true},
-    att_file: [{ type: Schema.Types.ObjectId, ref: 'request_form' }],
-    travel_forms: [{ type: Schema.Types.ObjectId, ref: 'travel_form' }] // References to travel_form model
+    college_name: {type:String,required: true},
 }, 
 { timestamps: true });
 

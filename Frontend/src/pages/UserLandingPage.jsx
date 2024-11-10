@@ -3,10 +3,29 @@ import { Container, Row, Col, Form, Button, InputGroup } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faLock } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom"; // Fixed missing import
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import "../styles/LandingPage.css";
 
 function UserLandingPage() {
+
   const navigate = useNavigate();
+  
+  const nullFields = () => {
+            toast.error("Please fillup the required Fields!", 
+                    {
+                            position: "top-center",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored"
+                      });
+               };
+
+
   const leftImageStyle = {
     backgroundImage: "url('/images/GSU_BG.png')",
     backgroundSize: "58% 100%",
@@ -52,7 +71,7 @@ function UserLandingPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = { email, password };
-
+    console.log('hello world')
     try {
       const response = await fetch("http://localhost:8000/user/login", {
         method: "POST",
@@ -61,17 +80,25 @@ function UserLandingPage() {
           "Content-Type": "application/json",
         },
       });
-
+      
       const json = await response.json();
       if (!response.ok) {
+        nullFields();
         setError(json.error); // Show error if login fails
+        console.log('unable to logged in --from response unsuccessful in if condition')
       } else {
         // Clear the form and reset state if login is successful
+        
         setEmail("");
         setPassword("");
         setError(null);
-        console.log("User logged in");
-        navigate("/user/homepage");
+        localStorage.setItem("auth_token", json.token); // Store the JWT token
+        localStorage.setItem("user_info", JSON.stringify(json.user));
+        console.log('email: '+email);
+        console.log('password: '+password);
+        const userInfo = JSON.parse(localStorage.getItem("user_info")); // Parse the stored JSON
+        const id = userInfo.user_id; // Access the correct key for the user ID
+        navigate(`/user/id=${id}/homepage`);
       }
     } catch (err) {
       setError("An error occurred, please try again."); // Catch network errors
@@ -180,15 +207,7 @@ function UserLandingPage() {
               >
                 Login
               </Button>
-              {error && (
-                <div
-                  className="alert alert-danger mt-3"
-                  role="alert"
-                  style={{ textAlign: "center" }}
-                >
-                  {error}
-                </div>
-              )}
+              <ToastContainer/> 
               {/** SIGN IN WITH GOOGLE */}
               <h5
                 className="text-center mt-3"

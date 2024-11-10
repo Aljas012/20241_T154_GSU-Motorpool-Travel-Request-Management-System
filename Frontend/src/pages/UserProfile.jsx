@@ -21,7 +21,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
-const signupSuccess = () => {
+const updateSuccess = () => {
   toast.success("Account Information updated successfully!", {
     position: "top-center",
     autoClose: 4000,
@@ -150,27 +150,24 @@ function UserProfile() {
   
       // Update the localStorage with the updated user info
       localStorage.setItem("user_info", JSON.stringify(updatedUserInfo));
-  
+
       // Immediately update the state with the updated values
-      setName(inputName);
-      setEmail(inputEmail);
-      setOffice(inputOffice);
-      setCode(newCode);
+      // setName(inputName);
+      // setEmail(inputEmail);
+      // setOffice(inputOffice);
+      // setCode(newCode);
   
       // Provide success feedback
-      handleRefresh();
-  
-      // Show success toast after refresh (use a timeout if needed)
-      setTimeout(() => {
-        signupSuccess(); // Show success toast after the refresh
-      }, 3000);
-  
-      // Reset form fields after a successful update
-      setName("");
-      setEmail("");
-      setOffice("");
-      setCode("");
-  
+      // handleRefresh(); // option ni if di mag work ang update 
+      updateSuccess();
+      
+  //  // Reset form fields after a successful update
+    setName(inputName);
+    setEmail(input);
+    setOffice(college_name);
+    setCode(office_code);
+     
+     
       // Clear errors
       setError(null);
     } catch (error) {
@@ -906,13 +903,14 @@ function UserProfile() {
                         Library - Basement (Graduate School Lawang) 
                       </option>
                     </Form.Select>
-                            
-                    <Button variant="secondary" onClick={toggleModal}>cancel </Button>
-                    <Button variant="primary" type = "submit" onClick={toggleModal}> update </Button>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '20px',marginTop:15 }}>
+  <Button variant="secondary" onClick={toggleModal}>Cancel</Button>
+  <Button variant="primary" type="submit" onClick={toggleModal}>Update</Button>
+</div>
                   </Form>
                          
                           </Modal.Body>
-                          <Modal.Footer >
+                          <Modal.Footer className="d-flex justify-content-center">
                                 <p>Please input the fields that are needed to be updated</p>
                           </Modal.Footer>
              </Modal>        

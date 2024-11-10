@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Navbar,
   Container,
@@ -15,10 +16,12 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import RTTNav from "../components/RTT_Nav";
 
 function RequestToTravelForm() {
+  const navigate = useNavigate();
+  const userInfo = JSON.parse(localStorage.getItem("user_info")); // Parse the stored JSON
+  const id = userInfo.user_id; // Access the correct key for the user ID
   const handleClick = () => {
-    alert("Left arrow clicked!"); // Replace with your desired action
+    navigate(`/user/id=${id}/homepage`);
   };
-
   const currentYear = new Date().getFullYear(); // Get the current year
   const startYear = 2023; // Define the starting year
   const years = []; // Initialize an array to hold the years

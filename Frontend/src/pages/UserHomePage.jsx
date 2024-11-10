@@ -1,4 +1,5 @@
 import React from "react";
+import decodeAndStoreUserInfo from "./middleware/decoderToken";
 import NavBarWithBellComponent from "../components/NavBarWithBellComponents";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -11,17 +12,29 @@ import {
 
 import FooterComponent from "../components/FooterComponents";
 
-function UserLandingPage() {
+function UserHomePage() {
   const navigate = useNavigate();
+  const [userInfo, setUserInfo] = useState(null);
+  useEffect(() => {
+    // Decode and store user info in localStorage
+    decodeAndStoreUserInfo();
+
+    // Retrieve and parse user info
+    const storedUserInfo = localStorage.getItem("user_info");
+    if (storedUserInfo) {
+      setUserInfo(JSON.parse(storedUserInfo));
+    }
+  }, []);
+
+  // Safeguard for userInfo properties
+  const id = userInfo ? userInfo.user_id : "";
 
   const handleButtonClickATT = () => {
-    // Replace with the path to your file
-    window.location.href = "/f";
+    navigate("/user/att_forms");
   };
 
   const handleButtonClickRTT = () => {
-    // Replace with the path to your file
-    window.location.href = "/f";
+    navigate("/user/request_forms");
   };
 
   return (
@@ -44,11 +57,13 @@ function UserLandingPage() {
                       marginBottom: 0,
                     }}
                   >
-                    INFORMATION TECHNOLOGY DEPARTMENT
+                    {userInfo ? userInfo.college_name : "Loading..."}
                   </h5>
                   <h4 style={{ fontFamily: "Helvetica", fontWeight: 700 }}>
                     OFFICE CODE:{" "}
-                    <span style={{ color: "#CD8800" }}>BLANKO SA DAW</span>
+                    <span style={{ color: "#CD8800" }}>
+                      {userInfo ? userInfo.office_code : "Loading..."}
+                    </span>
                   </h4>
                 </div>
               </Col>
@@ -56,7 +71,7 @@ function UserLandingPage() {
               {/** NAVIGATIONS / UPPER RIGHT */}
               <Col className="d-flex justify-content-center">
                 <a
-                  href="/home"
+                  href=""
                   style={{
                     color: "#000000",
                     textDecoration: "none",
@@ -69,7 +84,7 @@ function UserLandingPage() {
                 </a>
 
                 <a
-                  href="/about"
+                  href="/user/about_us"
                   style={{
                     color: "#000000",
                     textDecoration: "none",
@@ -82,7 +97,7 @@ function UserLandingPage() {
                 </a>
 
                 <a
-                  href="/user-guide"
+                  href="/user/user_guide"
                   style={{
                     color: "#000000",
                     textDecoration: "none",
@@ -95,7 +110,7 @@ function UserLandingPage() {
                 </a>
 
                 <a
-                  href="/request"
+                  href="/user/request"
                   style={{
                     color: "#000000",
                     textDecoration: "none",
@@ -108,7 +123,7 @@ function UserLandingPage() {
                 </a>
 
                 <a
-                  href="/profile"
+                  href={`/user/id=${id}/profile`} // Ensure proper string interpolation
                   style={{
                     color: "#000000",
                     textDecoration: "none",
@@ -140,7 +155,7 @@ function UserLandingPage() {
                   }}
                 >
                   <img
-                    src="./images/WEATHER_ICON.png"
+                    src="../images/WEATHER_ICON.png"
                     alt="weatherIcon"
                     style={{ width: "55px", height: "auto" }}
                   />
@@ -247,7 +262,7 @@ function UserLandingPage() {
                           textAlign: "start",
                         }}
                       >
-                        GOOD DAY BUKSUAN
+                        Good day, BUKSUan
                       </h4>
                       <h4
                         style={{
@@ -294,7 +309,7 @@ function UserLandingPage() {
                             }}
                           >
                             <img
-                              src="./images/Ell2.png"
+                              src="../images/Ell2.png"
                               alt="Descriptive text"
                               style={{
                                 width: "2.5rem",
@@ -318,7 +333,7 @@ function UserLandingPage() {
                           </div>
 
                           <button
-                            onClick={() => navigate("/user/att_forms")}
+                            onClick={handleButtonClickATT}
                             style={{
                               padding: "0.5rem 1rem",
                               background:
@@ -383,7 +398,7 @@ function UserLandingPage() {
                             }}
                           >
                             <img
-                              src="./images/Ell2.png"
+                              src="../images/Ell2.png"
                               alt="Descriptive text"
                               style={{
                                 width: "2.5rem",
@@ -462,4 +477,4 @@ function UserLandingPage() {
   );
 }
 
-export default UserLandingPage;
+export default UserHomePage;

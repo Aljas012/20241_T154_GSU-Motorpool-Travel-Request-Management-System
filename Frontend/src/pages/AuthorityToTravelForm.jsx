@@ -11,27 +11,58 @@ import {
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-
+//const generatePdf = require('')
 import ATTNav from "../components/ATT_Nav";
+//  import PdfGenerator from './middleware/wordGenerator'; // adjust the path based on your file structure
+  import "../styles/AuthorityToTravelForm.css";
 
-import "../styles/AuthorityToTravelForm.css";
+  function AuthorityToTravelForm({ children }) {
+    const navigate = useNavigate();
 
-function AuthorityToTravelForm({ children }) {
-  const navigate = useNavigate();
-  // State to track which checkbox is checked
-  const [checked, setChecked] = useState("");
 
-  // Handle checkbox click
-  const handleCheckboxChange = (event) => {
-    const { id } = event.target;
-    // If the same checkbox is clicked, uncheck it; otherwise, check the clicked checkbox
-    setChecked(id === checked ? "" : id);
-  };
 
-  const handleClickh6 = () => {
-    alert("H6 clicked!"); // You can replace this with any action you want
-  };
+    const   [name,setName] = useState("");
+    const   [auth_travel_number,setAuthTravelNumber] = useState("")
+    const   [dateDay,setDay] = useState("")
+    const   [dateMonth,setMonth] = useState("")
+    const   [dateYear,setYear] = useState("")
+    const   [position,setPosition] = useState("")
+    const   [station,setStation] = useState("")
+    const   [department,setDepartment] = useState("")
+    const   [purpose_travel,setTravelPurpose] = useState("")
+    const   [destination,setDestination] = useState("")
+    const   [travel_time_period,setTravelTimePeriod] = useState("") 
+    const   [fundSource,setFundSource] = useState("")
+    const   [chairperson_name, setChairpersonName] = useState("")
+    const   [dean_name, setDeanName] = useState("")
+    const   [vpaa_name, setVpaaName] = useState("")
+    const   [checkedWithVehicle, setCheckedWithVehicle] = useState(false);
+    const   [checkedWithoutVehicle, setCheckedWithoutVehicle] = useState(false);
 
+
+  
+
+    const handleBackButton = () => {
+      const userInfo = JSON.parse(localStorage.getItem("user_info")); // Parse the stored JSON
+      const id = userInfo.user_id; // Access the correct key for the user ID
+      navigate(`/user/id=${id}/homepage`);
+    };
+
+    // Handle checkbox click
+    const handleCheckboxChange = (event) => {
+      const { id } = event.target;
+      if (id === "withGovernmentVehicle") {
+        setCheckedWithVehicle(!checkedWithVehicle); // Toggle state for "with vehicle"
+      } else if (id === "withoutGovernmentVehicle") {
+        setCheckedWithoutVehicle(!checkedWithoutVehicle); // Toggle state for "without vehicle"
+      }
+    };
+    
+
+    const handleClickh6 = () => {
+      alert("H6 clicked!"); // You can replace this with any action you want
+    };
+    
   const currentYear = new Date().getFullYear(); // Get the current year
   const startYear = 2023; // Define the starting year
   const years = []; // Initialize an array to hold the years
@@ -40,12 +71,90 @@ function AuthorityToTravelForm({ children }) {
   for (let year = currentYear; year >= startYear; year--) {
     years.push(year);
   }
+  const formDataHandler = async (e) => {
+    e.preventDefault(); // Prevent the form from submitting the default way
+  
+    // Fetch token and user info from localStorage
+    const token = localStorage.getItem("auth_token");
+    const userInfo = JSON.parse(localStorage.getItem("user_info"));
+    const userId = userInfo?.user_id;
+    
 
+   
+    // Form data values from your comp  onent's state (make sure these are primitives)
+    const data = {
+      name,
+      position,
+      purpose_travel,
+      department,
+      station,
+      dateDay,
+      dateYear,
+      dateMonth,
+      destination,
+      fundSource,
+      travel_time_period,
+      auth_travel_number,
+      checkedWithVehicle,
+      checkedWithoutVehicle,
+      chairperson_name,
+      dean_name,
+      vpaa_name,
+      userId, // Include the userId
+    };
+  
+    // Logging form data
+ 
+
+    // Logging for debugging
+    console.log('stringify below')
+    console.log(JSON.stringify({ day: dateDay, month: dateMonth, year: dateYear }));
+
+  
+    try {
+      // Make the API call to generate the PDF
+      const response = await fetch(
+        `http://localhost:8000/user/${userId}/authority_to_travel/generate_pdf`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(data), // Ensure `data` is serializable
+        }
+      );
+  
+      if (response.ok) {
+        // Handle the successful PDF generation
+        const pdfBlob = await response.blob();
+        const pdfUrl = URL.createObjectURL(pdfBlob);
+  
+        console.log("PDF generated successfully. Redirecting to the PDF...");
+  
+        // Create a link element for downloading the PDF
+        const link = document.createElement("a");
+        link.href = pdfUrl;
+        link.download = "AuthorityToTravel.pdf"; // Set the download file name
+        document.body.appendChild(link); // Append the link to the document
+        link.click(); // Trigger the download
+        document.body.removeChild(link); // Clean up the link
+      } else {
+        // Handle errors from the server
+        const result = await response.json();
+        console.error("Error:", result.error || result.message);
+        alert(`Error generating PDF: ${result.message || "Unknown error"}`);
+      }
+    } catch (error) {
+      // Catch and log any errors
+      console.error("Error:", error);
+    }
+  };
+  
   return (
     <>
+      <ATTNav></ATTNav>
 
-    <ATTNav></ATTNav>
-      
       {/** BODY */}
       <main>
         <Container>
@@ -54,7 +163,7 @@ function AuthorityToTravelForm({ children }) {
               <div>
                 {/** BACK BUTTON */}
                 <button
-                  // Handle click event
+                  onClick={handleBackButton}
                   style={{
                     backgroundColor: "#0760A1", // Blue background color for the button
                     color: "#FFFFFF", // Text color (icon color will inherit this)
@@ -77,45 +186,45 @@ function AuthorityToTravelForm({ children }) {
               </div>
 
               <div>
-                <Card
-                  style={{
-                    marginTop: "1rem",
-                    paddingBottom: "1rem",
-                    marginBottom: "3rem",
-                    backgroundColor: "#F7F7F7",
-                  }}
-                >
-                  <Card.Header>
-                    <h6
-                      style={{
-                        color: "#0760A1",
-                        fontFamily: "Helvetica",
-                        fontWeight: "500",
-                        marginBottom: "0",
-                      }}
-                    >
-                      ATT
-                    </h6>
-                  </Card.Header>
+                        <Card
+                          style={{
+                            marginTop: "1rem",
+                            paddingBottom: "1rem",
+                            marginBottom: "3rem",
+                            backgroundColor: "#F7F7F7",
+                          }}
+                        >
+                          <Card.Header>
+                            <h6
+                              style={{
+                                color: "#0760A1",
+                                fontFamily: "Helvetica",
+                                fontWeight: "500",
+                                marginBottom: "0",
+                              }}
+                            >
+                              ATT
+                            </h6>
+                          </Card.Header>
 
-                  <Card.Body
-                    style={{
-                      display: "flex",
-                      alignItems: "stretch",
-                    }}
-                  >
-                    {/* FIRST COLUMN */}
-                    <Col md={7}>
-                      {/* CARD.BODY LEFT SIDE */}
-                      <div style={{ flex: 1, padding: "1rem" }}>
-                        <Container>
-                          <Form id="ATT_form">
+                          <Card.Body
+                            style={{
+                              display: "flex",
+                              alignItems: "stretch",
+                            }}
+                          >
+                            {/* FIRST COLUMN */}
+                            <Col md={7}>
+                              {/* CARD.BODY LEFT SIDE */}
+                              <div style={{ flex: 1, padding: "1rem" }}>
+                                <Container>
+                     <Form id="ATT_form"onSubmit={formDataHandler}>
                             {/* DATE OF TRAVEL */}
                             <div
                               style={{ display: "flex", alignItems: "center" }}
                             >
                               <img
-                                src="./images/CALENDAR_ICON.png"
+                                src="../images/CALENDAR_ICON.png"
                                 alt="Calendar"
                                 style={{
                                   width: "auto",
@@ -140,32 +249,35 @@ function AuthorityToTravelForm({ children }) {
                                 <Form.Select
                                   id="month"
                                   aria-label="Select Month"
+                                  onChange={(e) => setMonth(e.target.value)} 
                                   style={{
                                     marginRight: "0.5rem",
                                     width: "7rem",
                                     border: "1px solid #000000",
                                     borderRadius: "4px",
+                                    
                                   }}
                                 >
                                   <option>Month</option>
-                                  <option value="1">January</option>
-                                  <option value="2">February</option>
-                                  <option value="3">March</option>
-                                  <option value="4">April</option>
-                                  <option value="5">May</option>
-                                  <option value="6">June</option>
-                                  <option value="7">July</option>
-                                  <option value="8">August</option>
-                                  <option value="9">September</option>
-                                  <option value="10">October</option>
-                                  <option value="11">November</option>
-                                  <option value="12">December</option>
+                                  <option value="January">January</option>
+                                  <option value="February">February</option>
+                                  <option value="March">March</option>
+                                  <option value="April">April</option>
+                                  <option value="May">May</option>
+                                  <option value="June">June</option>
+                                  <option value="July">July</option>
+                                  <option value="August">August</option>
+                                  <option value="September">September</option>
+                                  <option value="October">October</option>
+                                  <option value="November">November</option>
+                                  <option value="December">December</option>
                                 </Form.Select>
 
                                 {/** DAY */}
                                 <Form.Select
                                   id="day"
                                   aria-label="Select Day"
+                                  onChange={(e) => setDay(Number(e.target.value))}
                                   style={{
                                     marginRight: "0.5rem",
                                     width: "7rem",
@@ -185,6 +297,7 @@ function AuthorityToTravelForm({ children }) {
                                 <Form.Select
                                   id="year"
                                   aria-label="Select Year"
+                                  onChange={(e) => setYear(Number(e.target.value))}
                                   style={{
                                     width: "7rem",
                                     border: "1px solid #000000",
@@ -210,7 +323,7 @@ function AuthorityToTravelForm({ children }) {
                               }}
                             >
                               <img
-                                src="./images/REQUESTOR_ICON.png"
+                                src="../images/REQUESTOR_ICON.png"
                                 alt="Requestor"
                                 style={{
                                   width: "auto",
@@ -229,6 +342,7 @@ function AuthorityToTravelForm({ children }) {
                                 id="name"
                                 type="text"
                                 placeholder="Full Name"
+                                onChange={(e) => setName(e.target.value)}
                                 style={{
                                   width: "22rem",
                                   border: "1px solid #000000",
@@ -247,7 +361,7 @@ function AuthorityToTravelForm({ children }) {
                               }}
                             >
                               <img
-                                src="./images/POSITION_ICON.png"
+                                src="../images/POSITION_ICON.png"
                                 alt="Position"
                                 style={{
                                   width: "auto",
@@ -266,6 +380,7 @@ function AuthorityToTravelForm({ children }) {
                                 id="role"
                                 type="text"
                                 placeholder="Role"
+                                onChange={(e) => setPosition(e.target.value)}
                                 style={{
                                   width: "22rem",
                                   border: "1px solid #000000",
@@ -284,7 +399,7 @@ function AuthorityToTravelForm({ children }) {
                               }}
                             >
                               <img
-                                src="./images/STATION_ICON.png"
+                                src="../images/STATION_ICON.png"
                                 alt="Station"
                                 style={{
                                   width: "auto",
@@ -303,6 +418,7 @@ function AuthorityToTravelForm({ children }) {
                                 id="office"
                                 type="text"
                                 placeholder="Office"
+                                onChange={(e) => setStation(e.target.value)}
                                 style={{
                                   width: "22rem",
                                   border: "1px solid #000000",
@@ -321,7 +437,7 @@ function AuthorityToTravelForm({ children }) {
                               }}
                             >
                               <img
-                                src="./images/PURPOSE_ICON.png"
+                                src="../images/PURPOSE_ICON.png"
                                 alt="Purpose"
                                 style={{
                                   width: "auto",
@@ -340,6 +456,7 @@ function AuthorityToTravelForm({ children }) {
                                 id="description"
                                 type="text"
                                 placeholder="Description"
+                                onChange={(e) => setTravelPurpose(e.target.value)}
                                 style={{
                                   width: "22rem",
                                   border: "1px solid #000000",
@@ -358,7 +475,7 @@ function AuthorityToTravelForm({ children }) {
                               }}
                             >
                               <img
-                                src="./images/DESTINATION_ICON.png"
+                                src="../images/DESTINATION_ICON.png"
                                 alt="Purpose"
                                 style={{
                                   width: "auto",
@@ -377,6 +494,7 @@ function AuthorityToTravelForm({ children }) {
                                 id="destination"
                                 type="text"
                                 placeholder="Location"
+                                onChange={(e) => setDestination(e.target.value)}
                                 style={{
                                   width: "22rem",
                                   border: "1px solid #000000",
@@ -395,7 +513,7 @@ function AuthorityToTravelForm({ children }) {
                               }}
                             >
                               <img
-                                src="./images/TIME_ICON.png"
+                                src="../images/TIME_ICON.png"
                                 alt="Purpose"
                                 style={{
                                   width: "auto",
@@ -418,6 +536,7 @@ function AuthorityToTravelForm({ children }) {
                                 id="travel_time"
                                 type="text"
                                 placeholder="Optional"
+                                onChange={(e) => setTravelTimePeriod(e.target.value)}
                                 style={{
                                   width: "22rem",
                                   border: "1px solid #000000",
@@ -436,7 +555,7 @@ function AuthorityToTravelForm({ children }) {
                               }}
                             >
                               <img
-                                src="./images/FUND_ICON.png"
+                                src="../images/FUND_ICON.png"
                                 alt="Purpose"
                                 style={{
                                   width: "auto",
@@ -455,6 +574,7 @@ function AuthorityToTravelForm({ children }) {
                                 id="fund_source"
                                 type="text"
                                 placeholder="Optional"
+                                onChange={(e) => setFundSource(e.target.value)}
                                 style={{
                                   width: "22rem",
                                   border: "1px solid #000000",
@@ -473,7 +593,7 @@ function AuthorityToTravelForm({ children }) {
                               }}
                             >
                               <img
-                                src="./images/ATTNO_ICON.png"
+                                src="../images/ATTNO_ICON.png"
                                 alt="NUMBER"
                                 style={{
                                   width: "auto",
@@ -492,6 +612,7 @@ function AuthorityToTravelForm({ children }) {
                                 id="att_no."
                                 type="text"
                                 placeholder="No."
+                                onChange={(e) => setAuthTravelNumber(e.target.value)}
                                 style={{
                                   width: "22rem",
                                   border: "1px solid #000000",
@@ -510,7 +631,7 @@ function AuthorityToTravelForm({ children }) {
                               }}
                             >
                               <img
-                                src="./images/USEVEHIC_ICON.png"
+                                src="../images/USEVEHIC_ICON.png"
                                 alt="Purpose"
                                 style={{
                                   width: "auto",
@@ -531,7 +652,7 @@ function AuthorityToTravelForm({ children }) {
                                   marginLeft: "6.5rem",
                                 }}
                               >
-                                <Form.Check
+                               <Form.Check
                                   type="checkbox"
                                   id="withGovernmentVehicle"
                                   label={
@@ -541,9 +662,10 @@ function AuthorityToTravelForm({ children }) {
                                   }
                                   className="custom-checkbox"
                                   style={{ marginRight: "1rem" }} // Add spacing between checkboxes
-                                  checked={checked === "withGovernmentVehicle"}
-                                  onChange={handleCheckboxChange} // Manage checkbox state
+                                  checked={checkedWithVehicle} // Checked if the state matches
+                                  onChange={handleCheckboxChange} // Handle state change
                                 />
+
                                 <Form.Check
                                   type="checkbox"
                                   id="withoutGovernmentVehicle"
@@ -553,10 +675,8 @@ function AuthorityToTravelForm({ children }) {
                                     </span>
                                   }
                                   className="custom-checkbox"
-                                  checked={
-                                    checked === "withoutGovernmentVehicle"
-                                  }
-                                  onChange={handleCheckboxChange} // Manage checkbox state
+                                  checked={checkedWithoutVehicle}// Checked if the state matches
+                                  onChange={handleCheckboxChange} // Handle state change
                                 />
                               </div>
                             </div>
@@ -585,6 +705,7 @@ function AuthorityToTravelForm({ children }) {
                               <Form.Group
                                 className="mb-3"
                                 controlId="name"
+                                onChange={(e) => setChairpersonName(e.target.value)}
                                 style={{
                                   width: "20rem",
                                   border: "1px solid #000000",
@@ -628,6 +749,7 @@ function AuthorityToTravelForm({ children }) {
                               <Form.Group
                                 className="mb-3"
                                 controlId="name"
+                                onChange={(e) => setDeanName(e.target.value)}
                                 style={{
                                   width: "20rem",
                                   border: "1px solid #000000",
@@ -658,6 +780,7 @@ function AuthorityToTravelForm({ children }) {
                               <Form.Group
                                 className="mb-3"
                                 controlId="name"
+                                onChange={(e) => setVpaaName(e.target.value)}
                                 style={{
                                   width: "20rem",
                                   border: "1px solid #000000",
@@ -683,7 +806,8 @@ function AuthorityToTravelForm({ children }) {
                           </div>
 
                           {/** EXPORT TO PDF */}
-                          <Button
+                          <Button type="submit"
+                          onClick={formDataHandler}
                             style={{
                               width: "20rem", // Same width as the Form.Group
                               marginTop: "1rem", // Add some spacing above the button
@@ -702,6 +826,9 @@ function AuthorityToTravelForm({ children }) {
                               Export to PDF
                             </span>
                           </Button>
+
+
+                       
                         </div>
 
                         <p style={{ marginTop: "2rem" }}>

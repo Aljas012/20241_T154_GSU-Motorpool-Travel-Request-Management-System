@@ -51,7 +51,7 @@ function SignupGoogle() {
 
   const handleSubmit = async (e) => {
   e.preventDefault();
-
+    
     const data = { name, email, password,  office_code, college_name};
           try { const response = await fetch("http://localhost:8000/user/signup",{method: "POST",body: JSON.stringify(data),headers: {"Content-Type": "application/json"},});
 
@@ -154,7 +154,7 @@ function SignupGoogle() {
                         width: "40%", // Adjust the width of the select to be smaller than the input
                       }}
                     >
-                      <option value=""disabled selected> Select Offices       </option>
+                      <option value=""disabled> Select Offices       </option>
                       <option value="" disabled>    A    </option>
                       <option value="A101-4F2D1E8C9B |  Accounting Unit (Assessment) - 101">
                         Accounting Unit (Account) 
@@ -483,6 +483,7 @@ function SignupGoogle() {
                         fontSize: "1.rem",
                         height: "2.8rem",
                       }}
+                        autoComplete="new-password"
                       className="custom-input"
                     />
                   </InputGroup>

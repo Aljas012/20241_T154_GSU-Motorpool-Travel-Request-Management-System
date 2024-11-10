@@ -12,15 +12,18 @@ import {
 
 import NavBarWithBellComponents from "../components/NavBarWithBellComponents";
 import FooterComponent from "../components/FooterComponents";
-
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 import "../styles/Table.css";
 
 function Request() {
+  const navigate = useNavigate();
+  const userInfo = JSON.parse(localStorage.getItem("user_info")); // Parse the stored JSON
+  const id = userInfo.user_id; // Access the correct key for the user ID
   const handleClick = () => {
-    alert("Left arrow clicked!"); // Replace with your desired action
+    navigate(`/user/id=${id}/homepage`);
   };
 
   return (
@@ -31,29 +34,29 @@ function Request() {
           <Row>
             <Col>
               <div>
-              {/** BACK BUTTON */}
-              <button
-                onClick={handleClick}
-                style={{
-                  backgroundColor: "#0760A1",
-                  color: "#FFFFFF",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  border: "none",
-                  borderRadius: "4px",
-                  width: "3rem",
-                  height: "2rem",
-                  marginTop: "1rem",
-                }}
-              >
-                <FontAwesomeIcon
-                  icon={faArrowLeft} // Use the left arrow icon
-                  style={{ color: "#FFFFFF", width: "28px", height: "auto" }} // Set icon color to white
-                />
-              </button>
-            </div>
+                {/** BACK BUTTON */}
+                <button
+                  onClick={handleClick}
+                  style={{
+                    backgroundColor: "#0760A1",
+                    color: "#FFFFFF",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    border: "none",
+                    borderRadius: "4px",
+                    width: "3rem",
+                    height: "2rem",
+                    marginTop: "1rem",
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={faArrowLeft} // Use the left arrow icon
+                    style={{ color: "#FFFFFF", width: "28px", height: "auto" }} // Set icon color to white
+                  />
+                </button>
+              </div>
 
               <div style={{ marginTop: "1rem" }}>
                 <Table
@@ -73,7 +76,7 @@ function Request() {
                         colSpan={4}
                         style={{
                           color: "#0760A1",
-                          textAlign: "start", 
+                          textAlign: "start",
                           paddingLeft: "1.5rem", // Adjust this value to move it further to the right
                           backgroundColor: "#F1F1F1",
                         }}
@@ -202,7 +205,6 @@ function Request() {
                         Pending
                       </td>
                     </tr>
-                   
                   </tbody>
                 </Table>
               </div>
