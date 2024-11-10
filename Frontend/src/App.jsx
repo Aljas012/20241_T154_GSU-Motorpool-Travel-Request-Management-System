@@ -34,7 +34,7 @@ function App() {
           <Route path="/user/user_guide" element={<UserGuide />} />
           <Route path="/user/request" element={<Request />} />
           <Route path="/user/:id/profile" element={<Profile />} />
-      {'<Route path="/user/att_forms/download" element={<AuthorityToTravelFormDownload />} />'}
+          {'<Route path="/user/att_forms/download" element={<AuthorityToTravelFormDownload />} />'}
 
         </Route>
       </Routes>
