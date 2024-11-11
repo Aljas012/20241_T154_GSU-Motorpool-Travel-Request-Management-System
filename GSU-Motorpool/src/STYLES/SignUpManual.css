@@ -38,7 +38,7 @@
 }
 
 /** FORM ************************************************/
-.form {
+.customForm {
   padding: 2rem 2rem 1rem 2rem;
   border: 1px solid #0760a1;
   border-radius: 6px;
@@ -66,33 +66,31 @@
 
 /** INPUT FIELDS COLOR ************************************************/
 /* Target the input field (text input) */
-.form-control {
-  background-color: #0760a1; /* Set background color */
-  color: #fff; /* Optional: Set text color to white */
+.customInputFieldSU {
+  background-color: #0760a1;
+  color: #fff;
   height: 3.5rem;
   width: 100%;
 }
 
-/* Target the select dropdown */
-.form-select {
-  border-color: #0760a1; /* Set background color */
-  color: #0760a1; /* Optional: Set text color to white */
+.customSelectSU {
+  border-color: #0760a1;
+  color: #0760a1;
   margin-left: 4px;
   width: 70%;
 
   font-family: Helvetica;
 }
 
-/* Target the placeholder text color */
-.form-control::placeholder {
-  color: #fff; /* Set placeholder text color to white */
+.customInputFieldSU::placeholder {
+  color: #fff;
   font-family: Helvetica;
-  
+
   padding-left: 1rem;
 }
 
 /** BUTTONS ************************************************/
-.customButton {
+.customButtonSU {
   background-color: #0760a1;
   color: #fff;
   border-radius: 1.7rem;
@@ -101,9 +99,23 @@
   width: 100%;
 
   font-family: Helvetica;
+  font-weight: 600;
 }
 
-.customButton1 {
+.customButtonSU:hover {
+  background-color: #06598f; /* Darker shade of blue */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow for effect */
+  cursor: pointer; /* Change cursor to pointer on hover */
+}
+
+.customButtonSU:active {
+  background-color: #054a79; /* Change to an even darker shade of blue when clicked */
+  transform: scale(
+    0.8
+  ); /* Slightly shrink the button to simulate pressing effect */
+}
+
+.customButton1SU {
   background-color: #fff;
   color: #0760a1;
 
@@ -116,10 +128,29 @@
   font-family: Helvetica;
 }
 
+.customButton1SU:hover {
+  background-color: #0760a1; /* Darker shade of blue */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow for effect */
+  cursor: pointer; /* Change cursor to pointer on hover */
+}
+
+.customButton1SU:hover .customIconSU {
+  color: #fff; /* Change icon color to white or any desired color */
+  transition: color .5s ease;
+}
+
+.customButton1SU:active {
+  background-color: #054a79; /* Change to an even darker shade of blue when clicked */
+  transform: scale(
+    0.8
+  ); /* Slightly shrink the button to simulate pressing effect */
+}
+
 /** ICONS ************************************************/
-.customIcon {
+.customIconSU {
   font-size: 2rem;
   color: #2b90d8; /* White color for the icon */
+  
 }
 
 /** FONT ************************************************/
@@ -138,12 +169,12 @@
   font-family: Helvetica;
   font-size: 16px;
   font-weight: 600;
+
 }
 
 .customP1 a {
   text-decoration: none; /* Removes the underline */
   color: #cd8800;
-
 }
 
 .effects .letter {

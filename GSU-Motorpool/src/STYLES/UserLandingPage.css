@@ -90,7 +90,7 @@ body {
 }
 
 /** PLACEHOLDER */
-.customInputField {
+.customInputFieldUL {
   text-align: left; /* Aligns text to the left */
   background-color: #ebebeb; /* Corrected syntax for background color */
 
@@ -106,7 +106,7 @@ body {
   outline: none;
 
 }
-.customInputField::placeholder {
+.customInputFieldUL::placeholder {
   color: #76767680; /* Set the placeholder color to gray with 50% opacity */
   text-align: start; /* Center the placeholder text */
 }
@@ -144,7 +144,7 @@ body {
 }
 
 /** BUTTON */
-.customButton {
+.customButtonUL {
   height: 3.5rem;
   width: 100%;
   background-color: #1a7fc8;
@@ -155,20 +155,20 @@ body {
   font-family: "Helvetica";
 }
 
-.customButton:hover {
+.customButtonUL:hover {
   background-color: #06598f; /* Darker shade of blue */
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow for effect */
   cursor: pointer; /* Change cursor to pointer on hover */
 }
 
-.customButton:active {
+.customButtonUL:active {
   background-color: #054a79; /* Change to an even darker shade of blue when clicked */
   transform: scale(
     0.8
   ); /* Slightly shrink the button to simulate pressing effect */
 }
 
-.customButton1 {
+.customButton2UL {
   height: 4rem;
   width: 100%;
   border: none;
@@ -181,13 +181,13 @@ body {
   font-size: 1.1rem;
 }
 
-.customButton1:hover {
+.customButton2UL:hover {
   background-color: #06598f; /* Darker shade of blue */
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow for effect */
   cursor: pointer; /* Change cursor to pointer on hover */
 }
 
-.customButton1:active {
+.customButton2UL:active {
   background-color: #054a79; /* Change to an even darker shade of blue when clicked */
   transform: scale(
     0.9

@@ -31,13 +31,18 @@ function SignUpManual() {
             <Col md={7} className="tunga">
               <div className="align">
                 {/** FORM SA MANUAL SIGN UP */}
-                <Form className="form">
+                <Form className="customForm">
                   {/** PARA SA NAME */}
                   <Form.Group className="mb-2 d-flex" controlId="MART">
-                    <Form.Control type="text" placeholder="Name" required />
+                    <Form.Control
+                      className="customInputFieldSU"
+                      type="text"
+                      placeholder="Name"
+                      required
+                    />
 
                     {/** SELECTION SA OFFICES */}
-                    <Form.Select required>
+                    <Form.Select className="customSelectSU" required>
                       {officeOptions.map((option, index) => (
                         <option
                           key={index}
@@ -53,6 +58,7 @@ function SignUpManual() {
                   {/** PARA SA EMAIL*/}
                   <Form.Group className="mb-2" controlId="MART">
                     <Form.Control
+                      className="customInputFieldSU"
                       type="email"
                       placeholder="Institutional Email"
                       required
@@ -62,13 +68,14 @@ function SignUpManual() {
                   {/** PARA SA PASSWORD */}
                   <Form.Group className="mb-2" controlId="MART">
                     <Form.Control
+                      className="customInputFieldSU"
                       type="password"
                       placeholder="Password"
                       required
                     />
                   </Form.Group>
 
-                  <Button type="submit" className="customButton">
+                  <Button type="submit" className="customButtonSU">
                     Create Account
                   </Button>
 
@@ -81,7 +88,7 @@ function SignUpManual() {
 
                   <div>
                     <Button
-                      className="customButton1"
+                      className="customButton1SU"
                       style={{
                         display: "flex",
                         alignItems: "center",
@@ -89,7 +96,7 @@ function SignUpManual() {
                         gap: "0.5rem",
                       }}
                     >
-                      <FontAwesomeIcon icon={faGoogle} className="customIcon" />
+                      <FontAwesomeIcon icon={faGoogle} className="customIconSU" />
                       Sign Up with Google
                     </Button>
                   </div>

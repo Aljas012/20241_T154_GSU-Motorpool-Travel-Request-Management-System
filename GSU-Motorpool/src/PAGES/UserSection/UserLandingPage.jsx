@@ -45,7 +45,8 @@ function UserLandingPage() {
                       id="MART"
                       type="email"
                       placeholder="Email"
-                      className="customInputField"
+                      className="customInputFieldUL"
+                      required
                     />
 
                     <FontAwesomeIcon
@@ -60,7 +61,8 @@ function UserLandingPage() {
                       id="MART"
                       type="password"
                       placeholder="Password"
-                      className="customInputField"
+                      className="customInputFieldUL"
+                      required
                     />
 
                     <FontAwesomeIcon
@@ -71,7 +73,7 @@ function UserLandingPage() {
 
                   {/** LOG IN BUTTON */}
                   <div>
-                    <Button className="customButton" type="submit">
+                    <Button className="customButtonUL" type="submit">
                       Log In
                     </Button>
                   </div>
@@ -185,7 +187,7 @@ function UserLandingPage() {
 
               <div className="mt-3">
                 {/** SIGN UP BUTTON */}
-                <Button className="customButton1">
+                <Button className="customButton2UL">
                   <div className="alignCenter2">
                     <img src={BSUIcon} alt="BSU" className="iconStyle1" />
                     No Account Yet? Sign Up
