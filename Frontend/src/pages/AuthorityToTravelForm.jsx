@@ -28,12 +28,11 @@ import ATTNav from "../components/ATT_Nav";
     const   [dateYear,setYear] = useState("")
     const   [position,setPosition] = useState("")
     const   [station,setStation] = useState("")
-    const   [department,setDepartment] = useState("")
     const   [purpose_travel,setTravelPurpose] = useState("")
     const   [destination,setDestination] = useState("")
     const   [travel_time_period,setTravelTimePeriod] = useState("") 
     const   [fundSource,setFundSource] = useState("")
-    const   [chairperson_name, setChairpersonName] = useState("")
+    const   [chair_person_name, setChairpersonName] = useState("")
     const   [dean_name, setDeanName] = useState("")
     const   [vpaa_name, setVpaaName] = useState("")
     const   [checkedWithVehicle, setCheckedWithVehicle] = useState(false);
@@ -67,6 +66,8 @@ import ATTNav from "../components/ATT_Nav";
       }
     };
     
+    const use_vehicle = checkedWithVehicle ? "true" : checkedWithoutVehicle ? "false" : undefined;
+
 
     const handleClickh6 = () => {
       alert("H6 clicked!"); // You can replace this with any action you want
@@ -80,46 +81,25 @@ import ATTNav from "../components/ATT_Nav";
   for (let year = currentYear; year >= startYear; year--) {
     years.push(year);
   }
+
+  const userInfo = JSON.parse(localStorage.getItem("user_info"));
+  const userId = userInfo?.user_id;
+
   const formDataHandler = async (e) => {
     e.preventDefault(); // Prevent the form from submitting the default way
   
     // Fetch token and user info from localStorage
     const token = localStorage.getItem("auth_token");
-    const userInfo = JSON.parse(localStorage.getItem("user_info"));
-    const userId = userInfo?.user_id;
+  
     
 
-   
-    // Form data values from your comp  onent's state (make sure these are primitives)
-    const data = {
-      name,
-      position,
-      purpose_travel,
-      department,
-      station,
-      dateDay,
-      dateYear,
-      dateMonth,
-      destination,
-      fundSource,
-      travel_time_period,
-      auth_travel_number,
-      checkedWithVehicle,
-      checkedWithoutVehicle,
-      chairperson_name,
-      dean_name,
-      vpaa_name,
-      userId, // Include the userId
-    };
-  
-    // Logging form data
- 
 
-    // Logging for debugging
-    console.log('stringify below')
+    const data = { name,position,purpose_travel,station, dateDay, dateYear,dateMonth,destination,
+      fundSource, travel_time_period, auth_travel_number,checkedWithVehicle, checkedWithoutVehicle,chair_person_name,
+      dean_name,vpaa_name, userId};
+  
     console.log(JSON.stringify({ day: dateDay, month: dateMonth, year: dateYear }));
 
-  
     try {
       // Make the API call to generate the PDF
       const response = await fetch(
@@ -148,6 +128,7 @@ import ATTNav from "../components/ATT_Nav";
         document.body.appendChild(link); // Append the link to the document
         link.click(); // Trigger the download
         document.body.removeChild(link); // Clean up the link
+        await saveToDatabase();
       } else {
         // Handle errors from the server
         const result = await response.json();
@@ -159,6 +140,39 @@ import ATTNav from "../components/ATT_Nav";
       console.error("Error:", error);
     }
   };
+
+
+
+  const saveToDatabase = async () =>
+          {
+            
+  let request_date = dateMonth + " " + dateDay + " " + dateYear;
+ 
+     const data = {name, position, purpose_travel,  station, destination,
+      fundSource,request_date,travel_time_period,auth_travel_number, use_vehicle, chair_person_name,
+      dean_name, vpaa_name,userId };
+
+
+        
+      console.log('data that will be sent to backend',data)
+      console.log('the id that will be sent to backend is ',userId)
+      try{
+          const response  = await fetch('http://localhost:8000/user/save_data',{
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data), // Ensure `data` is serializable
+          })
+              if(!response.ok)
+                  {
+                console.log('there is an error in the backend that causes an error')
+              }
+      }catch(error)
+        {
+          
+        }
+      }
   
   return (
     <>

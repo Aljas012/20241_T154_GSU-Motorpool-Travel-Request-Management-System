@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-const generateToken = (userId,college_name,name,email,office_code) => {
+const userGenerateToken = (userId,college_name,name,email,office_code) => {
     return jwt.sign({
          id: userId,
          office_code:office_code,
@@ -10,4 +10,13 @@ const generateToken = (userId,college_name,name,email,office_code) => {
         }, process.env.JWT_SECRET_KEY, { expiresIn: '1d' });
 };
 
-module.exports = generateToken ;
+
+const adminGenerateToken = (adminId,name,email) => {
+    return jwt.sign({
+         id: adminId,
+         email:email,
+         name:name
+        }, process.env.JWT_SECRET_KEY, { expiresIn: '2d' });
+};
+
+module.exports = {adminGenerateToken,userGenerateToken} ;

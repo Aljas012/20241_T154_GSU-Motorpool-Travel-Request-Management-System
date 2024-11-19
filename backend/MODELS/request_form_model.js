@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const form_model = new Schema({
-    college_name: { type: String, required: true },
+   organization_name: { type: String, required: true },
     requestor_name: { type: String, unique: true, required: true },
     contact_number: { type: String, required: true },
     request_date: { type: Date, required: true },

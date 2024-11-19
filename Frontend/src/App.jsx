@@ -1,7 +1,18 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
+/**ADMIN INTERFACES */
+import AdminLandingPage from "./pages/MOTORPOOL/AdminLandingPage";
+//import MotorpoolHomePage from "./pages/MOTORPOOL/MotorpoolHomePage";
+
+
+
+
+
+
+
 /** USER INTERFACES */
+//import loginAsGoogle from "./pages/goole";
 import UserLandingPage from "./pages/UserLandingPage";
 import SignupGoogle from "./pages/SignupGoogle";
 import UserHomePage from "./pages/UserHomePage";
@@ -21,15 +32,21 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route index element={<UserLandingPage />} />
-        <Route path="/user/signup_google" element={<SignupGoogle />} />
 
+
+        <Route index element={<UserLandingPage />} />
+        <Route path="/admin/AdminLandingPage" element={<AdminLandingPage/>} />
+
+
+        <Route path="/user/signup_google" element={<SignupGoogle />} />
+        <Route path="/user/forgot_password" element={<ForgotPassword />} />
+        <Route path="/user/recover_account" element={<RecoverAccount />} />
+        <Route path="/user/" element = {<loginAsGoogle />}/>
         <Route element={<ProtectedRoute />}>
-          <Route path="/user/recover_account" element={<RecoverAccount />} />
+         
           <Route path="/user/:id/homepage" element={<UserHomePage />} />
           <Route path="/user/att_forms" element={<AuthorityToTravelForm />} />
           <Route path="/user/request_forms" element={<RequestToTravelForm />} />
-          <Route path="/user/forgot_password" element={<ForgotPassword />} />
           <Route path="/user/about_us" element={<AboutUs />} />
           <Route path="/user/user_guide" element={<UserGuide />} />
           <Route path="/user/request" element={<Request />} />

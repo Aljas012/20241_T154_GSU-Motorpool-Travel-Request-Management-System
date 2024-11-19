@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Container, Row, Col, Form, Button, InputGroup } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faLock } from "@fortawesome/free-solid-svg-icons";
@@ -43,6 +43,62 @@ function AdminLandingPage() {
     fontFamily: "Helvetica",
   };
 
+  const [email, setEmail] = useState(""); // For email input
+  const [password, setPassword] = useState(""); // For password input
+  const [error, setError] = useState(null); // For handling errors
+
+
+  const handleSubmit = async (e) =>
+  {
+
+      e.preventDefault();
+      const data = { email, password };
+  
+      try {
+        const response = await fetch("http://localhost:8000/admin/login", {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        
+        const json =  response.json();
+        if (!response.ok) {
+          nullFields();
+          setError(json.error); // Show error if login fails
+          console.log('unable to logged in --from response unsuccessful in if condition')
+        } else {
+          // Clear the form and reset state if login is successful
+          
+          setEmail("");
+          setPassword("");
+          setError(null);
+
+          localStorage.setItem("auth_token", json.token); // Store the JWT token
+          localStorage.setItem("admin_info", JSON.stringify(json.admin));
+
+    
+          const adminInfo = JSON.parse(localStorage.getItem("admin_info")); // Parse the stored JSON
+          const id = adminInfo.admin_id; // Access the correct key for the user ID
+
+          console.log('admin logged in successfully')
+          
+         
+        }
+      } catch (err) {
+        setError("An error occurred, please try again."); // Catch network errors
+      }
+    };
+
+
+
+  
+
+  
+
+
+
   return (
     <Container fluid style={{ position: "relative", height: "100vh" }}>
       <div style={leftImageStyle}></div>
@@ -59,7 +115,7 @@ function AdminLandingPage() {
           lg={{ span: 4, offset: 0 }}
         >
           <div>
-            <Form id="landingpage">
+            <Form id="landingpage" onSubmit={handleSubmit}>
               <h2
                 style={{
                   ...headerStyle,
@@ -113,6 +169,9 @@ function AdminLandingPage() {
                   placeholder="Email"
                   aria-label="Email"
                   aria-describedby="basic-addon1"
+                  autoComplete = "current-email"
+                  onChange={(e) => setEmail(e.target.value)}
+                  value={email}
                 />
               </InputGroup>
 
@@ -128,6 +187,9 @@ function AdminLandingPage() {
                   placeholder="Password"
                   aria-label="Password"
                   aria-describedby="basic-addon1"
+                   autoComplete="current-password"
+                  onChange={(e) => setPassword(e.target.value)}
+                  value={password}
                 />
               </InputGroup>
 
@@ -148,7 +210,7 @@ function AdminLandingPage() {
                 style={{ fontFamily: "Helvetica", color: "#767676" }}
               >
                 <a
-                  href="/MART"
+                  href="/"
                   style={{
                     color: "#767676",
                     fontFamily: "Helvetica",

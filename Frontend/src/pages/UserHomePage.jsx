@@ -16,7 +16,7 @@ function UserHomePage() {
   const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState(null);
   useEffect(() => {
-    // Decode and store user info in localStorage
+
     decodeAndStoreUserInfo();
 
     // Retrieve and parse user info
@@ -36,6 +36,73 @@ function UserHomePage() {
   const handleButtonClickRTT = () => {
     navigate("/user/request_forms");
   };
+
+
+
+  const [receivedData,setReceivedData] =  useState("")
+  const [previousLocation, setPreviousLocation] = useState({ latitude: null, longitude: null });
+
+  const sendLocation = async () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+          console.log("Latitude:", latitude);
+          console.log("Longitude:", longitude);
+
+          // Check if the location has changed
+          if (
+            latitude !== previousLocation.latitude ||
+            longitude !== previousLocation.longitude
+          ) {
+            // Update the previous location
+            setPreviousLocation({ latitude, longitude });
+
+            const data = { latitude, longitude };
+
+            try {
+              const response = await fetch("http://localhost:8000/user/api/weather", {
+                method: "POST",
+                body: JSON.stringify(data),
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              });
+
+              if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+              }
+
+              const weather = await response.json();
+              setReceivedData(weather); // Update state with fetched weather data
+              console.log("Weather data:", weather);
+            } catch (error) {
+              console.error("Error fetching data from the backend:", error);
+            }
+          }
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+        }
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+    }
+  };
+
+  // Use effect to call sendLocation initially and at intervals
+  useEffect(() => {
+    sendLocation(); // Fetch weather data when the component mounts
+
+    const interval = setInterval(() => {
+      sendLocation(); // Refetch every 1 minute (or change the interval as needed)
+    }, 60000);
+
+    return () => clearInterval(interval); // Cleanup the interval on unmount
+  }, []);
+
+
 
   return (
     <>
@@ -57,12 +124,13 @@ function UserHomePage() {
                       marginBottom: 0,
                     }}
                   >
-                    {userInfo ? userInfo.college_name : "Loading..."}
+                    {userInfo ? (userInfo.college_name ? userInfo.college_name : "COLLEGE NAME NOT SET") : "Loading..."}
                   </h5>
                   <h4 style={{ fontFamily: "Helvetica", fontWeight: 700 }}>
                     OFFICE CODE:{" "}
                     <span style={{ color: "#CD8800" }}>
-                      {userInfo ? userInfo.office_code : "Loading..."}
+                    {userInfo ? (userInfo.office_code ? userInfo.office_code : "OFFICE CODE NOT SET") : "Loading..."}
+                    
                     </span>
                   </h4>
                 </div>
@@ -143,7 +211,7 @@ function UserHomePage() {
                 <h6 style={{ fontFamily: "Helvetica", marginTop: "1rem" }}>
                   Results for{" "}
                   <span style={{ fontWeight: "700" }}>
-                    Malaybalay City, Bukidnon
+                  {receivedData.location? `${receivedData.location}  `: "Loading..."}
                   </span>
                 </h6>
 
@@ -170,7 +238,7 @@ function UserHomePage() {
                       fontSize: "50px",
                     }}
                   >
-                    24
+                        {receivedData.temperature? `${receivedData.temperature} `: "Loading..."}
                   </h6>
 
                   <div style={{ marginBottom: "1.2rem" }}>
@@ -206,7 +274,7 @@ function UserHomePage() {
                         fontSize: "14px", // Set font size
                       }}
                     >
-                      Precipitation: 69%
+                      Description: {receivedData.description? `${receivedData.description} `: "Loading..."}
                     </p>
                     <p
                       style={{
@@ -217,7 +285,7 @@ function UserHomePage() {
                         fontSize: "14px", // Set font size
                       }}
                     >
-                      Humidity: 77%
+                      Humidity:  {receivedData.humidity? `${receivedData.humidity} `: "Loading..."}
                     </p>
                     <p
                       style={{
@@ -228,9 +296,11 @@ function UserHomePage() {
                         fontSize: "14px", // Set font size
                       }}
                     >
-                      Wind: 5km/h
+                      Wind: {receivedData.windSpeed? `${receivedData.windSpeed} km/h  `: "Loading..."}
                     </p>
                   </div>
+                 
+
                 </div>
 
                 {/** DIRI TUNG CALENDAR */}

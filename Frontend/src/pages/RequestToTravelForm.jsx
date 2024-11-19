@@ -31,6 +31,152 @@ function RequestToTravelForm() {
     years.push(year);
   }
 
+        //main 
+    
+      let [ dateOfRequestMonth,setdateOfRequestMonth] = useState('')  //date of request data
+      let [ dateOfRequestDay,setdateOfRequestDay] = useState('')
+      let [ dateOfRequestYear,setdateOfRequestYear] = useState('')
+      let [ dateOfRequestHour,setdateOfRequestHour] = useState('')
+      let [ dateOfRequestMinute,setdateOfRequestMinute] = useState('')
+      let [ dateOfRequestType,setdateOfRequestType] = useState('')
+      let [ dateOfTravelMonth,setDateOfTravelMonth] = useState('')       //travel details
+      let [ dateOfTravelDay,setDateOfTravelDay] = useState('')
+      let [ dateOfTravelYear,setDateOfTravelYear] = useState('')
+      let [ expectedDepartureHour,setExpectedDepartureHour] = useState('')
+      let [ expectedDepartureMinute,setExpectedDepartureMinute] = useState('')
+      let [ expectedDepartureType,setExpectedDepartureType] = useState('')
+      let [ expectedArrivalHour,setExpectedArrivalHour] = useState('')
+      let [ expectedArrivalMinute,setExpectedArrivalMinute] = useState('')
+      let [ expectedArrivalType,setExpectedArrivalType] = useState('')
+      let [ expectedReturnDateMonth,setExpectedReturnDateMonth] = useState('')
+      let [ expectedReturnDateDay,setExpectedReturnDateDay] = useState('')
+      let [ expectedReturnDateYear,setExpectedReturnDateYear] = useState('')
+      let [ expectedReturnArrivalHour,setExpectedReturnArrivalHour] = useState('')
+      let [ expectedReturnArrivalMinute,setExpectedReturnArrivalMinute] = useState('')
+      let [ expectedReturnArrivalType,setExpectedReturnArrivalType] = useState('')
+      let [imageUrl,setImageUrl] = useState(null)
+      //final output
+      let [ organization_name,setOrganizationName] = useState('')
+      let [ requestor_name,setRequestorName] = useState('')
+      let [ contact_number,setContactNumber] = useState('')
+      let [ passenger_names,setPassangerName] = useState('')
+      let [ destination, setDestination] = useState('')
+      let [ travel_purpose,setTravelPurpose] = useState('')
+      let [ att_File,setAttImage] = useState(null);
+
+      let  request_time = dateOfRequestHour+':'+dateOfRequestMinute+ ' '+dateOfRequestType;
+      let  request_date = dateOfRequestMonth+' '+dateOfRequestDay+' '+dateOfRequestYear;
+      let  date_travel = dateOfTravelMonth+ ' '+dateOfTravelDay+' '+dateOfTravelYear
+      let  departure_time = expectedDepartureHour+ ':'+expectedDepartureMinute+' '+expectedDepartureType
+      let  return_departure_arrival_time = expectedArrivalHour+':'+expectedArrivalMinute+' '+expectedArrivalType
+      let  return_date = expectedReturnDateMonth+' '+expectedReturnDateDay+' '+expectedReturnDateYear;
+      let  return_arrival_time = expectedReturnArrivalHour+' '+expectedReturnArrivalMinute+" "+expectedReturnArrivalType;
+      const cloudinary_cloud_name = "dvhfgstud"
+      const  cloudinary_url = `https://api.cloudinary.com/v1_1/${cloudinary_cloud_name}/upload`;
+
+
+      const onInputImage = async (e) => {  
+        const file = e.target.files[0];
+      
+        if (file) {
+          const fileExtension = file.name.split('.').pop().toLowerCase();
+          const allowedExtensions = ['png', 'jpg', 'jpeg', 'gif'];
+      
+          if (allowedExtensions.includes(fileExtension)) {
+            console.log(file);
+            setAttImage(file); // Save the file object to state
+      
+            // Setting up FormData for the file upload
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', 'gsu_motorpool');  // Replace with your Cloudinary upload preset
+      
+            try {
+              const cloudinaryResponse = await fetch(cloudinary_url, {
+                method: 'POST',
+                body: formData,
+              });
+      
+              if (!cloudinaryResponse.ok) {
+                alert('Unable to upload file to Cloudinary');
+                return;
+              }
+      
+              const responseData = await cloudinaryResponse.json();
+              setImageUrl(responseData.secure_url);
+              console.log('Cloudinary response:', imageUrl);
+              console.log(imageUrl)
+             // requestToTravelHandler();
+              alert('Image uploaded to Cloudinary successfully!');
+                
+            } catch (error) {
+              alert('Something went wrong in the catch block -- frontend');
+              console.error('Error:', error);
+            }
+            
+          } else {
+            console.error('Only .png, .jpg, .jpeg, or .gif extensions are allowed.');
+            alert('Only .png, .jpg, .jpeg, or .gif files are allowed.');
+            e.target.value = ''; // Clear the input field
+          }
+        } else {
+          console.error('No file was selected.');
+        }
+      };
+      
+
+
+
+
+
+
+
+
+
+      const requestToTravelHandler = async (e) =>
+          {e.preventDefault()
+                    
+         const userInfo = JSON.parse(localStorage.getItem("user_info"));
+         const userId = userInfo?.user_id;
+
+        const data =  {userId,organization_name, requestor_name, contact_number, request_date,request_time, passenger_names,
+        date_travel,destination, departure_time,return_date ,return_arrival_time,travel_purpose,return_departure_arrival_time,imageUrl};
+
+             try{
+                   const response  = await fetch('http://localhost:8000/user/travel_request',{
+                     METHOD: "POST",
+                     headers: {
+                       "Content-Type": "application/json",
+                     },
+                    body: JSON.stringify(data), 
+                   })
+             
+                   if(!response.ok)
+                       {
+                          alert('There is an error on retrieving data from backend --response.ok message')
+                              }
+
+                 alert('data has been successfully saved to database! --successfull response from backend')
+
+                  }catch(error)
+                {
+                            return console.log('error sending the data --frontend')
+                    } 
+
+
+                }
+
+
+
+              
+                
+
+
+
+
+
+
+
   return (
     <>
       {/** HEADER */}
@@ -84,7 +230,7 @@ function RequestToTravelForm() {
                     }}
                   >
                     <Container>
-                      <Form id="RTT_form">
+                      <Form id="RTT_form" onSubmit={requestToTravelHandler}>
                         {/** OFFICE/DEPARTMENT/UNIT NAME OF ORGANIZATION */}
                         <div
                           style={{
@@ -110,6 +256,7 @@ function RequestToTravelForm() {
                             id="organization"
                             type="text"
                             placeholder="Organization"
+                            onChange={(e) => setOrganizationName(e.target.value)}
                             style={{
                               width: "22rem",
                               border: "1px solid #000000",
@@ -144,6 +291,7 @@ function RequestToTravelForm() {
                             id="requestor"
                             type="text"
                             placeholder="Full Name"
+                            onChange={(e) => setRequestorName(e.target.value)}
                             style={{
                               width: "22rem",
                               border: "1px solid #000000",
@@ -178,6 +326,7 @@ function RequestToTravelForm() {
                             id="contact"
                             type="text"
                             placeholder="Optional"
+                            onChange={(e) => setContactNumber(e.target.value)}
                             style={{
                               width: "22rem",
                               border: "1px solid #000000",
@@ -231,6 +380,7 @@ function RequestToTravelForm() {
                             <Form.Select
                               id="month"
                               aria-label="Select Month"
+                              onChange={(e) => setdateOfRequestMonth(e.target.value)}
                               style={{
                                 marginRight: "0.5rem",
                                 width: "7rem",
@@ -240,24 +390,25 @@ function RequestToTravelForm() {
                               }}
                             >
                               <option>Month</option>
-                              <option value="1">January</option>
-                              <option value="2">February</option>
-                              <option value="3">March</option>
-                              <option value="4">April</option>
-                              <option value="5">May</option>
-                              <option value="6">June</option>
-                              <option value="7">July</option>
-                              <option value="8">August</option>
-                              <option value="9">September</option>
-                              <option value="10">October</option>
-                              <option value="11">November</option>
-                              <option value="12">December</option>
+                              <option value="January">January</option>
+                              <option value="February">February</option>
+                              <option value="March">March</option>
+                              <option value="April">April</option>
+                              <option value="May">May</option>
+                              <option value="June">June</option>
+                              <option value="July">July</option>
+                              <option value="August">August</option>
+                              <option value="September">September</option>
+                              <option value="October">October</option>
+                              <option value="November">November</option>
+                              <option value="December">December</option>
                             </Form.Select>
 
                             {/** DAY */}
                             <Form.Select
                               id="day"
                               aria-label="Select Day"
+                              onChange={(e) => setdateOfRequestDay(Number(e.target.value))}
                               style={{
                                 marginRight: "0.5rem",
                                 width: "7rem",
@@ -277,6 +428,7 @@ function RequestToTravelForm() {
                             <Form.Select
                               id="year"
                               aria-label="Select Year"
+                              onChange={(e) => setdateOfRequestYear(Number(e.target.value))}
                               style={{
                                 width: "7rem",
                                 border: "1px solid #000000",
@@ -326,6 +478,7 @@ function RequestToTravelForm() {
                               id="time"
                               type="text"
                               placeholder="H"
+                              onChange={(e) => setdateOfRequestHour(e.target.value)}
                               style={{
                                 width: "3rem",
                                 border: "1px solid #000000",
@@ -355,6 +508,7 @@ function RequestToTravelForm() {
                               id="M"
                               type="text"
                               placeholder="M"
+                              onChange={(e) => setdateOfRequestMinute(e.target.value)}
                               style={{
                                 width: "3rem",
                                 border: "1px solid #000000",
@@ -373,6 +527,7 @@ function RequestToTravelForm() {
                             <Form.Select
                               id="period"
                               aria-label="Select Period"
+                              onChange={(e) => setdateOfRequestType(e.target.value)}
                               style={{
                                 marginLeft: ".7rem",
                                 width: "3.8rem",
@@ -429,58 +584,20 @@ function RequestToTravelForm() {
                         alignItems: "center",
                       }}
                     >
-                      <h6
-                        style={{
-                          fontFamily: "Helvetica",
-                          fontWeight: "500",
-                          marginRight: "0.1rem",
-                        }}
-                      >
-                        Browse File
-                      </h6>
-
+                
                       {/** UTROHUNON / DAPAT MA CLICK TO UPLOAD A FILE */}
-                      <img
-                        src="./images/UP1_ICON.png"
-                        alt="Upp"
-                        style={{
-                          width: "auto",
-                          height: "1.2rem",
-                          marginLeft: "0.5rem",
-                          marginBottom: "0.6rem",
-                        }}
-                      />
-
-                      {/** UTROHUNON / DAPAT MA CLICK TO UPLOAD A FILE */}
-                      <img
-                        src="./images/UPP2_ICON.png"
-                        alt="Upp"
-                        style={{
-                          width: "auto",
-                          height: "1.2rem",
-                          marginLeft: "0.5rem",
-                          marginBottom: "0.6rem",
-                          marginRight: "13rem",
-                        }}
-                      />
+                    
                     </div>
 
                     <div>
                       {/** FIELD PATA SA i-UPLOAD NA FILE */}
-                      <Form.Control
-                        type="text"
-                        placeholder="PANGALAN_DAW_SA_FILE.jpg"
-                        disabled
-                        readOnly
-                        style={{
-                          width: "22rem",
-                          border: "1px solid #000000",
-                          borderRadius: "4px",
-                          marginBottom: "1rem",
-                        }}
-                      />
+                      <Form.Group controlId="formFile" className="mb-3">
+                        <Form.Label>Only images are allowed</Form.Label>
+                        <Form.Control type="file" onChange={onInputImage}/>
+                      </Form.Group>
 
                       <Button
+                        type="submit"
                         style={{
                           width: "22rem",
                           backgroundColor: "#CD8800",
@@ -495,7 +612,7 @@ function RequestToTravelForm() {
                             textAlign: "center",
                           }}
                         >
-                          Send ATT and RTT
+                            SUBMIT TO GSU HEAD
                         </span>
                       </Button>
                     </div>
@@ -537,6 +654,7 @@ function RequestToTravelForm() {
                               as="textarea"
                               rows={3}
                               placeholder="Name of Passenger/s..." // Placeholder text
+                              onChange={(e) => setPassangerName(e.target.value)}
                               style={{
                                 border: "1px solid #000000",
                                 borderRadius: "4px",
@@ -572,6 +690,7 @@ function RequestToTravelForm() {
                                 {/** MONTH */}
                                 <Form.Select
                                   aria-label="Select Month"
+                                  onChange={(e) => setDateOfTravelMonth(e.target.value)}
                                   style={{
                                     marginRight: "0.5rem",
                                     width: "7rem",
@@ -598,6 +717,7 @@ function RequestToTravelForm() {
                                 {/** DAY */}
                                 <Form.Select
                                   aria-label="Select Day"
+                                  onChange={(e) => setDateOfTravelDay(Number(e.target.value))}
                                   style={{
                                     marginRight: "0.5rem",
                                     width: "7rem",
@@ -616,6 +736,7 @@ function RequestToTravelForm() {
                                 {/** MONTH */}
                                 <Form.Select
                                   aria-label="Select Year"
+                                  onChange={(e) => setDateOfTravelYear(Number(e.target.value))}
                                   style={{
                                     width: "7rem",
                                     border: "1px solid #000000", // Add border
@@ -651,6 +772,7 @@ function RequestToTravelForm() {
                               <Form.Control
                                 type="text"
                                 placeholder="Malaybalay City, Bukidnon"
+                                onChange={(e) => setDestination(e.target.value)}
                                 style={{
                                   width: "22rem",
                                   border: "1px solid #000000",
@@ -680,6 +802,7 @@ function RequestToTravelForm() {
                               <Form.Control
                                 type="text"
                                 placeholder="H"
+                                onChange={(e) => setExpectedDepartureHour(Number(e.target.value))}
                                 style={{
                                   width: "3rem",
                                   border: "1px solid #000000",
@@ -708,6 +831,7 @@ function RequestToTravelForm() {
                               <Form.Control
                                 type="text"
                                 placeholder="M"
+                                onChange={(e) => setExpectedDepartureMinute(Number(e.target.value))}
                                 style={{
                                   width: "3rem",
                                   border: "1px solid #000000",
@@ -725,6 +849,7 @@ function RequestToTravelForm() {
                               {/** AM OR PM */}
                               <Form.Select
                                 aria-label="Select Period"
+                                onChange={(e) => setExpectedDepartureType(e.target.value)}
                                 style={{
                                   marginLeft: ".7rem",
                                   width: "3.8rem",
@@ -760,6 +885,7 @@ function RequestToTravelForm() {
                               <Form.Control
                                 type="text"
                                 placeholder="H"
+                                onChange={(e) => setExpectedArrivalHour(Number(e.target.value))}
                                 style={{
                                   width: "3rem",
                                   border: "1px solid #000000",
@@ -788,6 +914,7 @@ function RequestToTravelForm() {
                               <Form.Control
                                 type="text"
                                 placeholder="M"
+                                onChange={(e) => setExpectedArrivalMinute(Number(e.target.value))}
                                 style={{
                                   width: "3rem",
                                   border: "1px solid #000000",
@@ -805,6 +932,7 @@ function RequestToTravelForm() {
                               {/** AM OR PM */}
                               <Form.Select
                                 aria-label="Select Period"
+                                onChange={(e) => setExpectedArrivalType(e.target.value)}
                                 style={{
                                   marginLeft: ".7rem",
                                   width: "3.8rem",
@@ -840,6 +968,7 @@ function RequestToTravelForm() {
                               <Form.Control
                                 type="text"
                                 placeholder="M"
+                                onChange={(e) => setExpectedReturnDateMonth(Number(e.target.value))}
                                 style={{
                                   width: "3rem",
                                   border: "1px solid #000000",
@@ -868,6 +997,7 @@ function RequestToTravelForm() {
                               <Form.Control
                                 type="text"
                                 placeholder="D"
+                                onChange={(e) => setExpectedReturnDateDay(Number(e.target.value))}
                                 style={{
                                   width: "3rem",
                                   border: "1px solid #000000",
@@ -891,10 +1021,11 @@ function RequestToTravelForm() {
                               >
                                 /
                               </span>{" "}
-                              {/** YEARS */}
+                              {/** YEARS */} 
                               <Form.Control
                                 type="text"
                                 placeholder="Y"
+                                onChange={(e) => setExpectedReturnDateYear(Number(e.target.value))}
                                 style={{
                                   width: "3rem",
                                   border: "1px solid #000000",
@@ -928,6 +1059,7 @@ function RequestToTravelForm() {
                               <Form.Control
                                 type="text"
                                 placeholder="H"
+                                onChange={(e) => setExpectedReturnArrivalHour(Number(e.target.value))}
                                 style={{
                                   width: "3rem",
                                   border: "1px solid #000000",
@@ -956,6 +1088,7 @@ function RequestToTravelForm() {
                               <Form.Control
                                 type="text"
                                 placeholder="M"
+                                onChange={(e) => setExpectedReturnArrivalMinute(Number(e.target.value))}
                                 style={{
                                   width: "3rem",
                                   border: "1px solid #000000",
@@ -973,6 +1106,7 @@ function RequestToTravelForm() {
                               {/** AM OR PM */}
                               <Form.Select
                                 aria-label="Select Period"
+                                onChange={(e) => setExpectedReturnArrivalType(e.target.value)}
                                 style={{
                                   marginLeft: ".7rem",
                                   width: "3.8rem",
@@ -1032,6 +1166,7 @@ function RequestToTravelForm() {
                               as="textarea"
                               rows={3}
                               placeholder="Details..." // Placeholder text
+                              onChange={(e) => setTravelPurpose(e.target.value)}
                               style={{
                                 border: "1px solid #000000",
                                 borderRadius: "4px",

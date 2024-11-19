@@ -1,100 +1,303 @@
 import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Fixed missing import
-import {Navbar,Container, Row,Col,Form,InputGroup,Card,Button,DropdownButton,Dropdown,} from "react-bootstrap";
+import {Navbar,Container, Row,Col,Form,InputGroup,Card,Button,DropdownButton,Dropdown,Modal} from "react-bootstrap";
 import NavbarComponent from "../components/NavBarComponents";
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import "../styles/SignupGoogle.css";
+import "../styles/SignupGoogle.css"; // Assuming you are using react-toastify for notifications
+import { library } from "@fortawesome/fontawesome-svg-core";
+import Swal from 'sweetalert2';
+
 
 function SignupGoogle() {
+  let navigate = useNavigate();
+  let [name, setName] = useState("");
+  let [email, setEmail] = useState("");
+  let [password, setPassword] = useState("");
+  let [office_code, setOfficeCode] = useState("");
+  let [college_name, setCollegeName] = useState("");
 
-    
+
+
+  const [inputCode, setInputtedCode] = useState("");
+  const [showCodeModal, setShowCodeModal] = useState(false); 
+
+ 
+  
+  const [inputtedCode,setCodeInputted] = useState("")
+
+
+
+
+  const toggleCodeModal = () => {setShowCodeModal(showCodeModal);};
+  
+
 
   const signupSuccess = () => {
-    toast.success("You have successfully created an account!", 
-            {
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "colored"
-              });
-       };
-
+    toast.success("You have successfully created an account!", {
+      position: "top-center",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+    });
+  };
+  
   const nullFields = () => {
-    toast.warning("Please fillup the required Fields!", 
-            {
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "colored"
-              });
-       };
-  const navigate = useNavigate();
+    toast.warning("Please fill up the required fields!", {
+      position: "top-center",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+    });
+  };
 
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState(""); // For email input
-  const [password, setPassword] = useState(""); // For password
-  const [office_code, setOfficeCode] = useState(""); // For password input
-  const [college_name, setCollegeName] = useState(""); 
-  const [error, setError] = useState(null); // For handling errors
 
 
-  const handleSubmit = async (e) => {
-  e.preventDefault();
+
+
+  const handleLoginFailure = (error) => {
+    console.error('Login failed:', error);
     
-    const data = { name, email, password,  office_code, college_name};
-          try { const response = await fetch("http://localhost:8000/user/signup",{method: "POST",body: JSON.stringify(data),headers: {"Content-Type": "application/json"},});
+    alert('Login failed. Please try again.');
+  };
 
-          const json = await response.json();
+   const handleSelectChange = (event) => {
+    let selectedValue = event.target.value;
+    let [code, college] = selectedValue.split(' | ');
+    let capsCollege = college.toUpperCase();
+     setOfficeCode(code);
+     setCollegeName(capsCollege);
+  };
 
-      if (!response.ok) {
-                              nullFields();
-                              setError(json.error); // Show error if signup fails
-                          } 
-         else {
-                 setName("");
-                 setEmail("");
-                 setPassword("");
-                 setOfficeCode("");
-                 setCollegeName("");
-                 setError(null);
-                 navigate("/");
-                
-               }
-                        } catch (err) {
-                                          setError("An error occurred, please try again.");
-                                      }
-         }; 
+//================================================================================
 
-         const handleSelectChange = (event) => { //dropdown menu handler
-          const selectedValue = event.target.value;
-          const [code, college] = selectedValue.split(' | '); // Split the values by comma
-          const capsCollege = college.toUpperCase();
-          setOfficeCode(code);
-          setCollegeName(capsCollege);
-        };
 
+
+function validateEmail(email) {
+  // Define the allowed email domains
+  if(email !== "")
+  {
+  const allowedDomains = ['@buksu.edu.ph', '@student.buksu.edu.ph'];
+  const isValid = allowedDomains.some((domain) => email.endsWith(domain));
+  return isValid;}
+}
+
+
+
+
+
+
+const sendEmailVerification = async (e) => {
+  e.preventDefault();
+  const data = { name, email };
+    
+
+            
+  if (!validateEmail(email)) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Invalid Email',
+      text: 'The email must end with @buksu.edu.ph or @student.buksu.edu.ph.',
+      confirmButtonText: 'Try Again',
+      confirmButtonColor: '#FF0000',
+    });
+    return; // Stop further execution if the email is invalid
+  }
+
+  if (
+    email.trim() === "" ||
+    name.trim() === "" 
+    ) {
+      
+ 
+    Swal.fire({
+      position: "center",
+      icon: "warning",
+      title: "Missing Information",
+      text: "Input fields cannot be left blank!",
+      height:"40px",
+      width: "450px",
+      customClass: {
+        popup: "my-popup", // Adding a custom class to the popup element
+      },
+      didOpen: () => {  
+        // Inline styling for the warning icon
+        const icon = document.querySelector(".swal2-icon.swal2-warning");
+        if (icon) {
+          icon.style.fontSize = "1rem"; // Adjust the font size
+          icon.style.width = "30px";    // Adjust the width
+          icon.style.height = "30px";   // Adjust the height
+        }
+        
+        // Inline styling for the popup
+        const popup = Swal.getPopup();
+        if (popup) {
+          popup.style.marginLeft = "680px"; // Apply inline margin-left to the popup
+        }
+      },
+      
+    });
+
+  } 
+  try {
+  
+    const response = await fetch('http://localhost:8000/user/signup/code_sender', {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: { "Content-Type": "application/json" },
+    });
+
+    const json = await response.json();
+    if (!response.ok) {
+     console.log('email already exist!')
+     Swal.fire({
+      icon: 'error',
+      title: 'Request Failed',
+      text: 'Email already in use!. Please use another email.',
+    });
+    } else {
+      Swal.fire({
+        icon: 'success',
+        title: 'Verification Email Sent',
+        text: 'Please check your email for the verification code.',
+      });
+      setShowCodeModal(true)
+    }
+   
+  } catch (error) {
+    console.error("Error:", error);
+    Swal.fire({
+      icon: 'error',
+      title: 'Request Failed',
+      text: 'An error occurred while sending your request. Please try again later.',
+    });
+  }
+};
+
+
+
+const verifyPinAndRegister = async (inputtedCode) => {
+
+
+  if (office_code === "" && college_name === "") {
+    office_code = "UNSET";
+    college_name = "UNSET";
+  }
+
+  const data = { inputtedCode, name, email, password, office_code, college_name };
+  console.log('the inputted user in frontend is ' +inputtedCode)
+
+
+  try {
+    const response = await fetch('http://localhost:8000/user/signup/verify_pin', {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: { "Content-Type": "application/json" },
+    });
+
+    const json = await response.json();
+    if (!response.ok) {
+      Swal.fire({
+        
+        icon: 'error',
+        title: 'Error',
+        text: json.error,
+      });
+    } else {
+      console.log('This is the inputted code: '+inputtedCode);
+      Swal.fire({
+        icon: 'success',
+        title: 'Registration Successful',
+        text: 'You have been successfully registered.',
+      });
+      setShowCodeModal(false)
+      navigate('/');
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    Swal.fire({
+      icon: 'error',
+      title: 'Request Failed',
+      text: 'An error occurred while processing your request. Please try again later.',
+    });
+  }
+};
+
+const signupAsGoogleHandler = async () => {
+  try {
+    // Make a request to your backend to get the Google OAuth URL
+    const response = await fetch('http://localhost:8000/user/signup_as_google', {
+      method: 'POST',
+    });
+    const data = await response.json();
+    console.log('Response from backend:', data); 
+      
+    if (data.url) {
+      window.location.href = data.url;
+    
+    } else {
+      console.error('Authorization URL not received from the backend');
+      return;
+    }
+  } catch (error) {
+    console.error('Error during Google signup:', error);
+  }
+};
+      
+
+
+const GoogleAuthCallback = () => {
+  const navigate = useNavigate();
+  alert('calloback function is running!')
+  useEffect(() => {
+
+    const params = new URLSearchParams(window.location.search);
+    for (const [key, value] of params.entries()) {
+      console.log(key, value); // Log all parameters to ensure they are correctly parsed
+    }
+    const token = params.get('token');
+
+    const userInfo = {
+      id: params.get('id'),
+      name: params.get('name'),
+      email: params.get('email'),
+      office_code: params.get('office_code'),
+      college_name: params.get('college_name'),
+    };
+    console.log('Extracted user info:', userInfo); 
+    // Store data in localStorage
+    if (token !== null) {
+      localStorage.setItem('auth_token', token);
+      localStorage.setItem('user_info', JSON.stringify(userInfo));
+      console.log('redirecting to homepage')
+      navigate(`http://localhost:5173/user/id=${userInfo.id}/homepage`); // Redirect to the homepage
+    } else {
+      localStorage.setItem('auth_token',"");
+      localStorage.setItem('user_info',"");
+    }
+  }, [navigate]);
+
+};
 
 
   return (
           <>
-      {/** HEADER */}
-      <NavbarComponent />
+     
+      <NavbarComponent/>
 
-      {/** BODY */}
+      
       <Container>
         <Row>
-          {/** FIRST COLUMN / LEFT SIDE */}
+      
           <Col>
             <img
               src="../images/PICT1.png"
@@ -113,7 +316,7 @@ function SignupGoogle() {
           <Col>
             <Card style={{ backgroundColor: "#F1F1F1", marginTop: "5rem" }}>
               <Card.Body>
-                <Form onSubmit={handleSubmit} style={{ padding: "1rem" }}>
+                <Form onSubmit={sendEmailVerification} style={{ padding: "1rem" }}>
                   <div style={{ display: "flex" }}>
                     <InputGroup className="mb-3">
                       {/* NAME INPUT FIELD */}
@@ -122,8 +325,10 @@ function SignupGoogle() {
                         type="text"
                         placeholder="Name"
                         aria-label="Name"
+                        required
                         aria-describedby="basic-addon1"
                         onChange={(e) => setName(e.target.value)}
+                       
                         style={{
                           backgroundColor: "#0760A1",
                           color: "white",
@@ -135,9 +340,7 @@ function SignupGoogle() {
                           width: "60%", // Increase the width of the input field to make it larger than the select
                         }}
                         className="custom-input"
-                        autoComplete="off"
-                        readOnly
-                        onFocus={(e) => e.target.removeAttribute("readonly")}
+                     
                       />
                     </InputGroup>
 
@@ -146,6 +349,7 @@ function SignupGoogle() {
                       aria-label="Office"
                       value={`${office_code},${college_name}`}
                       onChange={handleSelectChange}
+                      required
                       style={{
                         marginLeft: ".5rem",
                         border: "1px solid #0760A1", // Adds the border in #0760A1
@@ -154,7 +358,7 @@ function SignupGoogle() {
                         width: "40%", // Adjust the width of the select to be smaller than the input
                       }}
                     >
-                      <option value=""disabled> Select Offices       </option>
+                      <option value="" disabled selected> Please select an office </option>
                       <option value="" disabled>    A    </option>
                       <option value="A101-4F2D1E8C9B |  Accounting Unit (Assessment) - 101">
                         Accounting Unit (Account) 
@@ -449,6 +653,7 @@ function SignupGoogle() {
                       aria-label="Email"
                       aria-describedby="basic-addon1"
                       onChange={(e) => setEmail(e.target.value)}
+                      required
                       style={{
                         backgroundColor: "#0760A1",
                         color: "white",
@@ -459,9 +664,6 @@ function SignupGoogle() {
                         height: "2.8rem",
                       }}
                       className="custom-input"
-                      autoComplete="off"
-                      readOnly
-                      onFocus={(e) => e.target.removeAttribute("readonly")}
                     />
                   </InputGroup>
 
@@ -474,6 +676,7 @@ function SignupGoogle() {
                       aria-label="Password"
                       aria-describedby="basic-addon2"
                       onChange={(e) => setPassword(e.target.value)}
+                      required
                       style={{
                         backgroundColor: "#0760A1",
                         color: "white",
@@ -491,6 +694,7 @@ function SignupGoogle() {
                   <Button
                     type="submit"
                     className="w-100"
+                    onClick={toggleCodeModal}
                     style={{
                       backgroundColor: "#0760A1",
                       fontFamily: "Helvetica",
@@ -500,21 +704,45 @@ function SignupGoogle() {
                       borderRadius: "1.5rem",
                     }}
                   >
-                    Create Account
+                    SEND VERIFICATION CODE
                   </Button>
-                  <ToastContainer
-                   position="top-center"
-                   autoClose={3000}
-                   hideProgressBar={false}
-                   newestOnTop={false}
-                   closeOnClick
-                   rtl={false}
-                   pauseOnFocusLoss
-                   draggable
-                   pauseOnHover
-                   theme="light"
-                  /> 
+                 
+                      <Modal show={showCodeModal} onHide={toggleCodeModal} centered>
+        <Modal.Header closeButton>
+          <Modal.Title className="text-center justify-content-center">
+            Email Verification Required
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form  onSubmit={(e) => {
+            e.preventDefault(); // Prevent the default form submission behavior
+            verifyPinAndRegister();
+          }}>
+            <Form.Group className="mb-3 d-flex align-items-center">
+            <InputGroup className="mb-2">
+        <InputGroup.Text id="basic-addon2">
+        <i className="fa-solid fa-key"></i>
+        </InputGroup.Text>
+        <Form.Control
+                  type="text"
+                  aria-label="Pin"
+                  placeholder="INPUT PIN"
+                  value={inputtedCode} // Bind the state value
+                  onChange={(e) => setCodeInputted(e.target.value)} // Update the state on input change
+                  aria-describedby="basic-addon1"
+                  style={{ padding: "12px" ,textAlign:"center" ,fontSize:"1.1rem",letterSpacing:".4rem"}}
+                  maxLength={6}
+                />
+      </InputGroup>
 
+            </Form.Group>
+            <Button type="submit" className="btn btn-primary m-1 pt-2 pb-2 w-100"style={{ letterSpacing: "0.6rem" }}>SUBMIT</Button>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer className="text-center justify-content-center">
+          <p>A verification code has been sent to your email.</p>
+        </Modal.Footer>
+      </Modal>
                   <div
                     style={{
                       display: "flex",
@@ -542,9 +770,9 @@ function SignupGoogle() {
                   </div>
 
                   {/** SIGN UP WITH GOOGLE */}
-                  <Button
-                 
-                    className="w-100 d-flex align-items-center justify-content-center mb-2"
+                  <Button onClick={signupAsGoogleHandler}
+                 className="w-100 d-flex align-items-center justify-content-center mb-2"
+
                     style={{
                       backgroundColor: "#F1F1F1",
                       fontFamily: "Helvetica",
@@ -555,6 +783,7 @@ function SignupGoogle() {
                       color: "#0760A1",
                       paddingLeft: "0.5rem",
                     }}
+                    
                   >
                     <img
                       src="../images/GOOGLE_LOGO.png"
@@ -576,7 +805,7 @@ function SignupGoogle() {
                       Sign up with Google
                     </span>{" "}
                   </Button>
-
+                  
                   <div
                     className="d-flex flex-column justify-content-center align-items-center"
                     style={{
@@ -650,6 +879,7 @@ function SignupGoogle() {
         </Row>
       </Container>
     </>
+  
   );
 }
 

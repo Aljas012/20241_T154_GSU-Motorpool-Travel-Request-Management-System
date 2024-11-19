@@ -1,0 +1,49 @@
+[33m9df650e[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mINTEGRATION[m[33m)[m HEAD@{0}: reset: moving to HEAD~1
+[33mdda5460[m HEAD@{1}: reset: moving to HEAD
+[33mdda5460[m HEAD@{2}: commit: updload changes done(user update profile/att form)
+[33m9df650e[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mINTEGRATION[m[33m)[m HEAD@{3}: commit: manual signup connected front and backend
+[33m0404e6c[m HEAD@{4}: commit: added function. user can edit their information
+[33mf47a1ef[m HEAD@{5}: commit: add button functionality
+[33ma348047[m HEAD@{6}: commit: connect signup page
+[33meb785c7[m HEAD@{7}: commit: updating user model,controller, and connecting signup page
+[33m4846f54[m HEAD@{8}: commit: add login function
+[33me3032da[m HEAD@{9}: commit: add login function
+[33m8e7712c[m HEAD@{10}: commit (merge): Merge branch 'INTEGRATION' of https://github.com/Aljas012/20241_T154_GSU-Motorpool-Travel-Request-Management-System into INTEGRATION
+[33m169a58d[m HEAD@{11}: commit: connecting signup
+[33ma61db34[m HEAD@{12}: commit: connecting loginpage and setting routes on app js
+[33ma222c79[m HEAD@{13}: commit (merge): Resolved merge conflicts and merged INTEGRATION branch
+[33m7579e2f[m HEAD@{14}: commit: CONNECTING FRONT AND BACKEND
+[33me742eab[m HEAD@{15}: commit: Updating backend
+[33mb8d793d[m HEAD@{16}: reset: moving to HEAD~1
+[33mbeafc94[m HEAD@{17}: commit: connected front and backend
+[33mb8d793d[m HEAD@{18}: commit: update
+[33mcd971a7[m HEAD@{19}: commit: update
+[33m3ed3739[m HEAD@{20}: commit: removed unfinished variables in env
+[33m26ffc7c[m HEAD@{21}: pull: Fast-forward
+[33mb62fdc6[m HEAD@{22}: commit: committing changes
+[33mf799d0c[m HEAD@{23}: commit: commiting files
+[33m4248b97[m HEAD@{24}: commit: adding api folder
+[33mbf58251[m HEAD@{25}: commit: adding controller folder
+[33md78865b[m HEAD@{26}: commit: adding user_routes
+[33m0856ad8[m HEAD@{27}: commit: adding models
+[33mabe3201[m HEAD@{28}: commit: adding server.js file
+[33md911043[m HEAD@{29}: reset: moving to origin/INTEGRATION
+[33m0c55bf3[m HEAD@{30}: reset: moving to HEAD
+[33m0c55bf3[m HEAD@{31}: reset: moving to HEAD
+[33m0c55bf3[m HEAD@{32}: reset: moving to HEAD
+[33m0c55bf3[m HEAD@{33}: commit: commit all files
+[33mb98c632[m HEAD@{34}: reset: moving to HEAD
+[33mb98c632[m HEAD@{35}: checkout: moving from INTEGRATION to INTEGRATION
+[33mb98c632[m HEAD@{36}: checkout: moving from integration to INTEGRATION
+[33mb98c632[m HEAD@{37}: commit: added the main file/server file
+[33m6c4fc08[m HEAD@{38}: commit: added user controller
+[33m5a0c228[m HEAD@{39}: commit: added models
+[33me13a235[m HEAD@{40}: commit: user_route added
+[33m3f590a5[m HEAD@{41}: pull --tags origin integration: Merge made by the 'ort' strategy.
+[33m5193660[m HEAD@{42}: commit: update
+[33m880ffba[m HEAD@{43}: commit: remove all
+[33mb3e3b01[m HEAD@{44}: commit: deleted db folder
+[33m2110353[m HEAD@{45}: pull --tags origin integration: Merge made by the 'ort' strategy.
+[33m3dfc886[m HEAD@{46}: commit: backend configurations added
+[33m3583f49[m HEAD@{47}: checkout: moving from main to integration
+[33m91dd388[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m HEAD@{48}: clone: from https://github.com/Aljas012/20241_T154_GSU-Motorpool-Travel-Request-Management-System.git
