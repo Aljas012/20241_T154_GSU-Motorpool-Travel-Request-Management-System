@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import {
   Navbar,
@@ -55,6 +56,8 @@ function RequestToTravelForm() {
       let [ expectedReturnArrivalMinute,setExpectedReturnArrivalMinute] = useState('')
       let [ expectedReturnArrivalType,setExpectedReturnArrivalType] = useState('')
       let [imageUrl,setImageUrl] = useState(null)
+      const [isImageUploaded, setIsImageUploaded] = useState(false);
+
       //final output
       let [ organization_name,setOrganizationName] = useState('')
       let [ requestor_name,setRequestorName] = useState('')
@@ -75,45 +78,42 @@ function RequestToTravelForm() {
       const  cloudinary_url = `https://api.cloudinary.com/v1_1/${cloudinary_cloud_name}/upload`;
 
 
-      const onInputImage = async (e) => {  
+      const onInputImage = async (e) => {
         const file = e.target.files[0];
-      
+    
         if (file) {
           const fileExtension = file.name.split('.').pop().toLowerCase();
           const allowedExtensions = ['png', 'jpg', 'jpeg', 'gif'];
-      
+    
           if (allowedExtensions.includes(fileExtension)) {
-            console.log(file);
             setAttImage(file); // Save the file object to state
-      
+    
             // Setting up FormData for the file upload
             const formData = new FormData();
             formData.append('file', file);
-            formData.append('upload_preset', 'gsu_motorpool');  // Replace with your Cloudinary upload preset
-      
+            formData.append('upload_preset', 'gsu_motorpool'); // Replace with your Cloudinary upload preset
+    
             try {
               const cloudinaryResponse = await fetch(cloudinary_url, {
                 method: 'POST',
                 body: formData,
               });
-      
+    
               if (!cloudinaryResponse.ok) {
                 alert('Unable to upload file to Cloudinary');
                 return;
               }
-      
+    
               const responseData = await cloudinaryResponse.json();
-              setImageUrl(responseData.secure_url);
-              console.log('Cloudinary response:', imageUrl);
-              console.log(imageUrl)
-             // requestToTravelHandler();
-              alert('Image uploaded to Cloudinary successfully!');
-                
+              setImageUrl(responseData.secure_url); // Update the state with the 
+              setIsImageUploaded(true); 
+    
+    
             } catch (error) {
               alert('Something went wrong in the catch block -- frontend');
               console.error('Error:', error);
             }
-            
+    
           } else {
             console.error('Only .png, .jpg, .jpeg, or .gif extensions are allowed.');
             alert('Only .png, .jpg, .jpeg, or .gif files are allowed.');
@@ -123,48 +123,71 @@ function RequestToTravelForm() {
           console.error('No file was selected.');
         }
       };
+    
+      // Using useEffect to monitor changes to imageUrl
+      const handleSubmit = (e) => {
+        e.preventDefault(); // Prevent form from auto-submitting
+        if(att_File === null)
+        {
+          alert('please upload a file first!')
+          return;
+        }
+        if (!isImageUploaded) {
+          alert('Please wait for the image to finish uploading.');
+          return;
+        }
+      
+        // Call the function to submit the form data
+        requestToTravelHandler();
+        alert('Form submitted successfully!');
+      };
+      
+
+
+
+      const requestToTravelHandler = async () => {
+      
+        const userInfo = JSON.parse(localStorage.getItem("user_info"));
+        const userId = userInfo?.user_id;
+      
+        // Check if the image URL is still null
+        if (imageUrl === null) {
+          alert('The attachment file is still uploading. Please wait!');
+          return; // Exit the function to prevent proceeding
+        }
+      
+        // Prepare the data to be sent to the backend
+        const data = {
+          userId, organization_name,   requestor_name,  contact_number, request_date, request_time,
+          passenger_names,date_travel,destination,departure_time,return_date,return_arrival_time,
+          travel_purpose,return_departure_arrival_time, imageUrl,};
+
+      
+        try {
+          // Send the request to the backend
+          const response = await fetch('http://localhost:8000/user/travel_request', {
+            method: "POST", // Corrected "METHOD" to "method"
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
+      
+          if (!response.ok) {
+            alert('There was an error retrieving data from the backend -- response not OK');
+            return; // Exit the function if the response is not OK
+          }
+      
+          alert('Data has been successfully saved to the database! -- Successful response from backend');
+        } catch (error) {
+          console.error('Error sending the data -- frontend:', error);
+        }
+      };
       
 
 
 
 
-
-
-
-
-
-      const requestToTravelHandler = async (e) =>
-          {e.preventDefault()
-                    
-         const userInfo = JSON.parse(localStorage.getItem("user_info"));
-         const userId = userInfo?.user_id;
-
-        const data =  {userId,organization_name, requestor_name, contact_number, request_date,request_time, passenger_names,
-        date_travel,destination, departure_time,return_date ,return_arrival_time,travel_purpose,return_departure_arrival_time,imageUrl};
-
-             try{
-                   const response  = await fetch('http://localhost:8000/user/travel_request',{
-                     METHOD: "POST",
-                     headers: {
-                       "Content-Type": "application/json",
-                     },
-                    body: JSON.stringify(data), 
-                   })
-             
-                   if(!response.ok)
-                       {
-                          alert('There is an error on retrieving data from backend --response.ok message')
-                              }
-
-                 alert('data has been successfully saved to database! --successfull response from backend')
-
-                  }catch(error)
-                {
-                            return console.log('error sending the data --frontend')
-                    } 
-
-
-                }
 
 
 
@@ -598,6 +621,7 @@ function RequestToTravelForm() {
 
                       <Button
                         type="submit"
+                        onClick={handleSubmit}
                         style={{
                           width: "22rem",
                           backgroundColor: "#CD8800",

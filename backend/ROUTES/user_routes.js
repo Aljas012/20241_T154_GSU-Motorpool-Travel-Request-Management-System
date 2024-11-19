@@ -6,7 +6,7 @@ const {create_account, login_user, createTravelForm, createRequestForm ,changePa
 const { verify } = require('crypto');
 const {validateAuthCode} = require('../MIDDLEWARES/googleAuthenthicator')
 const {countUserRequests} = require('../CONTROLLERS/user controllers/count_request_total')
-const {travelRequestHandler} = require('../CONTROLLERS/user controllers/request_to_travel')
+const {requestToTravelForm} = require('../CONTROLLERS/user controllers/request_to_travel')
 const weatherApiRoute =require('../API/weather_api')
 //const {getIpAddress,currentLocation} = require('../MIDDLEWARES/get_ip_address')
 
@@ -28,7 +28,7 @@ router.get('/signup_as_google', validateAuthCode);
 router.post('/total_request',countUserRequests)
 router.get('/api/weather',weatherApiRoute)
 router.post('/api/weather',weatherApiRoute)
-router.post('/travel_request',travelRequestHandler)
+router.post('/travel_request',requestToTravelForm)
 // router.get('/getLocation', getIpAddress, currentLocation)
 module.exports = router
 
