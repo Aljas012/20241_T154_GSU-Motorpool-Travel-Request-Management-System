@@ -12,16 +12,20 @@ const cors = require('cors');
 app.use(express.json());  // To parse JSON request bodies
 
 // Use session middleware
-app.use(session(sessionConfig));  // Apply session configuration globally to all routes
+app.use(session(sessionConfig)); 
 
 // Logger middleware (for debugging)
 app.use((req, res, next) => {
-    console.log(req.path, req.method);
+ 
     next();
 });
 
 
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173',  // Allow your frontend origin
+    credentials: true  // Allow cookies and credentials to be included in the request
+}));
+
 app.use('/user', userRoutes); // User routes
 app.use('/admin', adminRoutes); // Admin routes
 

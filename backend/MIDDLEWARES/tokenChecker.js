@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-// Middleware to authenticate token
+
 const userAuthenticateToken = (req, res, next) => {
     // Get the token from the Authorization header (expected format: "Bearer <token>")
     const token = req.headers.authorization?.split(" ")[1]; 
@@ -12,7 +12,7 @@ const userAuthenticateToken = (req, res, next) => {
     }
 
     try {
-        // Verify the token using the secret key
+     
         const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
         // Attach the decoded user info to the request object (for further use in the route handler)
@@ -42,13 +42,12 @@ const adminAuthenticateToken = (req, res, next) => {
     }
 
     try {
-        // Verify the token using the secret key
+      
         const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
         // Attach the decoded user info to the request object (for further use in the route handler)
         req.user = decoded;
 
-        // Proceed to the next middleware or route handler
         next();
     } catch (error) {
         if (error.name === 'TokenExpiredError') {

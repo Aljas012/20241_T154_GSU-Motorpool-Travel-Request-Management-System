@@ -8,6 +8,8 @@ const {validateAuthCode} = require('../MIDDLEWARES/googleAuthenthicator')
 const {countUserRequests} = require('../CONTROLLERS/user controllers/count_request_total')
 const {requestToTravelForm} = require('../CONTROLLERS/user controllers/request_to_travel')
 const weatherApiRoute =require('../API/weather_api')
+const {viewTravelRequest} = require('../CONTROLLERS/user controllers/travel_request_viewer')
+const {totalCompletedServices} = require('../CONTROLLERS/user controllers/profile_completed_services')
 //const {getIpAddress,currentLocation} = require('../MIDDLEWARES/get_ip_address')
 
 
@@ -16,7 +18,6 @@ router.post('/signup/verify_pin',verifyPinAndCreateUser) // for signup
 router.post('/email_verification',pinGmailSender)
 router.post('/signup_google', create_account) // route for creating an account (signup)
 router.post('/login',login_user) // route for login
-//router.post('/:id/authority_to_travel',authenticateToken, createTravelForm); //route for creating authority to travel
 router.post('/:id/request_to_travel',authenticateToken, createRequestForm); //route for creating travel request
 router.post('/:userId/authority_to_travel/generate_pdf', authenticateToken,generatePdf);
 router.patch('/:id/update_profile',authenticateToken,updateProfile);
@@ -29,6 +30,8 @@ router.post('/total_request',countUserRequests)
 router.get('/api/weather',weatherApiRoute)
 router.post('/api/weather',weatherApiRoute)
 router.post('/travel_request',requestToTravelForm)
-// router.get('/getLocation', getIpAddress, currentLocation)
+router.post('/pending_request',viewTravelRequest)
+router.post('/completed_services',totalCompletedServices)
+router.post('/verify_code',verifyPin)
 module.exports = router
 

@@ -7,6 +7,7 @@ import NavbarComponent from "../components/NavBarComponents";
 import FooterComponent from "../components/FooterComponents";
 import Swal from "sweetalert2";
 import "react-toastify/dist/ReactToastify.css";
+import Spinner from 'react-bootstrap/Spinner';
 
 
 const updateSuccess = () => {
@@ -26,20 +27,16 @@ const updateSuccess = () => {
   });
 };
 
-// Function to handle logout
+
+
 const handleLogout = () => {
-  // Remove the authentication token and user info from localStorage
+
   localStorage.removeItem("auth_token");
   localStorage.removeItem("user_info");
-
-  // Optionally, force a page reload to reset everything
-  window.location.reload(); // Ensures everything is reset
-
-  // Navigate to the home page or login page after logout
-  navigate("/");
+  window.location.href = "http://localhost:5173"; 
 };
 
-// Function to confirm logout with SweetAlert
+
 const confirmLogout = () => {
   Swal.fire({
     title: "Are you sure?",
@@ -64,6 +61,7 @@ function UserProfile() {
   const [inputOffice, setOffice] = useState("");
   const [newCode, setCode] = useState("");
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const userInfo = JSON.parse(localStorage.getItem("user_info")) || {};
   const id = userInfo.user_id;
@@ -244,15 +242,19 @@ function UserProfile() {
   };
 
 
+
+
   const [requestCount, setRequestCount] = useState(null);
   const [todaysRequest, setTodaysRequest] = useState(null);
+  const [totalCompletedServices,setCompletedServices] = useState(null)
+
 
   const countTotalRequest = async () => {
     const userInfo = JSON.parse(localStorage.getItem("user_info"));
     const userId = userInfo?.user_id;
-      console.log(userId)
+    setLoading(true);
     try {
-      // Include userId as a query parameter in the URL
+     
       const response = await fetch(`http://localhost:8000/user/total_request`, {
         method: "POST",
         body: JSON.stringify({ userId }),
@@ -262,7 +264,7 @@ function UserProfile() {
       });
   
       if (!response.ok) {
-        alert("Unable to fetch total request!");
+        console.log("Unable to fetch total request!");
       } 
       
       const contentType = response.headers.get("content-type");
@@ -270,7 +272,7 @@ function UserProfile() {
         console.error("Response is not in JSON format");
         return;
       }
-  
+      setLoading(false);
 
       const responseData = await response.json(); 
       setRequestCount(responseData.requestCount);
@@ -280,12 +282,53 @@ function UserProfile() {
     }
   };
   
-  useEffect(() => {
-    countTotalRequest();
-  }, []); 
 
 
 
+  const completedServices = async () => {
+    const userInfo = JSON.parse(localStorage.getItem("user_info"));
+    const userId = userInfo?.user_id;  
+    setLoading(true);
+    try {
+      
+        let response = await fetch('http://localhost:8000/user/completed_services', {
+            method: "POST",
+            body: JSON.stringify({ userId }), 
+            headers: {
+                "Content-Type": "application/json",  
+            },
+        });
+
+        if (!response.ok) {
+          console.error(`Failed to fetch completed services. Status: ${response.status}`);
+          alert("Failed to fetch completed services. Please try again later.");
+       
+          return;
+      }
+
+        const responseData = await response.json();  
+        setLoading(false);
+        if (typeof responseData.completedCount === "number") {
+          console.log(`Completed Services: ${responseData.completedCount}`);
+          setCompletedServices(responseData.completedCount); // Update state
+      } else {
+          console.error("Unexpected response format:", responseData);
+          alert("An error occurred while processing the response.");
+      }
+  } catch (error) {
+      console.error("Error while fetching completed services:", error);
+      alert("An error occurred while fetching completed services. Please try again later.");
+  }
+};
+
+
+
+        useEffect(() => {
+          countTotalRequest();
+          completedServices();
+          fetchUserData()
+        }, []); 
+      
   return (
     <>
       <NavbarComponent></NavbarComponent>
@@ -355,36 +398,7 @@ function UserProfile() {
                     cursor: "pointer",
                   }}
                 >
-                  <svg
-                    width="28"
-                    height="28"
-                    viewBox="0 0 35 38"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <g id="fi-rr-eye" clipPath="url(#clip0_821_3209)">
-                      <path
-                        id="Vector"
-                        d="M33.9365 13.9858C31.6746 10.3021 26.5296 4.12164 17.4996 4.12164C8.46965 4.12164 3.32465 10.3021 1.06277 13.9858C0.363542 15.1168 -0.00683594 16.4201 -0.00683594 17.7498C-0.00683594 19.0794 0.363542 20.3828 1.06277 21.5137C3.32465 25.1975 8.46965 31.3779 17.4996 31.3779C26.5296 31.3779 31.6746 25.1975 33.9365 21.5137C34.6357 20.3828 35.0061 19.0794 35.0061 17.7498C35.0061 16.4201 34.6357 15.1168 33.9365 13.9858ZM31.4501 19.9869C29.5076 23.1456 25.1107 28.4612 17.4996 28.4612C9.88861 28.4612 5.49173 23.1456 3.54923 19.9869C3.1338 19.3146 2.91376 18.54 2.91376 17.7498C2.91376 16.9595 3.1338 16.1849 3.54923 15.5127C5.49173 12.3539 9.88861 7.03831 17.4996 7.03831C25.1107 7.03831 29.5076 12.3481 31.4501 15.5127C31.8655 16.1849 32.0855 16.9595 32.0855 17.7498C32.0855 18.54 31.8655 19.3146 31.4501 19.9869Z"
-                        fill="#0760A1"
-                      />
-                      <path
-                        id="Vector_2"
-                        d="M17.4997 10.4581C16.0575 10.4581 14.6478 10.8858 13.4486 11.687C12.2495 12.4882 11.3149 13.627 10.7631 14.9594C10.2112 16.2918 10.0668 17.7579 10.3481 19.1723C10.6295 20.5868 11.3239 21.886 12.3437 22.9058C13.3634 23.9255 14.6627 24.62 16.0771 24.9014C17.4916 25.1827 18.9577 25.0383 20.2901 24.4864C21.6225 23.9345 22.7613 22.9999 23.5625 21.8008C24.3637 20.6017 24.7913 19.192 24.7913 17.7498C24.789 15.8166 24.0201 13.9633 22.6531 12.5964C21.2862 11.2294 19.4328 10.4604 17.4997 10.4581ZM17.4997 22.1248C16.6344 22.1248 15.7885 21.8682 15.0691 21.3875C14.3496 20.9067 13.7888 20.2235 13.4577 19.424C13.1266 18.6246 13.0399 17.7449 13.2087 16.8963C13.3776 16.0476 13.7942 15.2681 14.4061 14.6562C15.0179 14.0443 15.7975 13.6277 16.6462 13.4589C17.4948 13.2901 18.3745 13.3767 19.1739 13.7078C19.9733 14.039 20.6566 14.5997 21.1374 15.3192C21.6181 16.0386 21.8747 16.8845 21.8747 17.7498C21.8747 18.9101 21.4137 20.0229 20.5933 20.8434C19.7728 21.6639 18.66 22.1248 17.4997 22.1248Z"
-                        fill="#0760A1"
-                      />
-                    </g>
-                    <defs>
-                      <clipPath id="clip0_821_3209">
-                        <rect
-                          width="35"
-                          height="35"
-                          fill="white"
-                          transform="translate(0 0.25)"
-                        />
-                      </clipPath>
-                    </defs>
-                  </svg>
+                
                 </button>
               </div>
 
@@ -551,7 +565,8 @@ function UserProfile() {
                         color: "#FFFFFF",
                       }}
                     >
-                     {todaysRequest!== null ? `${todaysRequest}` : "Loading..."}
+                      {loading ? ( <Spinner animation="border" /> ) : ( <p>{todaysRequest !== null ? `${todaysRequest}` : ""}</p> )}
+                   
                     </h6>
                   </div>
                 </Card>
@@ -592,8 +607,8 @@ function UserProfile() {
                         color: "#FFFFFF",
                       }}
                     >
-                           {requestCount !== null ? `${requestCount}` : "Loading..."}
-
+                           
+                           {loading ? ( <Spinner animation="border" /> ) : ( <p>{requestCount !== null ? `${requestCount}` : ""}</p> )}
                     </h6>
                   </div>
                 </Card>
@@ -634,7 +649,7 @@ function UserProfile() {
                         color: "#FFFFFF",
                       }}
                     >
-                      #
+                       {loading ? ( <Spinner animation="border" /> ) : ( <p>{totalCompletedServices !== null ? `${totalCompletedServices}` : ""}</p> )}
                     </h6>
                   </div>
                 </Card>

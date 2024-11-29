@@ -41,13 +41,8 @@ const pinGmailSender = async (req, res) => {
         const emailMessage = forgotPassword(changePasswordPin)
 
         const emailData = req.body.email;  // Get the email from req.body.email
-        console.log('the data sent to backend is ' +emailData)
+        console.log('the data sent to backend is ',emailData)
 
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(emailData) || !emailData.endsWith('.com')) {
-          return res.status(400).json({ error: "Invalid email format. Email must end with '.com' or '.student.buksu.edu.ph'" });
-        } 
 
         const existingUser = await user_data.findOne({ email:emailData });
           if (!existingUser) {
@@ -92,32 +87,35 @@ const pinGmailSender = async (req, res) => {
     //================================================================
 
     const verifyPin = async (req, res) => {
-      console.log("Received body:", req.body); // Log the entire body to see the data structure
-      
+     
       const { forgotPin, forgotEmail } = req.body;
-      console.log("THE EMAIL IS:", forgotEmail);
+      console.log('received email ',forgotEmail)
+      console.log('received pin ',forgotPin)
+
+
       try {
-        // Check if the user exists
         const existingUser = await user_data.findOne({ email: forgotEmail });
         
         if (!existingUser) {
           console.log('Error: User not found');
           return res.status(400).json({ message: 'User not found' });
         }
-    
-        
+
         const storedKey = existingUser.temporary_key;
+
         console.log('Pin received in the backend is ' + forgotPin);
         console.log('Key stored in the database is ' + storedKey);
     
-        // Compare the received PIN with the stored key
-        if (forgotPin !== storedKey) {
-          console.log('Invalid pin!');
-          return res.status(400).json({ message: 'Invalid pin' }); // Respond for an invalid pin
+        
+        if (String(forgotPin.trim()) === storedKey) {
+          console.log('Success');
+          return res.status(200).json({ message: 'Pin verified successfully' }); 
         }
-    
-        console.log('Success');
-        return res.status(200).json({ message: 'Pin verified successfully' }); // Respond for a successful verification
+
+        console.log('Invalid pin!');
+        return res.status(400).json({ message: 'Invalid pin' });
+      
+
       } catch (error) {
         console.error('Something went wrong in processing the pin:', error);
         return res.status(500).json({ message: 'Internal server error' }); // Respond for server errors
@@ -134,11 +132,7 @@ const create_account = async (req, res) => {
 
   try {    
 
-    // Validate email format using regex (simplified example)
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-          return res.status(400).json({ error: "Invalid email format" });
-        }
+
 
         // Check if the email already exists in the database
         const existingUser = await user_data.findOne({ email });
@@ -204,20 +198,17 @@ const login_user = async (req, res) => {
       user.email
     );
 
-    console.log(token);
-    res
-      .status(200)
-      .json({
-        message: "Welcome user",
-        token,
-        user: {
-          user_id: user._id,
-          email: user.email,
-          name: user.name,
-          office_code: user.office_code,
-          college_name: user.college_name,
-        },
-      });
+    res .status(200) .json({
+                            message: "Welcome user",
+                            token,
+                            user: {
+                              user_id: user._id,
+                              email: user.email,
+                              name: user.name,
+                              office_code: user.office_code,
+                              college_name: user.college_name,
+                            },
+                          });
   } catch (error) {
     res.status(500).json({ error: "Login failed: " + error.message });
   }
@@ -226,19 +217,18 @@ const login_user = async (req, res) => {
 
 
 /**========================== MANUAL EMAIL AUTHENTICATOR AND ACCOUNT CREATION ====================== */
+const tempPins = {};
 
+function pinGenerator(length = 6) {
+  const pin = crypto.randomInt(0, 10 ** length);
+  return pin.toString().padStart(length, '0');
+}
 
 
 const verifyEmailSignup = async (req, res) => {
   const { name, email } = req.body;
   console.log('received name: ',name)
   console.log('received email', email)
-
-
-  function pinGenerator(length = 6) {
-    const pin = crypto.randomInt(0, 10 ** length);
-    return pin.toString().padStart(length, '0');
-  }
 
   const existingUser = await user_data.findOne({ email });
   if (existingUser) {
@@ -247,7 +237,8 @@ const verifyEmailSignup = async (req, res) => {
   }
 
   const pin = pinGenerator();
-
+  tempPins[email] = pin;
+  console.log('Generated PIN:', pin);
   const signupEmailTemplate = signupVerification(name, pin);
 
   const transporter = nodemailer.createTransport({
@@ -278,42 +269,55 @@ const verifyEmailSignup = async (req, res) => {
 };
 
 
- const verifyPinAndCreateUser = async (req,res) => {
 
+
+const verifyPinAndCreateUser = async (req, res) => {
   const { inputtedCode, name, email, password, office_code, college_name } = req.body;
 
-  const issuedPin = req.session.sessionConfig;
-  console.log('The generated pin is ',issuedPin)
-  console.log('Generated PIN from session: ', req.session.sessionConfig);
+  try {
+    // Check if a verification code exists for this email
+    if (!tempPins[email]) {
+      return res.status(400).json({ error: 'No verification code found for this email' });
+    }
 
-  if (issuedPin === inputtedCode){
+    // Check if the inputted PIN matches the stored PIN
+    const storedPin = tempPins[email];
+    
+    if (storedPin.pin === inputtedCode) {
+      // Successfully verified PIN, remove it from the temporary storage
+      delete tempPins[email];
       
-   const hashedPassword = await bcrypt.hash(password, 12);
-   const newUser = await user_data.create({
-    name,
-     email,
-     password: hashedPassword,
-     office_code,
-     college_name,
-    });
-    
-    req.session.sessionConfig = "";
-    return res.status(201).json({
-      message: "User created successfully",
-       user: {
-       name: newUser.name,
-       email: newUser.email,
-       office_code: newUser.office_code,
-       college_name: newUser.college_name,
-     },
-    
-    });
-  }
-  else{
-    return res.status(400).json({ error: "Invalid PIN, please try again" });
-  }
+      // Hash the password before storing it in the database
+      const hashedPassword = await bcrypt.hash(password, 12);
 
- };
+      // Create a new user in the database
+      const newUser = await user_data.create({
+        name,
+        email,
+        password: hashedPassword,
+        office_code,
+        college_name
+      });
+
+      // Return a success message along with the user data (excluding password)
+      const { password: _, ...userWithoutPassword } = newUser.toObject();
+      return res.status(201).json({
+        message: 'User created successfully! Please log in.',
+        user: userWithoutPassword
+      });
+    } else {
+      // Invalid PIN, return an error response
+      return res.status(400).json({ error: "Invalid PIN, please try again" });
+    }
+  } catch (error) {
+    console.error('Error in verifyPinAndCreateUser:', error);
+    return res.status(500).json({ error: 'An error occurred while creating the user. Please try again later.' });
+  }
+};
+    
+
+
+
 
 
 
@@ -322,12 +326,12 @@ const verifyEmailSignup = async (req, res) => {
 
 const changePassword = async (req, res) => {
   
-  const { inputtedPassword, forgotEmail } = req.body;
+  const {  newPassword, forgotEmail } = req.body;
 
   try {
-    console.log("Password update process started..."); // Added console message
+    console.log("Password update process started..."); 
 
-    // Find the user by email
+    console.log(''+forgotEmail)
     const existingUser = await user_data.findOne({ email: forgotEmail });
 
     if (!existingUser) {
@@ -335,10 +339,9 @@ const changePassword = async (req, res) => {
       return res.status(404).json({ mssg: "Unable to change password! User not found." });
     }
 
-    console.log("The new Password is " + inputtedPassword);
+    console.log("The new Password is " + newPassword);
 
-    // Hash the new password
-    const hashedPassword = await bcrypt.hash(inputtedPassword, 10);
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     // Update the password field and save
     existingUser.password = hashedPassword;
@@ -346,7 +349,8 @@ const changePassword = async (req, res) => {
 
     console.log("The new hashed Password is " + hashedPassword); // Log hashed password for debugging
     console.log("Password updated successfully!"); // Added success console message
- 
+    existingUser.temporary_key = ""; 
+    await existingUser.save(); 
     // Respond with success message
     res.status(200).json({ mssg: "Password updated successfully!" });
   } catch (error) {
@@ -430,9 +434,7 @@ const handleGoogleCallback = async (req, res) => {
           });
           await user.save(); // Save the new user to the database
       }
-      
-    
-     
+ 
     const token = userGenerateToken(user.id, user.college_name, user.name, user.email, user.office_code);
 
       
@@ -615,9 +617,7 @@ const generatePdf = async (req, res) => {  // function for pdf generation
     position,
     purpose_travel,
     station,
-    dateDay,
-    dateYear,
-    dateMonth,
+   request_date,
     destination,
     fundSource,
     travel_time_period,
@@ -629,7 +629,7 @@ const generatePdf = async (req, res) => {  // function for pdf generation
     vpaa_name,
   } = req.body;
 
-  let requestDate = dateMonth + " " + dateDay + " " + dateYear;
+
 
   const font = "Helvetica";
 
@@ -640,11 +640,11 @@ const generatePdf = async (req, res) => {  // function for pdf generation
     "Authority to travel.pdf"
   );
 
-  // Create a writable stream to save the PDF
+ 
 
   const doc = new PDFDocument({ size: "A4" });
 
-  // Set headers for the response before piping the document
+  
   res.setHeader("Content-Type", "application/pdf");
   res.setHeader(
     "Content-Disposition",
@@ -723,7 +723,7 @@ const generatePdf = async (req, res) => {  // function for pdf generation
   yPosition += 60;
   xPosition = 50;
   doc.font("Helvetica").fontSize(12);
-  doc.text(`Date:          ${requestDate}`, xPosition, yPosition); // Date aligned to the left
+  doc.text(`Date:          ${request_date}`, xPosition, yPosition); // Date aligned to the left
   xPosition += 300;
   doc.text(
     `Authority Travel No.       ${auth_travel_number}`,

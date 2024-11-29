@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState,useEffect } from "react";
 import {
   Navbar,
   Container,
@@ -6,10 +6,10 @@ import {
   Col,
   Form,
   Card,
-  Button,
   Table,
 } from "react-bootstrap";
-
+import DataTable from 'react-data-table-component';
+import { Modal, Button } from 'react-bootstrap';
 import NavBarWithBellComponents from "../components/NavBarWithBellComponents";
 import FooterComponent from "../components/FooterComponents";
 import { useNavigate } from "react-router-dom";
@@ -25,6 +25,100 @@ function Request() {
   const handleClick = () => {
     navigate(`/user/id=${id}/homepage`);
   };
+
+
+
+
+  const [data, setData] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState('');
+
+  const handleShow = (content) => {
+    setModalContent(content);
+    setShowModal(true);
+  };
+
+  const handleClose = () => setShowModal(false);
+
+
+
+
+
+
+
+
+
+  // Columns definition
+  const columns = [
+    {
+      name: 'TIME OF REQUEST',
+      selector: row => row.request_time, // Access request_time directly from the row object
+    },
+    {
+      name: 'DATE OF REQUEST',
+      selector: row => row.request_date, // Access request_date directly from the row object
+    },
+    {
+      name: 'AUTHORITY TO TRAVEL INFO',
+      selector: row => (
+        <button
+        onClick={() => handleShow(row.imgUrl.file_name)} // Trigger the modal
+        style={{
+          color: 'blue',
+          textDecoration: 'underline',
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          textDecorationLine:false
+        }}
+      >
+        VIEW DETAILS
+      </button>
+      ), // Ensure the value rendered is a string or something React can render
+    },
+    {
+      name: 'REQUEST STATUS',
+      selector: row => (
+        <span style={{
+          color: row.status === 'Pending' ? 'RED' : 'GREEN' // Change color based on status
+        }}>
+          {row.status}
+        </span>)
+    },
+  ];
+
+
+
+    
+
+  useEffect(() => {
+    const listOfPendingSubmition = async () =>
+           {
+              const userInfo = JSON.parse(localStorage.getItem("user_info"));
+              const reference_id = userInfo?.user_id;
+
+            try{
+                const response = await fetch('http://localhost:8000/user/pending_request',
+                     {
+                        method:'POST',
+                        headers: {
+                          'Content-Type': 'application/json', // Important for sending JSON data
+                      },
+                        body: JSON.stringify({ reference_id: reference_id }),
+                  });
+
+                  
+                    const responseData  =  await response.json();
+                    setData(responseData);
+
+            }catch(error)
+                {
+                  alert('unable to run the try statement in frontend  -catch')
+              }
+        }
+        listOfPendingSubmition(); 
+      }, []);
+
 
   return (
     <>
@@ -57,157 +151,94 @@ function Request() {
                   />
                 </button>
               </div>
-
-              <div style={{ marginTop: "1rem" }}>
-                <Table
-                  responsive
-                  bordered
-                  hover
-                  style={{
-                    textAlign: "center",
-                    fontFamily: "Helvetica",
-                    backgroundColor: "#F1F1F1", // Add this line
-                    border: "1px solid #00000066",
-                  }}
-                >
-                  <thead style={{ backgroundColor: "#F1F1F1" }}>
-                    <tr>
-                      <th
-                        colSpan={4}
-                        style={{
-                          color: "#0760A1",
-                          textAlign: "start",
-                          paddingLeft: "1.5rem", // Adjust this value to move it further to the right
-                          backgroundColor: "#F1F1F1",
-                        }}
-                      >
-                        Request Status
-                      </th>
-                    </tr>
-                    <tr>
-                      <th style={{ backgroundColor: "#F1F1F1" }}>
-                        Time of Request
-                      </th>
-                      <th style={{ backgroundColor: "#F1F1F1" }}>
-                        Date of Request
-                      </th>
-                      <th style={{ backgroundColor: "#F1F1F1" }}>
-                        Date of Request
-                      </th>
-                      <th style={{ backgroundColor: "#F1F1F1" }}>
-                        Status of the Request
-                      </th>
-                    </tr>
-                  </thead>
-
-                  <tbody style={{ backgroundColor: "#F1F1F1" }}>
-                    <tr>
-                      <td
-                        style={{
-                          color: "#0760A1",
-                          backgroundColor: "#F1F1F1",
-                        }}
-                      >
-                        9:35 am
+              <div style={{ overflowX: 'auto', padding: '20px' }}>
+      <table
+        style={{
+          width: '100%',
+          border: '1px solid #ddd',
+          borderCollapse: 'collapse',
+          textAlign: 'center',
+          margin: '10px 0',
+          fontFamily: 'Arial, sans-serif',
+        }}
+      >
+        <thead>
+          <tr
+            style={{
+              backgroundColor: '#f4f4f4',
+              color: '#333',
+              border: '1px solid #ddd',
+              padding: '8px',
+              textAlign: 'center',
+            }}
+          >
+            {columns.map((column) => (
+              <th key={column.name} style={{ padding: '12px', fontWeight: 'bold' }}>
+                {column.name}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {data.length > 0 ? (
+            data.map((row, index) => (
+              <tr
+                key={row.id}
+                style={{
+                  backgroundColor: index % 2 === 0 ? '#f9f9f9' : '#ffffff',
+                  transition: 'background-color 0.3s ease',
+                }}
+                onMouseEnter={(e) => (e.target.style.backgroundColor = '#e6e6e6')}
+                onMouseLeave={(e) => (e.target.style.backgroundColor = index % 2 === 0 ? '#f9f9f9' : '#ffffff')}
+              >
+                {columns.map((column) => (
+                  <td
+                    key={column.name}
+                    style={{
+                      padding: '10px',
+                      border: '1px solid #ddd',
+                      fontWeight: 'normal',
+                      fontSize: '14px',
+                      color: '#333',
+                    }}
+                  >
+                    {column.selector(row)}
+                  </td>
+                ))}
+              </tr>
+            ))
+          ) : (
+            <tr>
+             <td colSpan={columns.length} style={{ textAlign: 'center', padding: '20px' }}>
+                        {data.length === 0 ? (
+                          <p> No requests available at the moment. Please check back later or try again.</p> // Display this message if no data found
+                        ) : (
+                          <div className="spinner-grow m-3" role="status">
+                            <span className="sr-only">Currently fetching data from the backend...</span>
+                          </div>
+                        )}
                       </td>
-                      <td
-                        style={{ color: "#0760A1", backgroundColor: "#F1F1F1" }}
-                      >
-                        6/12/2024
-                      </td>
-                      <td
-                        style={{ color: "#0760A1", backgroundColor: "#F1F1F1" }}
-                      >
-                        <a
-                          href="/details" // Change this to the appropriate link
-                          style={{
-                            color: "#0760A1",
-                            textDecoration: "underline",
-                            cursor: "pointer",
-                          }}
-                        >
-                          View Details
-                        </a>
-                      </td>
-                      <td
-                        style={{ color: "#CD8800", backgroundColor: "#F1F1F1" }}
-                      >
-                        Pending
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td
-                        style={{
-                          color: "#0760A1",
-                          backgroundColor: "#F1F1F1",
-                        }}
-                      >
-                        9:35 am
-                      </td>
-                      <td
-                        style={{ color: "#0760A1", backgroundColor: "#F1F1F1" }}
-                      >
-                        6/12/2024
-                      </td>
-                      <td
-                        style={{ color: "#0760A1", backgroundColor: "#F1F1F1" }}
-                      >
-                        <a
-                          href="/details" // Change this to the appropriate link
-                          style={{
-                            color: "#0760A1",
-                            textDecoration: "underline",
-                            cursor: "pointer",
-                          }}
-                        >
-                          View Details
-                        </a>
-                      </td>
-                      <td
-                        style={{ color: "#CD8800", backgroundColor: "#F1F1F1" }}
-                      >
-                        Pending
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td
-                        style={{
-                          color: "#0760A1",
-                          backgroundColor: "#F1F1F1",
-                        }}
-                      >
-                        9:35 am
-                      </td>
-                      <td
-                        style={{ color: "#0760A1", backgroundColor: "#F1F1F1" }}
-                      >
-                        6/12/2024
-                      </td>
-                      <td
-                        style={{ color: "#0760A1", backgroundColor: "#F1F1F1" }}
-                      >
-                        <a
-                          href="/details" // Change this to the appropriate link
-                          style={{
-                            color: "#0760A1",
-                            textDecoration: "underline",
-                            cursor: "pointer",
-                          }}
-                        >
-                          View Details
-                        </a>
-                      </td>
-                      <td
-                        style={{ color: "#CD8800", backgroundColor: "#F1F1F1" }}
-                      >
-                        Pending
-                      </td>
-                    </tr>
-                  </tbody>
-                </Table>
-              </div>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+              
+              <Modal show={showModal} onHide={handleClose}>
+        
+        <Modal.Body>
+          <img
+            src={modalContent}
+            alt="Travel Authority"
+            style={{ width: '100%', height: 'auto' }}
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
             </Col>
           </Row>
         </Container>

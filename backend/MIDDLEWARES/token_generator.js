@@ -11,12 +11,13 @@ const userGenerateToken = (userId,college_name,name,email,office_code) => {
 };
 
 
-const adminGenerateToken = (adminId,name,email) => {
+const adminGenerateToken = (adminId,name,email,role) => {
     return jwt.sign({
          id: adminId,
          email:email,
-         name:name
-        }, process.env.JWT_SECRET_KEY, { expiresIn: '2d' });
+         name:name,
+         role:role
+        }, process.env.JWT_SECRET_KEY, { expiresIn: '5d' });
 };
 
 module.exports = {adminGenerateToken,userGenerateToken} ;

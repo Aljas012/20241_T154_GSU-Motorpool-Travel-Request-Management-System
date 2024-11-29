@@ -1,0 +1,35 @@
+.select-loading {
+    position: relative;
+    background-color: #f8f9fa;
+    color: #666;
+}
+
+.select-loading option {
+    padding: 8px;
+    font-style: italic;
+}
+
+.select-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.select-spinner {
+    position: absolute;
+    right: 30px; /* Adjust based on your dropdown arrow position */
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.customFieldVR.loading {
+    color: #666;
+}
+
+/* Optional: Style the disabled select during loading */
+.customFieldVR:disabled {
+    background-color: #f8f9fa;
+    cursor: not-allowed;
+} 

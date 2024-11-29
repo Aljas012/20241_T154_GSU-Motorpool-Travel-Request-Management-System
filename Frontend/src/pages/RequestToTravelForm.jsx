@@ -83,7 +83,7 @@ function RequestToTravelForm() {
     
         if (file) {
           const fileExtension = file.name.split('.').pop().toLowerCase();
-          const allowedExtensions = ['png', 'jpg', 'jpeg', 'gif'];
+          const allowedExtensions = ['png', 'jpg', 'jpeg', 'gif',];
     
           if (allowedExtensions.includes(fileExtension)) {
             setAttImage(file); // Save the file object to state
@@ -156,13 +156,13 @@ function RequestToTravelForm() {
           return; // Exit the function to prevent proceeding
         }
       
-        // Prepare the data to be sent to the backend
+      
         const data = {
           userId, organization_name,   requestor_name,  contact_number, request_date, request_time,
           passenger_names,date_travel,destination,departure_time,return_date,return_arrival_time,
           travel_purpose,return_departure_arrival_time, imageUrl,};
 
-      
+          
         try {
           // Send the request to the backend
           const response = await fetch('http://localhost:8000/user/travel_request', {
@@ -452,6 +452,7 @@ function RequestToTravelForm() {
                               id="year"
                               aria-label="Select Year"
                               onChange={(e) => setdateOfRequestYear(Number(e.target.value))}
+                              required
                               style={{
                                 width: "7rem",
                                 border: "1px solid #000000",
@@ -502,6 +503,7 @@ function RequestToTravelForm() {
                               type="text"
                               placeholder="H"
                               onChange={(e) => setdateOfRequestHour(e.target.value)}
+                              required
                               style={{
                                 width: "3rem",
                                 border: "1px solid #000000",
@@ -532,6 +534,7 @@ function RequestToTravelForm() {
                               type="text"
                               placeholder="M"
                               onChange={(e) => setdateOfRequestMinute(e.target.value)}
+                              required
                               style={{
                                 width: "3rem",
                                 border: "1px solid #000000",
@@ -551,6 +554,7 @@ function RequestToTravelForm() {
                               id="period"
                               aria-label="Select Period"
                               onChange={(e) => setdateOfRequestType(e.target.value)}
+                              required
                               style={{
                                 marginLeft: ".7rem",
                                 width: "3.8rem",

@@ -267,4 +267,92 @@ const passwordGeneratorForGoogleSignup = (name,generatedPassword) =>
 `
 }
 
-module.exports = { signupVerification, forgotPassword,passwordGeneratorForGoogleSignup };
+
+const adminPinEmailTemplate = (verificationCode) =>
+  { return `
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Password Verification</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 30px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background-color: #fff;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .header h2 {
+      font-size: 24px;
+      color: #007BFF; /* Blue color for header */
+    }
+    .code {
+      font-size: 28px;
+      font-weight: bold;
+      color: #007BFF; /* Blue color for the code */
+      text-align: center;
+      margin: 20px 0;
+      padding: 10px;
+      border: 2px solid #007BFF;
+      border-radius: 5px;
+      background-color: #e8f4fd; /* Light blue background for code */
+    }
+    p {
+      font-size: 16px;
+      color: #555;
+    }
+    .footer {
+      font-size: 12px;
+      color: #888;
+      text-align: center;
+      margin-top: 20px;
+    }
+    a {
+      color: #007BFF; /* Blue color for links */
+      text-decoration: none;
+    }
+    .footer a {
+      color: #007BFF;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>Password Reset Verification</h2>
+    </div>
+    <p>Hello Admin,</p>
+    <p>We received a request to reset your password. To verify your identity, please use the 6-digit code below:</p>
+    <div class="code">${verificationCode}</div>
+    <p>This code will expire in <strong>2 minutes</strong>. Please enter it on the password reset page to proceed.</p>
+    <p>If you didn’t request this code, please ignore this email or contact our support team immediately for assistance.</p>
+    <p>Thank you,<br><strong>GSU Motorpool Support Team</strong></p>
+    <div class="footer">
+      <p>Need help? Contact us at <a href="mailto:gsumotorpools@gmail.com">GSU Motorpool</a></p>
+    </div>
+  </div>
+</body>
+</html>
+    `
+}
+
+
+
+
+module.exports = { signupVerification, forgotPassword,passwordGeneratorForGoogleSignup,adminPinEmailTemplate };

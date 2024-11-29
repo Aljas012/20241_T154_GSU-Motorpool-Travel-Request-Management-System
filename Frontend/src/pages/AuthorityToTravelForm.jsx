@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 import { useNavigate } from "react-router-dom";
 import {
   Navbar,
@@ -23,9 +25,6 @@ import ATTNav from "../components/ATT_Nav";
 
     const   [name,setName] = useState("");
     const   [auth_travel_number,setAuthTravelNumber] = useState("")
-    const   [dateDay,setDay] = useState("")
-    const   [dateMonth,setMonth] = useState("")
-    const   [dateYear,setYear] = useState("")
     const   [position,setPosition] = useState("")
     const   [station,setStation] = useState("")
     const   [purpose_travel,setTravelPurpose] = useState("")
@@ -37,8 +36,8 @@ import ATTNav from "../components/ATT_Nav";
     const   [vpaa_name, setVpaaName] = useState("")
     const   [checkedWithVehicle, setCheckedWithVehicle] = useState(false);
     const   [checkedWithoutVehicle, setCheckedWithoutVehicle] = useState(false);
-
-
+    const   [request_date, setRequestDate] = useState(new Date());
+    const   [isCalendarVisible, setIsCalendarVisible] = useState(false);
   
 
     const handleBackButton = () => {
@@ -46,6 +45,27 @@ import ATTNav from "../components/ATT_Nav";
       const id = userInfo.user_id; // Access the correct key for the user ID
       navigate(`/user/id=${id}/homepage`);
     };
+
+
+    const toggleCalendar = () => {
+      setIsCalendarVisible(prevState => !prevState);
+    };
+
+    const handleDateChange = (date) => {
+     
+      setRequestDate(new Date(date)); // Set the selected date
+      setIsCalendarVisible(false); // Close the calendar
+    };
+
+    const formattedDate = request_date
+    ? request_date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',  // Abbreviated month (e.g., Jan, Feb)
+        day: 'numeric',  // Day of the month
+      })
+    : "Select a Date";  // Default placeholder if no date is selected
+
+
 
     // Handle checkbox click
     const handleCheckboxChange = (event) => {
@@ -90,15 +110,12 @@ import ATTNav from "../components/ATT_Nav";
   
     // Fetch token and user info from localStorage
     const token = localStorage.getItem("auth_token");
-  
-    
 
-
-    const data = { name,position,purpose_travel,station, dateDay, dateYear,dateMonth,destination,
+    const data = { name,position,purpose_travel,station, request_date,destination,
       fundSource, travel_time_period, auth_travel_number,checkedWithVehicle, checkedWithoutVehicle,chair_person_name,
       dean_name,vpaa_name, userId};
   
-    console.log(JSON.stringify({ day: dateDay, month: dateMonth, year: dateYear }));
+    console.log(JSON.stringify(request_date));
 
     try {
       // Make the API call to generate the PDF
@@ -110,12 +127,12 @@ import ATTNav from "../components/ATT_Nav";
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(data), // Ensure `data` is serializable
+          body: JSON.stringify(data), 
         }
       );
   
       if (response.ok) {
-        // Handle the successful PDF generation
+        // Handle the successful PDF generation 
         const pdfBlob = await response.blob();
         const pdfUrl = URL.createObjectURL(pdfBlob);
   
@@ -141,12 +158,12 @@ import ATTNav from "../components/ATT_Nav";
     }
   };
 
+  const displayDate = request_date || "Select a Date";
 
 
   const saveToDatabase = async () =>
           {
-            
-  let request_date = dateMonth + " " + dateDay + " " + dateYear;
+
  
      const data = {name, position, purpose_travel,  station, destination,
       fundSource,request_date,travel_time_period,auth_travel_number, use_vehicle, chair_person_name,
@@ -241,110 +258,81 @@ import ATTNav from "../components/ATT_Nav";
                               {/* CARD.BODY LEFT SIDE */}
                               <div style={{ flex: 1, padding: "1rem" }}>
                                 <Container>
-                     <Form id="ATT_form"onSubmit={formDataHandler}>
-                            {/* DATE OF TRAVEL */}
-                            <div
-                              style={{ display: "flex", alignItems: "center" }}
-                            >
-                              <img
-                                src="../images/CALENDAR_ICON.png"
-                                alt="Calendar"
-                                style={{
-                                  width: "auto",
-                                  height: "2rem",
-                                  marginRight: "1rem",
-                                }}
-                              />
-                              <h6
-                                style={{ fontFamily: "Helvetica", margin: 0 }}
-                              >
-                                Date of travel:
-                              </h6>
+                                <Form id="ATT_form" onSubmit={formDataHandler}>
+      {/* DATE OF TRAVEL */}
 
-                              <div
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  marginLeft: "6.4rem",
-                                }}
-                              >
-                                {/** MONTH */}
-                                <Form.Select
-                                  id="month"
-                                  aria-label="Select Month"
-                                  onChange={(e) => setMonth(e.target.value)} 
-                                  style={{
-                                    marginRight: "0.5rem",
-                                    width: "7rem",
-                                    border: "1px solid #000000",
-                                    borderRadius: "4px",
-                                    
-                                  }}
-                                >
-                                  <option>Month</option>
-                                  <option value="January">January</option>
-                                  <option value="February">February</option>
-                                  <option value="March">March</option>
-                                  <option value="April">April</option>
-                                  <option value="May">May</option>
-                                  <option value="June">June</option>
-                                  <option value="July">July</option>
-                                  <option value="August">August</option>
-                                  <option value="September">September</option>
-                                  <option value="October">October</option>
-                                  <option value="November">November</option>
-                                  <option value="December">December</option>
-                                </Form.Select>
+                            
+      
+    
+      <div style={{ display: "flex", alignItems: "center", marginTop: "1rem" }}>
+      <Container>
+        <Form id="ATT_form">
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              marginTop: "1rem",
+            }}
+          >
+            <img
+              src="../images/CALENDAR_ICON.png"
+              alt="Calendar"
+              style={{
+                width: "auto",
+                height: "2rem",
+                marginRight: "1rem",
+              }}
+            />
+            <h6 style={{ fontFamily: "Helvetica", margin: 0 }}>Date of travel:</h6>
 
-                                {/** DAY */}
-                                <Form.Select
-                                  id="day"
-                                  aria-label="Select Day"
-                                  onChange={(e) => setDay(Number(e.target.value))}
-                                  style={{
-                                    marginRight: "0.5rem",
-                                    width: "7rem",
-                                    border: "1px solid #000000",
-                                    borderRadius: "4px",
-                                  }}
-                                >
-                                  <option>Day</option>
-                                  {[...Array(31)].map((_, index) => (
-                                    <option key={index + 1} value={index + 1}>
-                                      {index + 1}
-                                    </option>
-                                  ))}
-                                </Form.Select>
+            <div style={{ display: "flex", flexDirection: "column", marginLeft: "2rem" }}>
+              {/* Button to toggle calendar */}
+              <Button
+                onClick={toggleCalendar}
+                variant="outline-secondary"
+                style={{
+                  width: "22rem",
+                  border: "1px solid #000000",
+                  borderRadius: "4px",
+                  marginLeft: "3.6rem",
+                }}
+              >
+                 {formattedDate}  {/* If no date is selected, show "Select a Date" */}
+              </Button>
+            </div>
+          </div>
 
-                                {/** YEAR */}
-                                <Form.Select
-                                  id="year"
-                                  aria-label="Select Year"
-                                  onChange={(e) => setYear(Number(e.target.value))}
-                                  style={{
-                                    width: "7rem",
-                                    border: "1px solid #000000",
-                                    borderRadius: "4px",
-                                  }}
-                                >
-                                  <option>Year</option>
-                                  {years.map((year) => (
-                                    <option key={year} value={year}>
-                                      {year}
-                                    </option>
-                                  ))}
-                                </Form.Select>
-                              </div>
-                            </div>
+          {/* Floating Calendar */}
+          {isCalendarVisible && (
+            <div
+              style={{
+                position: "absolute", // Make it float
+                top: "4rem", // Position it below the button
+                left: "50%", // Center it horizontally
+                transform: "translateX(-50%)", // Adjust for centering
+                zIndex: 10, // Ensure it's above other elements
+                backgroundColor: "#fff", // Background color for visibility
+                boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)", // Subtle shadow
+                padding: "1rem",
+                borderRadius: "8px",
+              }}
+            >
+              <Calendar
+                onChange={handleDateChange}
+                value={new Date(request_date)} // Pass selected date to Calendar component
+              />
+            </div>
+          )}
+        </Form>
+      </Container>
+    </div>
+  
+
+
+
 
                             {/* NAME OF THE REQUESTOR*/}
-                            <div
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                                marginTop: "1rem",
-                              }}
-                            >
+                            <div  style={{ display: "flex",  alignItems: "center",  marginTop: "1rem",}} >
                               <img
                                 src="../images/REQUESTOR_ICON.png"
                                 alt="Requestor"

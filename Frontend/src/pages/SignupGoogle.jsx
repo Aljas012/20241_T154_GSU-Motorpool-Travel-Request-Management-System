@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState,useRef } from "react";
 import { useNavigate } from "react-router-dom"; // Fixed missing import
 import {Navbar,Container, Row,Col,Form,InputGroup,Card,Button,DropdownButton,Dropdown,Modal} from "react-bootstrap";
 import NavbarComponent from "../components/NavBarComponents";
@@ -14,50 +14,38 @@ function SignupGoogle() {
   let [name, setName] = useState("");
   let [email, setEmail] = useState("");
   let [password, setPassword] = useState("");
+  let [confirm_password, setConfirmPassword] = useState("");
+
   let [office_code, setOfficeCode] = useState("");
   let [college_name, setCollegeName] = useState("");
 
 
 
-  const [inputCode, setInputtedCode] = useState("");
+  const [inputtedCode, setInputtedCode] = useState("");
   const [showCodeModal, setShowCodeModal] = useState(false); 
-
- 
-  
-  const [inputtedCode,setCodeInputted] = useState("")
-
-
-
-
+  const inputsRef = useRef([]);
   const toggleCodeModal = () => {setShowCodeModal(showCodeModal);};
+
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalImage,setModalImage] = useState('')
+  const [buttonColor,setButtonColor] = useState('')
   
 
-
-  const signupSuccess = () => {
-    toast.success("You have successfully created an account!", {
-      position: "top-center",
-      autoClose: 2000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "colored",
-    });
-  };
   
-  const nullFields = () => {
-    toast.warning("Please fill up the required fields!", {
-      position: "top-center",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "colored",
-    });
-  };
+  const handleInputPin = (e, index) => {
+    const value = e.target.value;
+    if (/^\d$/.test(value) || value === "")
+       {
+          const newPin = [...pin];
+          newPin[index] = value; 
+          setInputtedCode(newPin);
+      }
+    const isEmpty = newPin.some(pinValue => pinValue === ""); 
+      setSubmitDisabled(isEmpty)
+   };
+
+
 
 
 
@@ -92,62 +80,103 @@ function validateEmail(email) {
 }
 
 
+  function alphaNumericChecker (password) {
+     if(password.length <= 8)
+     {
+      alert('password should not less than 8 in length')
+      return false;
+     }
+     return true;
+  }
+
+
+
+
+
+    async function validatePassword(password,confirm_password) {
+
+      if(password === "" && confirm_password === "")
+      {
+        setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732118396/warning_1_vj16yl.png')
+        setModalMessage('Unable to continue due to null input field')
+        setButtonColor('danger')
+        setModalIsOpen(true)
+        return false;
+      }
+
+      if(password !== confirm_password)
+      {
+        setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732118396/warning_1_vj16yl.png')
+        setModalMessage('Passwords do not match. Please ensure both password fields are identical.')
+        setButtonColor('danger')
+        setModalIsOpen(true)
+        return false;    
+      }
+     
+      return true;
+}
+
+
+
+
+      async function emailValidator(email)
+      {
+        email = email.trim();
+
+        if (email === "") {
+          setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732118396/warning_1_vj16yl.png')
+          setModalMessage('Email is required')
+          setButtonColor('warning')
+          setModalIsOpen(true)
+            return false;
+        }
+    
+        const allowedDomains = ['@buksu.edu.ph', '@student.buksu.edu.ph'];
+        const isValid = allowedDomains.some(domain => email.endsWith(domain));
+        
+        if (!isValid) {
+            setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732290025/complain_z5n7bb.png');
+            setModalMessage('Non-Institutional Accounts are not allowed!');
+            setButtonColor('warning')
+            setModalIsOpen(true)
+            return false;
+        }
+       return true;
+      }
+
+
+      async function NullChecker(office_code, college_name) {
+        if (college_name === "" && office_code === "") {
+
+          return { office_code: "Not Set", college_name: "Not Set" };
+        }
+        return { office_code, college_name };  // Return the values as an object
+      }
+    
 
 
 
 
 const sendEmailVerification = async (e) => {
   e.preventDefault();
-  const data = { name, email };
-    
 
-            
-  if (!validateEmail(email)) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Invalid Email',
-      text: 'The email must end with @buksu.edu.ph or @student.buksu.edu.ph.',
-      confirmButtonText: 'Try Again',
-      confirmButtonColor: '#FF0000',
-    });
-    return; // Stop further execution if the email is invalid
-  }
+  const isValid = await emailValidator(email) 
+  if(!isValid)
+    {return;}
 
-  if (
-    email.trim() === "" ||
-    name.trim() === "" 
-    ) {
-      
- 
-    Swal.fire({
-      position: "center",
-      icon: "warning",
-      title: "Missing Information",
-      text: "Input fields cannot be left blank!",
-      height:"40px",
-      width: "450px",
-      customClass: {
-        popup: "my-popup", // Adding a custom class to the popup element
-      },
-      didOpen: () => {  
-        // Inline styling for the warning icon
-        const icon = document.querySelector(".swal2-icon.swal2-warning");
-        if (icon) {
-          icon.style.fontSize = "1rem"; // Adjust the font size
-          icon.style.width = "30px";    // Adjust the width
-          icon.style.height = "30px";   // Adjust the height
-        }
-        
-        // Inline styling for the popup
-        const popup = Swal.getPopup();
-        if (popup) {
-          popup.style.marginLeft = "680px"; // Apply inline margin-left to the popup
-        }
-      },
-      
-    });
+  const validPassword = await validatePassword(password,confirm_password)
+      if(!validPassword)
+      {
+        return;
+      }
 
-  } 
+      const checker = await NullChecker(office_code, college_name);
+      office_code = checker.office_code;
+      college_name = checker.college_name;
+
+     
+      const data = { name, email };
+          
   try {
   
     const response = await fetch('http://localhost:8000/user/signup/code_sender', {
@@ -158,43 +187,33 @@ const sendEmailVerification = async (e) => {
 
     const json = await response.json();
     if (!response.ok) {
-     console.log('email already exist!')
-     Swal.fire({
-      icon: 'error',
-      title: 'Request Failed',
-      text: 'Email already in use!. Please use another email.',
-    });
-    } else {
-      Swal.fire({
-        icon: 'success',
-        title: 'Verification Email Sent',
-        text: 'Please check your email for the verification code.',
-      });
+
+          setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732290025/complain_z5n7bb.png');
+          setModalMessage('Unable to continue because you are already registered! We will redirect you to the login page');
+          setButtonColor('primary')
+          setModalIsOpen(true)
+
+          setTimeout(() => {
+            window.location = "http://localhost:5173/"; 
+          }, 4000); 
+        
+     return;
+    } 
+      alert('response is valid!')
       setShowCodeModal(true)
-    }
-   
+      return;
   } catch (error) {
-    console.error("Error:", error);
-    Swal.fire({
-      icon: 'error',
-      title: 'Request Failed',
-      text: 'An error occurred while sending your request. Please try again later.',
-    });
+    console.log('cannot run try statement');
+   return;
   }
 };
 
 
 
-const verifyPinAndRegister = async (inputtedCode) => {
-
-
-  if (office_code === "" && college_name === "") {
-    office_code = "UNSET";
-    college_name = "UNSET";
-  }
+const verifyPinAndRegister = async () => {
 
   const data = { inputtedCode, name, email, password, office_code, college_name };
-  console.log('the inputted user in frontend is ' +inputtedCode)
+  console.log('the inputted user in frontend is ',inputtedCode)
 
 
   try {
@@ -206,31 +225,22 @@ const verifyPinAndRegister = async (inputtedCode) => {
 
     const json = await response.json();
     if (!response.ok) {
-      Swal.fire({
-        
-        icon: 'error',
-        title: 'Error',
-        text: json.error,
-      });
+     alert('response from backend is unsuccessful! maybe due do already registered')
     } else {
       console.log('This is the inputted code: '+inputtedCode);
-      Swal.fire({
-        icon: 'success',
-        title: 'Registration Successful',
-        text: 'You have been successfully registered.',
-      });
+      alert('response from backend is successful!')
       setShowCodeModal(false)
       navigate('/');
     }
   } catch (error) {
     console.error("Error:", error);
-    Swal.fire({
-      icon: 'error',
-      title: 'Request Failed',
-      text: 'An error occurred while processing your request. Please try again later.',
-    });
+    alert('something went wrong! -CATCH VERIFY PIN')
   }
 };
+
+
+
+
 
 const signupAsGoogleHandler = async () => {
   try {
@@ -690,6 +700,28 @@ const GoogleAuthCallback = () => {
                       className="custom-input"
                     />
                   </InputGroup>
+                  <InputGroup className="mb-3">
+                    <Form.Control
+                      id="Confirm password"
+                      type="password"
+                      placeholder="Confirm Password"
+                      aria-label="Confirm Password"
+                      aria-describedby="basic-addon2"
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                      style={{
+                        backgroundColor: "#0760A1",
+                        color: "white",
+                        fontFamily: "Helvetica",
+                        border: "none",
+                        padding: "1rem",
+                        fontSize: "1.rem",
+                        height: "2.8rem",
+                      }}
+                        autoComplete="new-password"
+                      className="custom-input"
+                    />
+                  </InputGroup>
 
                   <Button
                     type="submit"
@@ -707,42 +739,120 @@ const GoogleAuthCallback = () => {
                     SEND VERIFICATION CODE
                   </Button>
                  
-                      <Modal show={showCodeModal} onHide={toggleCodeModal} centered>
-        <Modal.Header closeButton>
-          <Modal.Title className="text-center justify-content-center">
-            Email Verification Required
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form  onSubmit={(e) => {
-            e.preventDefault(); // Prevent the default form submission behavior
-            verifyPinAndRegister();
-          }}>
-            <Form.Group className="mb-3 d-flex align-items-center">
-            <InputGroup className="mb-2">
-        <InputGroup.Text id="basic-addon2">
-        <i className="fa-solid fa-key"></i>
-        </InputGroup.Text>
-        <Form.Control
-                  type="text"
-                  aria-label="Pin"
-                  placeholder="INPUT PIN"
-                  value={inputtedCode} // Bind the state value
-                  onChange={(e) => setCodeInputted(e.target.value)} // Update the state on input change
-                  aria-describedby="basic-addon1"
-                  style={{ padding: "12px" ,textAlign:"center" ,fontSize:"1.1rem",letterSpacing:".4rem"}}
-                  maxLength={6}
-                />
-      </InputGroup>
 
-            </Form.Group>
-            <Button type="submit" className="btn btn-primary m-1 pt-2 pb-2 w-100"style={{ letterSpacing: "0.6rem" }}>SUBMIT</Button>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer className="text-center justify-content-center">
-          <p>A verification code has been sent to your email.</p>
-        </Modal.Footer>
-      </Modal>
+
+
+                  {/*showCodeModal*/}
+     <Modal show={showCodeModal} onHide={toggleCodeModal} centered>
+            <Modal.Header closeButton></Modal.Header>
+            <Modal.Body className="p-2" style={{ padding: "0 24px" }}>
+            
+              <div className="d-flex flex-column justify-content-center align-items-center pt-4">
+                <img src="https://res.cloudinary.com/dvhfgstud/image/upload/v1732194851/authentication_jdckfv.png"  alt="Company Logo" draggable="false"    style={{ width: "90px", height: "90px" }}/>
+                <h6 className="mt-3">Verify your account</h6>
+                <p className="text-center text-muted" style={{ maxWidth: "300px", fontSize: "14px", marginTop: "8px" }}> Enter the verification code sent to your email address below.  </p>
+              </div>
+
+              <div style={{ margin: "0 auto", maxWidth: "350px" }}>
+              <Form onSubmit={(e) => { e.preventDefault();   verifyPinAndRegister() ; }}>
+                  <Form.Group className="mb-3 d-flex justify-content-between">
+                    {Array.from({ length: 6 }, (_, i) => (
+                        <Form.Control
+                          key={i}
+                          ref={(el) => (inputsRef.current[i] = el)}
+                          type="text"
+                          inputMode="numeric"
+                          maxLength="1"
+                          pattern="\d*"
+                          aria-label={`pin${i + 1}`}
+                          className="text-center mx-1"
+                          style={{
+                            height: "50px",
+                            width: "50px",
+                            fontSize: "24px",
+                            border: "1px solid #ddd",
+                            borderRadius: "5px"
+                          }}
+                          onInput={(e) => {
+                            const input = e.target;
+                            const value = input.value;
+                            if (!/^\d$/.test(value)) input.value = ""; // Prevent non-numeric input
+                            const nextInput = input.nextElementSibling;
+                            if (value && nextInput) nextInput.focus(); // Auto-focus next field
+                          }}
+                          onKeyDown={(e) => {
+                            const input = e.target;
+                            if (e.key === "Backspace" && !input.value) {
+                              const prevInput = input.previousElementSibling;
+                              if (prevInput) prevInput.focus();
+                            }
+                          }}
+                        />
+                    ))}
+                  </Form.Group>
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    className="w-100 text-white"
+                    
+                    style={{ padding: "10px 0", fontWeight: "bold" }}
+                  >
+                    SUBMIT
+                  </Button>
+                </Form>
+              </div>
+            </Modal.Body>
+
+            <Modal.Footer className="justify-content-center m-2">
+                  
+            </Modal.Footer>
+          </Modal>
+
+
+
+
+
+
+                      
+
+    <Modal show={modalIsOpen}
+            onHide={() => setModalIsOpen(false)}
+            centered
+            size="sm"
+            animation={true}
+          >
+            <Modal.Body
+              style={{
+                textAlign: 'center',  
+                padding: '20px',
+                backgroundColor: 'white',
+                color: '#721c24',
+              }}
+            >
+        
+              {modalImage && <img src={modalImage} alt="Modal Image" style={{ width: '50px', height: '50px', marginBottom: '20px', borderRadius: '8px' }} />}
+              
+              <p style={{fontSize:".9rem"}}>{modalMessage}</p>
+              <Button
+                variant= {buttonColor}
+                onClick={() => setModalIsOpen(false)}
+                style={{
+                  marginTop: '15px',
+                  width: '100%',
+                  borderRadius: '5px',
+                }}
+              >
+              continue
+              </Button>
+            </Modal.Body>
+          </Modal>
+
+
+
+
+
+
+
                   <div
                     style={{
                       display: "flex",
