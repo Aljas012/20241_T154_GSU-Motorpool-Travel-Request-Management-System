@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const { event_schema } = require('./user_events_model');
 
 const authorityToTravelSchema = new Schema({
     name: { type: String, required: true },
@@ -25,10 +26,16 @@ const user_schema = new Schema({
     office_code: { type: String, required: false },
     college_name: { type: String, required: false },
     temporary_key: { type: String, required: false },
-    google_id: { type: String, required: false },
-    authority_to_travel: [authorityToTravelSchema], // Array of authorityToTravelSchema objects
+    google_id: {type: String, sparse: true},
+    google_refresh_token: { type: String, default: null},
+    google_access_token: { type: String,default: null},
+    calendar_connected: {type: Boolean,default: false},
+    last_token_refresh: {type: Date,default: null},
+    authority_to_travel: [authorityToTravelSchema], 
+    events:[event_schema],
 }, 
-{ timestamps: true }); // This is for the user-level createdAt and updatedAt timestamps.
+ 
+{ timestamps: true }); 
 
 const User = mongoose.model('user_data', user_schema);
 

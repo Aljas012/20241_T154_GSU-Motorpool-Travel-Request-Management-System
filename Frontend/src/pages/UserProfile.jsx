@@ -55,48 +55,60 @@ const confirmLogout = () => {
 function UserProfile() {
   const [modal, setModal] = useState(false);
   const navigate = useNavigate();
-
   const [inputName, setName] = useState("");
   const [inputEmail, setEmail] = useState("");
   const [inputOffice, setOffice] = useState("");
   const [newCode, setCode] = useState("");
-  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [errorModal,setShowErrorModal] = useState(false)
+  const [errorMessage,setErrorMessage] = useState('')
+  const [errorColor,setErrorColor] = useState('')
+  const [errorIcon,setErrorIcon] = useState('')
+  const [errorDiv,setErrorDiv] = useState('')
+  const [storageChange, setStorageChange] = useState(0);
+  const warning = '#FCC737'
+  const danger = '#C63C51'
 
-  const userInfo = JSON.parse(localStorage.getItem("user_info")) || {};
-  const id = userInfo.user_id;
-  const office_code = userInfo.office_code || "";
-  const college_name = userInfo.college_name || "";
-  const name = userInfo.name || "";
-  const email = userInfo.email || "";
 
-  // Initialize state with localStorage values
   useEffect(() => {
-    const userInfo = localStorage.getItem("user_info");
+    // This function will run when localStorage changes in other windows
+    const handleStorageChange = (e) => {
+        if (e.key === "user_info") {
+            const userInfo = JSON.parse(localStorage.getItem("user_info"));
+            if (userInfo) {
+                setName(userInfo.name || "");
+                setEmail(userInfo.email || "");
+                setOffice(userInfo.college_name || "");
+                setCode(userInfo.office_code || "");
+            }
+            setStorageChange(prev => prev + 1); // Trigger re-render
+        }
+    };
 
+    // Add event listener
+    window.addEventListener('storage', handleStorageChange);
+
+    // Cleanup
+    return () => {
+        window.removeEventListener('storage', handleStorageChange);
+    };
+}, []);
+
+
+
+  useEffect(() => {
+    const userInfo = JSON.parse(localStorage.getItem("user_info"));
     if (userInfo) {
-      // If user_info exists in localStorage, parse it
-      const parsedUserInfo = JSON.parse(userInfo);
-      setName(parsedUserInfo.name || "");
-      setEmail(parsedUserInfo.email || "");
-      setOffice(parsedUserInfo.office || "");
-      setCode(parsedUserInfo.office_code || "");
+        setName(userInfo.name || "");
+        setEmail(userInfo.email || "");
+        setOffice(userInfo.college_name || "");
+        setCode(userInfo.office_code || "");
     } else {
-      // If user_info is not found in localStorage
-      console.error("User info not found in localStorage");
-      // Optionally, navigate the user to the login page or show an error message
-      navigate("/login");
+        navigate("/login");
     }
   }, [navigate]);
 
-  const handleClick = () => {
-    navigate(`/user/id=${id}/homepage`);
-  };
 
-  const handleRefresh = () => {
-    sessionStorage.setItem("refreshFlag", "true");
-    window.location.reload();
-  };
 
   const toggleModal = () => {
     setModal(!modal);
@@ -109,139 +121,108 @@ function UserProfile() {
     setOffice(college.toUpperCase());
   };
 
-  const handleUpdate = async (e) => {
-    e.preventDefault();
 
-    const updatedInformation = {
-      inputName,
-      inputEmail,
-      inputOffice, // office
-      newCode, // office_code
-      collegeName: inputOffice, // Assuming inputOffice holds the college name
+
+    const checkUpdates = async () => {
+        const userInfo = JSON.parse(localStorage.getItem("user_info"));
+        const userId = userInfo?.user_id; 
+        try {
+            const response = await fetch(`http://localhost:8000/user/${userId}/check_updates`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            
+            const updateResponse = await response.json();
+            
+            if (updateResponse.hasUpdates) {  
+
+                setName(updateResponse.user.name || "");
+                setEmail(updateResponse.user.email || "");
+                setOffice(updateResponse.user.college_name || "");
+                setCode(updateResponse.user.office_code || "");
+                
+                // Update localStorage
+                const updatedUserInfo = {
+                    ...userInfo,
+                    name: updateResponse.user.name,
+                    email: updateResponse.user.email,
+                    college_name: updateResponse.user.college_name,
+                    office_code: updateResponse.user.office_code
+                };
+                localStorage.setItem("user_info", JSON.stringify(updatedUserInfo));
+            }
+        } catch (error) {
+            console.error("Error checking updates:", error);
+        }
     };
 
-    const token = localStorage.getItem("auth_token");
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            checkUpdates();
+        }, 20000); 
+
+        return () => clearInterval(interval); 
+    }, []);
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
     const userInfo = JSON.parse(localStorage.getItem("user_info"));
-    const userId = userInfo?.user_id;
-
-    if (!token) {
-      console.error("Token is missing");
-      setError("Authorization token is missing. Please log in again.");
-      return;
-    }
-
-    if (!userId) {
-      console.error("User ID is missing from localStorage");
-      setError("User ID is missing. Please try logging in again.");
-      return;
-    }
-
-    const url = `http://localhost:8000/user/${userId}/update_profile`;
+    const userId = userInfo?.user_id; 
+    const updatedInformation = {
+        inputName,
+        inputOffice,
+        newCode,
+        userId,
+        inputEmail: userInfo.email  // Include email in the update
+    };
 
     try {
-      const response = await fetch(url, {
-        method: "PATCH",
-        body: JSON.stringify(updatedInformation),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+        const response = await fetch(`http://localhost:8000/user/${userId}/update_profile`, {
+            method: "PATCH",
+            body: JSON.stringify(updatedInformation),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
 
-      const json = await response.json();
-      if (!response.ok) {
-        console.error("Update failed", json);
-        setError(json.message || "Failed to update profile. Please try again.");
-        return;
-      }
+        const data = await response.json();
 
-      // Update state and localStorage with the new data immediately
-      const updatedUserInfo = {
-        ...userInfo,
-        name: inputName,
-        email: inputEmail,
-        office: inputOffice,
-        office_code: newCode,
-        college_name: inputOffice, // Here we update the college_name
-      };
+        if (!response.ok) {
+            setShowErrorModal(true);
+            setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1733419224/warning_3_pkhfuq.png');
+            setErrorColor('white');
+            setErrorDiv(warning);
+            setErrorMessage('Status (404) - User not found');
+            return;
+        }
 
-      // Update the localStorage with the updated user info
-      localStorage.setItem("user_info", JSON.stringify(updatedUserInfo));
+        // Update state with the response data
+        setName(data.user.name);
+        setEmail(userInfo.email);  // Keep the existing email
+        setOffice(data.user.college_name);
+        setCode(data.user.office_code);
 
-      // Immediately update the state with the updated values
-      // setName(inputName);
-      // setEmail(inputEmail);
-      // setOffice(inputOffice);
-      // setCode(newCode);
+        const updatedUserInfo = {
+            ...userInfo,  
+            name: data.user.name,
+            email: userInfo.email,  // Keep the existing email
+            college_name: data.user.college_name,
+            office_code: data.user.office_code
+        };
+        
+        localStorage.setItem("user_info", JSON.stringify(updatedUserInfo));
+        updateSuccess();
 
-      // Provide success feedback
-      // handleRefresh(); // option ni if di mag work ang update
-      updateSuccess();
-
-      //  // Reset form fields after a successful update
-      setName(inputName);
-      setEmail(input);
-      setOffice(college_name);
-      setCode(office_code);
-
-      // Clear errors
-      setError(null);
     } catch (error) {
-      console.error("Error during update", error);
-      setError(
-        "An error occurred while updating the profile. Please try again."
-      );
+        setShowErrorModal(true);
+        setErrorColor('white');
+        setErrorDiv(warning);
+        setErrorMessage('Something went wrong while updating your information! Please check your internet connection.');
     }
-  };
-
-  const fetchUserData = async () => {
-    const token = localStorage.getItem("auth_token");
-    const userInfo = JSON.parse(localStorage.getItem("user_info"));
-    const userId = userInfo?.user_id;
-
-    if (!token || !userId) {
-      console.error("Token or user ID is missing");
-      return;
-    }
-
-    const url = `http://localhost:8000/user/${userId}/profile`;
-
-    try {
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const userData = await response.json();
-      if (response.ok) {
-        // Update the state with the new user data
-        setName(userData.name);
-        setEmail(userData.email);
-        setOffice(userData.college_name);
-        setCode(userId.office_code);
-
-        // Update localStorage with the latest data as well
-        localStorage.setItem(
-          "user_info",
-          JSON.stringify({
-            ...userInfo,
-            name: userData.name,
-            email: userData.email,
-            office: userData.college_name,
-            office_code: userData.office_code,
-          })
-        );
-      } else {
-        console.error("Failed to fetch updated user data:", userData.message);
-      }
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-    }
-  };
-
-
+};
 
 
   const [requestCount, setRequestCount] = useState(null);
@@ -250,35 +231,32 @@ function UserProfile() {
 
 
   const countTotalRequest = async () => {
-    const userInfo = JSON.parse(localStorage.getItem("user_info"));
-    const userId = userInfo?.user_id;
+    
+  const userInfo = JSON.parse(localStorage.getItem("user_info"));
+  const userId = userInfo?.user_id; 
+    const data = {userId};
     setLoading(true);
     try {
      
       const response = await fetch(`http://localhost:8000/user/total_request`, {
         method: "POST",
-        body: JSON.stringify({ userId }),
+        body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json",
         },
       });
   
-      if (!response.ok) {
-        console.log("Unable to fetch total request!");
-      } 
-      
-      const contentType = response.headers.get("content-type");
-      if (!contentType || !contentType.includes("application/json")) {
-        console.error("Response is not in JSON format");
-        return;
-      }
-      setLoading(false);
 
+      setLoading(false);
       const responseData = await response.json(); 
       setRequestCount(responseData.requestCount);
       setTodaysRequest(responseData.totalToday)
     } catch (error) {
-      console.error("Error fetching total requests:", error);
+      setShowErrorModal(true)
+      setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1733419224/warning_3_pkhfuq.png')
+      setErrorColor('white')
+      setErrorDiv(warning)
+      setErrorMessage('Something went wrong while fetching total request. Please check your internet connection')
     }
   };
   
@@ -287,24 +265,19 @@ function UserProfile() {
 
   const completedServices = async () => {
     const userInfo = JSON.parse(localStorage.getItem("user_info"));
-    const userId = userInfo?.user_id;  
+    const userId = userInfo?.user_id; 
+    const data = {userId};
     setLoading(true);
     try {
-      
-        let response = await fetch('http://localhost:8000/user/completed_services', {
+        const response = await fetch('http://localhost:8000/user/completed_services', {
             method: "POST",
-            body: JSON.stringify({ userId }), 
+            body: JSON.stringify(data), 
             headers: {
                 "Content-Type": "application/json",  
             },
         });
 
-        if (!response.ok) {
-          console.error(`Failed to fetch completed services. Status: ${response.status}`);
-          alert("Failed to fetch completed services. Please try again later.");
-       
-          return;
-      }
+   
 
         const responseData = await response.json();  
         setLoading(false);
@@ -316,17 +289,24 @@ function UserProfile() {
           alert("An error occurred while processing the response.");
       }
   } catch (error) {
-      console.error("Error while fetching completed services:", error);
-      alert("An error occurred while fetching completed services. Please try again later.");
+    setShowErrorModal(true)
+    setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1733419224/warning_3_pkhfuq.png')
+    setErrorColor('white')
+    setErrorDiv(warning)
+    setErrorMessage('Something went wrong while fetching completed services. Please check your internet connection')
   }
 };
 
-
+  
+const handleClick = () => {
+  const userInfo = JSON.parse(localStorage.getItem("user_info"));
+  const user_id = userInfo?.user_id;
+  navigate(`/user/id=${user_id}/homepage`);
+};
 
         useEffect(() => {
           countTotalRequest();
           completedServices();
-          fetchUserData()
         }, []); 
       
   return (
@@ -423,7 +403,7 @@ function UserProfile() {
                         marginLeft: "8px", // Optional: Space between label and value
                       }}
                     >
-                      {name}
+                      {inputName}
                     </h5>
                   </div>
 
@@ -446,7 +426,7 @@ function UserProfile() {
                         marginLeft: "8px", // Optional: Space between label and value
                       }}
                     >
-                      {email}
+                      {inputEmail}
                     </h5>
                   </div>
 
@@ -469,7 +449,7 @@ function UserProfile() {
                         marginLeft: "8px", // Optional: Space between label and value
                       }}
                     >
-                      {office_code}
+                      {newCode}
                     </h5>
                   </div>
 
@@ -492,7 +472,7 @@ function UserProfile() {
                         marginLeft: "8px", // Optional: Space between label and value
                       }}
                     >
-                      {college_name}
+                      {inputOffice}
                     </h5>
                   </div>
 
@@ -676,7 +656,7 @@ function UserProfile() {
                         </InputGroup.Text>
                         <Form.Control
                           type="text"
-                          placeholder={name}
+                          placeholder={inputEmail}
                           aria-label="Username"
                           aria-describedby="basic-addon1"
                           value={inputName}
@@ -692,11 +672,11 @@ function UserProfile() {
                         </InputGroup.Text>
                         <Form.Control
                           type="text"
-                          placeholder={email}
+                          placeholder={inputEmail}
                           aria-label="Email"
                           aria-describedby="basic-addon1"
                           value={inputEmail}
-                          readOnly
+                          disabled
                           onChange={(e) => setEmail(e.target.value)}
                         />
                       </InputGroup>
@@ -1074,6 +1054,17 @@ function UserProfile() {
               </div>
             </Col>
           </Row>
+          
+          <Modal show={errorModal} centered>
+                  <Modal.Body style={{ backgroundColor: errorColor, borderRadius: '0px', display: 'flex',
+                      justifyContent: 'center',alignItems: 'center',flexDirection: 'column',padding: 0,}}>
+                    <img src={errorIcon} alt="no internet" height="90px" width="90px" draggable={false} style={{marginBottom: "1.5em",marginTop:'2rem'}}/>
+                    <p style={{color: 'black',textAlign:'center',margin:'.5rem'}}>{errorMessage}</p>
+                    <div style={{display:'flex',backgroundColor:errorDiv,width:'100%',  padding: '10px',marginTop:'1em',justifyContent:'center'}}>
+                    <button style={{ backgroundColor: 'transparent',border:'none',margin:'.8em',color:'white'}} onClick={()=>setShowErrorModal(false)}> DISMISS </button>
+                   </div>
+                  </Modal.Body>
+          </Modal>
         </Container>
       </main>
 

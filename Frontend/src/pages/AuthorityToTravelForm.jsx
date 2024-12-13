@@ -132,19 +132,18 @@ import ATTNav from "../components/ATT_Nav";
       );
   
       if (response.ok) {
-        // Handle the successful PDF generation 
+    
         const pdfBlob = await response.blob();
         const pdfUrl = URL.createObjectURL(pdfBlob);
   
         console.log("PDF generated successfully. Redirecting to the PDF...");
-  
-        // Create a link element for downloading the PDF
+
         const link = document.createElement("a");
         link.href = pdfUrl;
-        link.download = "AuthorityToTravel.pdf"; // Set the download file name
-        document.body.appendChild(link); // Append the link to the document
-        link.click(); // Trigger the download
-        document.body.removeChild(link); // Clean up the link
+        link.download = "AuthorityToTravel.pdf";
+        document.body.appendChild(link); 
+        link.click(); 
+        document.body.removeChild(link); 
         await saveToDatabase();
       } else {
         // Handle errors from the server

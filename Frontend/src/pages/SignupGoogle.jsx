@@ -1,5 +1,5 @@
 import React from "react";
-import { useState,useRef } from "react";
+import { useState,useRef,useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // Fixed missing import
 import {Navbar,Container, Row,Col,Form,InputGroup,Card,Button,DropdownButton,Dropdown,Modal} from "react-bootstrap";
 import NavbarComponent from "../components/NavBarComponents";
@@ -25,12 +25,19 @@ function SignupGoogle() {
   const [showCodeModal, setShowCodeModal] = useState(false); 
   const inputsRef = useRef([]);
   const toggleCodeModal = () => {setShowCodeModal(showCodeModal);};
-
+  const [time,setTime] = useState(5);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   const [modalImage,setModalImage] = useState('')
   const [buttonColor,setButtonColor] = useState('')
-  
+  const [errorModal,setShowErrorModal] = useState(false)
+  const [errorMessage,setErrorMessage] = useState('')
+  const [errorColor,setErrorColor] = useState('')
+  const [errorIcon,setErrorIcon] = useState('')
+  const [errorDiv,setErrorDiv] = useState('')
+  const warning = '#FCC737'
+  const danger = '#C63C51'
+
 
   
   const handleInputPin = (e, index) => {
@@ -44,9 +51,6 @@ function SignupGoogle() {
     const isEmpty = newPin.some(pinValue => pinValue === ""); 
       setSubmitDisabled(isEmpty)
    };
-
-
-
 
 
 
@@ -68,6 +72,20 @@ function SignupGoogle() {
 
 //================================================================================
 
+
+useEffect(() => {
+  if (time < 0) return;
+  const interval = setInterval(() => {
+    setTime(prevTime => {
+      if (prevTime < 0) {
+        clearInterval(interval);
+        return 0;
+      }
+      return prevTime - 1;
+    });
+  }, 1000);
+  return () => clearInterval(interval);
+}, [time]);
 
 
 function validateEmail(email) {
@@ -135,10 +153,12 @@ function validateEmail(email) {
         const isValid = allowedDomains.some(domain => email.endsWith(domain));
         
         if (!isValid) {
-            setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732290025/complain_z5n7bb.png');
-            setModalMessage('Non-Institutional Accounts are not allowed!');
-            setButtonColor('warning')
-            setModalIsOpen(true)
+          setShowErrorModal(true)
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732290025/complain_z5n7bb.png');
+          setErrorMessage('Non-Institutional Accounts are not allowed!')
+          setErrorDiv(warning)
+          setErrorColor('white')
+
             return false;
         }
        return true;
@@ -173,7 +193,6 @@ const sendEmailVerification = async (e) => {
       const checker = await NullChecker(office_code, college_name);
       office_code = checker.office_code;
       college_name = checker.college_name;
-
      
       const data = { name, email };
           
@@ -187,15 +206,15 @@ const sendEmailVerification = async (e) => {
 
     const json = await response.json();
     if (!response.ok) {
-
-          setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732290025/complain_z5n7bb.png');
-          setModalMessage('Unable to continue because you are already registered! We will redirect you to the login page');
-          setButtonColor('primary')
-          setModalIsOpen(true)
-
+            setShowErrorModal(true)
+            setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732290025/complain_z5n7bb.png');
+            setErrorMessage('Unable to continue because you are already registered! We will redirect you to the login page');
+            setErrorColor('white')
+            setErrorDiv(warning)
+            setTime(5)
           setTimeout(() => {
             window.location = "http://localhost:5173/"; 
-          }, 4000); 
+          }, 5000); 
         
      return;
     } 
@@ -244,7 +263,6 @@ const verifyPinAndRegister = async () => {
 
 const signupAsGoogleHandler = async () => {
   try {
-    // Make a request to your backend to get the Google OAuth URL
     const response = await fetch('http://localhost:8000/user/signup_as_google', {
       method: 'POST',
     });
@@ -263,40 +281,6 @@ const signupAsGoogleHandler = async () => {
   }
 };
       
-
-
-const GoogleAuthCallback = () => {
-  const navigate = useNavigate();
-  alert('calloback function is running!')
-  useEffect(() => {
-
-    const params = new URLSearchParams(window.location.search);
-    for (const [key, value] of params.entries()) {
-      console.log(key, value); // Log all parameters to ensure they are correctly parsed
-    }
-    const token = params.get('token');
-
-    const userInfo = {
-      id: params.get('id'),
-      name: params.get('name'),
-      email: params.get('email'),
-      office_code: params.get('office_code'),
-      college_name: params.get('college_name'),
-    };
-    console.log('Extracted user info:', userInfo); 
-    // Store data in localStorage
-    if (token !== null) {
-      localStorage.setItem('auth_token', token);
-      localStorage.setItem('user_info', JSON.stringify(userInfo));
-      console.log('redirecting to homepage')
-      navigate(`http://localhost:5173/user/id=${userInfo.id}/homepage`); // Redirect to the homepage
-    } else {
-      localStorage.setItem('auth_token',"");
-      localStorage.setItem('user_info',"");
-    }
-  }, [navigate]);
-
-};
 
 
   return (
@@ -810,11 +794,72 @@ const GoogleAuthCallback = () => {
 
 
 
-
+          <Modal show={errorModal} centered>
+                  <Modal.Body style={{ 
+                    backgroundColor: errorColor, 
+                    borderRadius: '0px', 
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    flexDirection: 'column',
+                    padding: 0,
+                  }}>
+                    <img 
+                      src={errorIcon} 
+                      alt="no internet" 
+                      height="90px" 
+                      width="90px" 
+                      draggable={false} 
+                      style={{
+                        marginBottom: "1.5em",
+                        marginTop:'2rem'
+                      }}
+                    />
+                    <p style={{
+                      color: 'black',
+                      textAlign:'center',
+                      margin:'.5rem'
+                    }}>
+                      {errorMessage}
+                    </p>
+                    <div style={{
+                      display:'flex',
+                      backgroundColor: errorDiv,
+                      width:'100%',
+                      padding: '10px',
+                      marginTop:'1em',
+                      justifyContent:'center'
+                    }}>
+                      {errorMessage.includes('already registered') ? (
+                        <h6 style={{color:'white'}}>Redirecting in <span style={{color:'red'}}>{time}</span> seconds...</h6>
+                      ) : (
+                        <Button
+                          onClick={() => setShowErrorModal(false)}
+                          variant="light"
+                          size="sm"
+                          style={{
+                            borderRadius: '0',
+                            backgroundColor:'transparent',
+                            paddingLeft: '20px',
+                            border:'none',
+                            color:'white',
+                            fontSize:'1rem',
+                            fontWeight:'bold',
+                            paddingRight: '20px',
+                            marginTop:'.3em',
+                            marginBottom:'.4em'
+                          }}
+                        >
+                          Dismiss
+                        </Button>
+                      )}
+                    </div>
+                  </Modal.Body>
+          </Modal>
 
 
                       
-
+{/* 
     <Modal show={modalIsOpen}
             onHide={() => setModalIsOpen(false)}
             centered
@@ -845,7 +890,7 @@ const GoogleAuthCallback = () => {
               continue
               </Button>
             </Modal.Body>
-          </Modal>
+          </Modal> */}
 
 
 

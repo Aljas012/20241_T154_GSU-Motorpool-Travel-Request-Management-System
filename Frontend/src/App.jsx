@@ -4,10 +4,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 /**ADMIN INTERFACES */
 import AdminLandingPage from "./pages/MOTORPOOL/AdminLandingPage";
 import MotorpoolHomePage from "./pages/MOTORPOOL/MotorpoolHomePage";
-//import MotorpoolHomePage from "./pages/MOTORPOOL/MotorpoolHomePage";
-
-
-
+import HeadHomePage from "./pages/GSU HEAD/HeadHomePage";
+import HeadFinalApproved from "./pages/GSU HEAD/HeadFinalApproved";
 
 
 
@@ -29,6 +27,11 @@ import Profile from "./pages/UserProfile";
 import PrivateRoute from "./routeChecker";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import ProtectedRoute from "./routeChecker";
+import RedirectPage from "./pages/redirectPage";
+import FinalApproved from "./pages/MOTORPOOL/FInalApproved"
+
+
+
 
 function App() {
   return (
@@ -37,26 +40,28 @@ function App() {
 
 
         <Route index element={<UserLandingPage />} />
-        
         <Route path="/admin/AdminLandingPage" element={<AdminLandingPage/>} />
-      
+        <Route path="/redirect" element={<RedirectPage />} />
 
 
         <Route path="/user/signup_google" element={<SignupGoogle />} />
         <Route path="/user/forgot_password" element={<ForgotPassword />} />
         <Route path="/user/recover_account" element={<RecoverAccount />} />
-        <Route path="/user/" element = {<loginAsGoogle />}/>
+        {/* <Route path="/user/" element = {<loginAsGoogle />}/> */}
 
         <Route element={<ProtectedRoute />}>  
         <Route path="/admin/view_request/:id/:userId" element={<ViewRequest />} />
-          <Route path="/admin/homepage" element={<MotorpoolHomePage />} />
-          <Route path="/user/:id/homepage" element={<UserHomePage />} />  
-          <Route path="/user/att_forms" element={<AuthorityToTravelForm />} />
-          <Route path="/user/request_forms" element={<RequestToTravelForm />} />
-          <Route path="/user/about_us" element={<AboutUs />} />
-          <Route path="/user/user_guide" element={<UserGuide />} />
-          <Route path="/user/request" element={<Request />} />
-          <Route path="/user/:id/profile" element={<Profile />} />
+        <Route path="/admin/head_homepage" element={<HeadHomePage />} />
+        <Route path="/admin/head_final_approved/:requestId/:userId" element={<HeadFinalApproved />} />
+        <Route path="/admin/homepage" element={<MotorpoolHomePage />} />
+        <Route path="/admin/Final_approved/:requestId/:userId" element={<FinalApproved />} />
+        <Route path="/user/:id/homepage" element={<UserHomePage />} />  
+        <Route path="/user/att_forms" element={<AuthorityToTravelForm />} />
+        <Route path="/user/request_forms" element={<RequestToTravelForm />} />
+        <Route path="/user/about_us" element={<AboutUs />} />
+        <Route path="/user/user_guide" element={<UserGuide />} />
+        <Route path="/user/request" element={<Request />} />
+        <Route path="/user/:id/profile" element={<Profile />} />
           {'<Route path="/user/att_forms/download" element={<AuthorityToTravelFormDownload />} />'}
 
         </Route>

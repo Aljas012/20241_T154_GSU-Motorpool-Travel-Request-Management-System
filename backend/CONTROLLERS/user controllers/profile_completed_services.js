@@ -7,7 +7,6 @@ const totalCompletedServices = async (req,res) =>
         
         try{
             const completedData = await request_data.find({ reference_id: userId, status: 'Completed' });
-            
             return res.status(200).json({ completedCount: completedData.length });
         }catch(error)
         {

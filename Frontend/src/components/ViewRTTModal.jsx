@@ -291,7 +291,7 @@ if (rttData?.travel_details?.return_arrival_time) {
 
                     {/** DATE */}
                     <div className="alignmentVRTTC">
-                      <p className="noMargMHP">Date: || 'No data available'</p>
+                      <p className="noMargMHP">Date:</p>
                       {/** REFLECT DIRI */}
                       <div className="alignCenterVRDates">
                        <Form.Control

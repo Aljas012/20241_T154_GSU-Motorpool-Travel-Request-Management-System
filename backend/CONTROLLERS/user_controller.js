@@ -6,9 +6,6 @@ const userGenerateToken =require("../MIDDLEWARES/token_generator").userGenerateT
 const  { signupVerification, forgotPassword ,passwordGeneratorForGoogleSignup} = require('../MIDDLEWARES/email messages');
 const {getUserData} =require ('../MIDDLEWARES/fetch_userdata_signup')
 const { OAuth2Client} = require ('google-auth-library')
-const {sessionConfig} = require('../MIDDLEWARES/session')
-const passport = require('passport')
-const GoogleStrategy = require( 'passport-google-oauth2' ).Strategy;
 const fs = require("fs");
 const path = require("path");
 const PDFDocument = require("pdfkit");
@@ -179,8 +176,7 @@ const login_user = async (req, res) => {
     // Check if the email exists
     const user = await user_data.findOne({ email });
     if (!user) {
-      return res.status(401).json({ error: "Invalid email or password" });
-    }
+      return res.status(401).json({ error: "Invalid email or password" });   }
 
     // Compare the password with the hashed password in the database
     const isMatch = await bcrypt.compare(password, user.password);
@@ -365,7 +361,8 @@ const changePassword = async (req, res) => {
 
 const signupAsGoogle = async (req, res) => {
   res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
-  res.header('Referrer-Policy', 'no-referrer-when-downgrade');
+        res.header('Referrer-Policy', 'no-referrer-when-downgrade');
+
   const redirectUrl = 'http://localhost:8000/user/googleCallback';
 
   const oAuth2Client = new OAuth2Client(
@@ -378,7 +375,8 @@ const signupAsGoogle = async (req, res) => {
       access_type: 'offline',
       scope: [
         'https://www.googleapis.com/auth/userinfo.email',
-        'https://www.googleapis.com/auth/userinfo.profile'
+        'https://www.googleapis.com/auth/userinfo.profile',
+        'https://www.googleapis.com/auth/calendar'
       ],
       prompt: 'consent',
   });
@@ -386,135 +384,9 @@ const signupAsGoogle = async (req, res) => {
 };
 
 
-const handleGoogleCallback = async (req, res) => {
-  const code = req.query.code;
-
-  try {
-      // Setting up the OAuth2 client with credentials
-      const redirectUrl = 'http://localhost:8000/user/googleCallback';
-      const oAuth2Client = new OAuth2Client(
-          process.env.GOOGLE_AUTH_CLIENT_ID,
-          process.env.GOOGLE_AUTH_CLIENT_SECRET,
-          redirectUrl
-      );
-    
-      const response = await oAuth2Client.getToken(code);
-      oAuth2Client.setCredentials(response.tokens); // Set the credentials to the client
-
-      // Fetching user data from Google
-      const accessToken = response.tokens.access_token;
-      const userData = await getUserData(accessToken); // Get user data from the utility function
-     
-
-      const { id, email, name } = userData; // Destructure the user data
-      let user = await user_data.findOne({ google_id: id });
-      if(user)
-          { 
-            const alreadyRegistered = 'true';
-            return res.redirect(`http://localhost:5173?registered=${alreadyRegistered}`)
-          } 
-
-      function generateRandomPassword(length = 12) {
-        // Generate random bytes and convert them to a base64 string
-        return crypto.randomBytes(length).toString('base64').slice(0, length);
-      } 
-      generatedPassword = generateRandomPassword();
-      
-      const hashedPassword = await bcrypt.hash(generatedPassword, 12);  
-      if (!user) {
-          // If user does not exist, create a new user
-          user = new user_data({
-              name,
-              email,
-              password:hashedPassword,
-              office_code: '', // Default empty, can be updated later
-              college_name: '', // Default empty, can be updated later
-              temporary_key: '', // No temporary key required
-              google_id: id // Save the Google ID
-          });
-          await user.save(); // Save the new user to the database
-      }
- 
-    const token = userGenerateToken(user.id, user.college_name, user.name, user.email, user.office_code);
-
-      
-     let emailHtmlContent = passwordGeneratorForGoogleSignup(name,generatedPassword);  
-      const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true,
-        auth: {
-          user: gsu_email,
-          pass: gsu_password,
-        },
-      });
-    
-      const mailOptions = {
-        from: process.env.GSU_EMAIL,
-        to: email,
-        subject: 'Password Generator',
-        html:   emailHtmlContent,
-      };
-    
-      try {
-        await transporter.sendMail(mailOptions);
-        console.log('Email sent to:', email);
-     res.redirect(`http://localhost:5173?token=${token}&id=${user.id}&name=${user.name}`);
-      } catch (error) {
-        console.error('Error sending email:', error);
-        return res.status(500).json({ error: 'Error sending email' });
-      }
-    
-  } catch (err) {
-      console.error('Error with signing in as Google:', err);
-      res.status(500).json({ error: 'Failed to sign in with Google' });
-  }
-};
-
-//=================== recaptcha holder  ============================//
-
-
-
-
-
 
 /**============================  PROFILE UPDATE CONTROLLER  ========================= */
 
-const updateProfile = async (req, res) => {
-  const { inputName, inputEmail, inputOffice, newCode } = req.body; // Retrieve new fields from the request body
-  const { id } = req.params; // Get user ID from the request parameters
-
-  try {
-    // Find the user by ID
-    const user = await user_data.findById(id);
-    if (!user) {
-      return res.status(404).json({ message: "User not found." });
-    }
-
-    // Update user information only if new data is provided
-    if (inputName && inputName.trim() !== "") {
-      user.name = inputName; // Update name if provided
-    }
-    if (inputEmail && inputEmail.trim() !== "") {
-      user.email = inputEmail; // Update email if provided
-    }
-    if (inputOffice && inputOffice.trim() !== "") {
-      user.college_name = inputOffice; // Update college name if provided
-    }
-    if (newCode && newCode.trim() !== "") {
-      user.office_code = newCode; // Update office code if provided
-    }
-
-    // Save the updated user
-    await user.save();
-    res.status(200).json({ message: "User information updated successfully!" });
-  } catch (error) {
-    console.error("Error updating user:", error); // Log the error for debugging
-    return res
-      .status(500)
-      .json({ message: "An error occurred while updating user information." });
-  }
-};
 
 
 
@@ -878,12 +750,10 @@ module.exports = {
   createTravelForm,
   createRequestForm,
   changePassword,
-  updateProfile,
   generatePdf,
   pinGmailSender,
   verifyPin,
   verifyEmailSignup,
   verifyPinAndCreateUser,
-  signupAsGoogle,
-  handleGoogleCallback
+  signupAsGoogle
 };

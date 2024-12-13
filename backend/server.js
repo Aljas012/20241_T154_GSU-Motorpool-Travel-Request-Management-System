@@ -7,6 +7,7 @@ const session = require('express-session');
 const app = express();  // express app
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
 
 // Middleware
 app.use(express.json());  // To parse JSON request bodies
@@ -28,6 +29,9 @@ app.use(cors({
 
 app.use('/user', userRoutes); // User routes
 app.use('/admin', adminRoutes); // Admin routes
+
+// Add this near your other middleware
+app.use('/generated_pdfs', express.static(path.join(__dirname, 'public/generated_pdfs')));
 
 // Connect to the MongoDB database
 mongoose.connect(process.env.MONGODB_URI)

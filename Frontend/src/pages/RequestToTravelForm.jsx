@@ -1,16 +1,8 @@
 import React, { useState } from "react";
 import { useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-import {
-  Navbar,
-  Container,
-  Row,
-  Col,
-  Form,
-  Card,
-  Button,
-} from "react-bootstrap";
-
+import {Container, Row, Col, Form, Modal,Card,Button,} from "react-bootstrap";
+import ReactLoading from 'react-loading';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
@@ -76,17 +68,30 @@ function RequestToTravelForm() {
       let  return_arrival_time = expectedReturnArrivalHour+' '+expectedReturnArrivalMinute+" "+expectedReturnArrivalType;
       const cloudinary_cloud_name = "dvhfgstud"
       const  cloudinary_url = `https://api.cloudinary.com/v1_1/${cloudinary_cloud_name}/upload`;
+      const [errorModal,setShowErrorModal] = useState(false)
+      const [errorMessage,setErrorMessage] = useState('')
+      const [errorColor,setErrorColor] = useState('')
+      const [errorIcon,setErrorIcon] = useState('')
+      const [errorDiv,setErrorDiv] = useState('')
+      const warning = '#FCC737'
+      const danger = '#C63C51'
+      const success = '#7ED4AD'
+     const [loadingModal,setShowLoadingModal] = useState(false)
+     const [loadingMessage,setLoadingMessage] = useState('')
+  
+
 
 
       const onInputImage = async (e) => {
         const file = e.target.files[0];
-    
+        setShowLoadingModal(true)
+        setLoadingMessage('Please wait while uploading file...')
         if (file) {
           const fileExtension = file.name.split('.').pop().toLowerCase();
-          const allowedExtensions = ['png', 'jpg', 'jpeg', 'gif',];
+          const allowedExtensions = ['png', 'jpg', 'jpeg', 'gif','pdf'];
     
           if (allowedExtensions.includes(fileExtension)) {
-            setAttImage(file); // Save the file object to state
+            setAttImage(file); 
     
             // Setting up FormData for the file upload
             const formData = new FormData();
@@ -98,29 +103,42 @@ function RequestToTravelForm() {
                 method: 'POST',
                 body: formData,
               });
-    
+           
               if (!cloudinaryResponse.ok) {
+                setShowLoadingModal(false)
                 alert('Unable to upload file to Cloudinary');
                 return;
               }
-    
+              
               const responseData = await cloudinaryResponse.json();
               setImageUrl(responseData.secure_url); // Update the state with the 
               setIsImageUploaded(true); 
-    
-    
+              setShowLoadingModal(false)
             } catch (error) {
-              alert('Something went wrong in the catch block -- frontend');
-              console.error('Error:', error);
+              setShowErrorModal(true)
+              setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732116882/warning_xpcpdr.png')
+              setErrorColor('white')
+              setErrorDiv(danger)
+              setErrorMessage('Something went wrong! Please check your internet connection and try again.')
+             
             }
     
           } else {
-            console.error('Only .png, .jpg, .jpeg, or .gif extensions are allowed.');
-            alert('Only .png, .jpg, .jpeg, or .gif files are allowed.');
-            e.target.value = ''; // Clear the input field
+
+            setShowErrorModal(true)
+            setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732116882/warning_xpcpdr.png')
+            setErrorColor('white')
+            setErrorDiv(danger)
+            setErrorMessage('Only .png, .jpg, .jpeg, or .gif files are allowed.')
+            e.target.value = '';
           }
         } else {
-          console.error('No file was selected.');
+          setShowErrorModal(true)
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732290025/complain_z5n7bb.png')
+          setErrorColor('white')
+          setErrorDiv(warning)
+          setErrorMessage('Please select a file to upload first before proceeding.')
+          return;
         }
       };
     
@@ -129,7 +147,11 @@ function RequestToTravelForm() {
         e.preventDefault(); // Prevent form from auto-submitting
         if(att_File === null)
         {
-          alert('please upload a file first!')
+          setShowErrorModal(true)
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732290025/complain_z5n7bb.png')
+          setErrorColor('white')
+          setErrorDiv(warning)
+          setErrorMessage('Please select a file to upload first before proceeding.')
           return;
         }
         if (!isImageUploaded) {
@@ -139,30 +161,23 @@ function RequestToTravelForm() {
       
         // Call the function to submit the form data
         requestToTravelHandler();
-        alert('Form submitted successfully!');
+
       };
       
 
-
-
       const requestToTravelHandler = async () => {
-      
         const userInfo = JSON.parse(localStorage.getItem("user_info"));
         const userId = userInfo?.user_id;
-      
-        // Check if the image URL is still null
+    
         if (imageUrl === null) {
           alert('The attachment file is still uploading. Please wait!');
           return; // Exit the function to prevent proceeding
         }
-      
-      
+    
         const data = {
           userId, organization_name,   requestor_name,  contact_number, request_date, request_time,
           passenger_names,date_travel,destination,departure_time,return_date,return_arrival_time,
           travel_purpose,return_departure_arrival_time, imageUrl,};
-
-          
         try {
           // Send the request to the backend
           const response = await fetch('http://localhost:8000/user/travel_request', {
@@ -174,28 +189,23 @@ function RequestToTravelForm() {
           });
       
           if (!response.ok) {
-            alert('There was an error retrieving data from the backend -- response not OK');
-            return; // Exit the function if the response is not OK
+            setShowErrorModal(true)
+            setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732290025/complain_z5n7bb.png')
+            setErrorColor('white')
+            setErrorDiv(warning)
+            setErrorMessage('You have already submitted a request. If you wish to submit another request, please use a different requester name. Thank you.')
+            return;
           }
-      
-          alert('Data has been successfully saved to the database! -- Successful response from backend');
+          setShowErrorModal(true)
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732291143/checked_prbxuf.png')
+          setErrorColor('white')
+          setErrorDiv(success)
+          setErrorMessage('Successfully submitting you request.  Your request is currently reviewed by the admin. Thankyou')
         } catch (error) {
           console.error('Error sending the data -- frontend:', error);
         }
       };
       
-
-
-
-
-
-
-
-              
-                
-
-
-
 
 
 
@@ -612,7 +622,6 @@ function RequestToTravelForm() {
                       }}
                     >
                 
-                      {/** UTROHUNON / DAPAT MA CLICK TO UPLOAD A FILE */}
                     
                     </div>
 
@@ -620,7 +629,7 @@ function RequestToTravelForm() {
                       {/** FIELD PATA SA i-UPLOAD NA FILE */}
                       <Form.Group controlId="formFile" className="mb-3">
                         <Form.Label>Only images are allowed</Form.Label>
-                        <Form.Control type="file" onChange={onInputImage}/>
+                        <Form.Control type="file" accept=".jpg, .jpeg, .png, .pdf" onChange={onInputImage}/>
                       </Form.Group>
 
                       <Button
@@ -1203,6 +1212,43 @@ function RequestToTravelForm() {
                           </Form.Group>
                         </Form>
                       </Card.Body>
+
+
+                      <Modal 
+                        show={loadingModal} 
+                        centered 
+                        style={{borderRadius: '0'}}
+                        dialogClassName="modal-no-radius"
+                      >
+                        <Modal.Body 
+                          className="modal-body-no-radius"
+                          style={{ 
+                            display: 'flex', 
+                            marginTop:'2rem',
+                            marginBottom:'2rem',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            flexDirection: 'column',
+                            padding: 0
+                          }}
+                        >
+                          <ReactLoading type="spin" color="#CD8800" height={50} width={50} />
+                          <p style={{color: 'black', textAlign:'center', margin:'.5rem'}}>{loadingMessage}</p>
+                        </Modal.Body>
+                      </Modal>
+                      
+
+                      <Modal show={errorModal} centered>
+                            <Modal.Body style={{ backgroundColor: errorColor, borderRadius: '0px', display: 'flex',
+                                justifyContent: 'center',alignItems: 'center',flexDirection: 'column',padding: 0,}}>
+                              <img src={errorIcon} alt="no internet" height="90px" width="90px" draggable={false} style={{marginBottom: "1.5em",marginTop:'2rem'}}/>
+                              <p style={{color: 'black',textAlign:'center',margin:'.5rem'}}>{errorMessage}</p>
+                              <div style={{display:'flex',backgroundColor:errorDiv,width:'100%',  padding: '10px',marginTop:'1em',justifyContent:'center'}}>
+                              <button style={{ backgroundColor: 'transparent',border:'none',margin:'.8em',color:'white'}} onClick={()=>setShowErrorModal(false)}> DISMISS </button>
+                            </div>
+                            </Modal.Body>
+                      </Modal>
+
                     </Container>
                   </Card>
                 </div>

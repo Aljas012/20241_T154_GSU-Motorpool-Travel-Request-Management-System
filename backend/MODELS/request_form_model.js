@@ -3,16 +3,17 @@ const Schema = mongoose.Schema;
 
 const form_model = new Schema({
     status: {type:String,required:true},
-    reference_id:{type:String, required:true},
+    reference_id:{type:String, required:true,},
     organization_name: { type: String, required: true },
-    requestor_name: { type: String, unique: true, required: true },
-    collegeName: {type: String,require: true},
-    officeCode: {type: String,require: true},
+    requestor_name: { type: String,required: true,unique: false },
+    collegeName: {type: String,required: true},
+    officeCode: {type: String,required: true},
     contact_number: { type: String, required: true },
     request_date: { type: String, required: true },
     request_time: { type: String, required: true },
     travel_details: {   
-        passenger_names: { type: String, required: true },
+        passenger_names: { type: [String], required: true },
+        chair_person_name: { type: String, required: true },
         date_travel: { type: String, required: true },
         destination: { type: String, required: true },
         departure_time: { type: String, required: true },
@@ -23,7 +24,7 @@ const form_model = new Schema({
     travel_purpose: {type:String,required: true}
     ,
     imgUrl: {
-        file_name: { type: String, required: true }
+        file_name: { type: String }
     }
 }, { timestamps: true });
 

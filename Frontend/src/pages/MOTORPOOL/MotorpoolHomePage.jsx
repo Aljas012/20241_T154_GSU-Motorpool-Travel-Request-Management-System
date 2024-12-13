@@ -1,21 +1,38 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Card } from "react-bootstrap";
-
+import { Container, Row, Col, Card, Modal, Form, Button } from "react-bootstrap";
+import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
+import format from 'date-fns/format';
+import parse from 'date-fns/parse';
+import startOfWeek from 'date-fns/startOfWeek';
+import getDay from 'date-fns/getDay';
+import enUS from 'date-fns/locale/en-US';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../styles/MotorpoolHomePage.css";
 
 import NavbarComponent from "../../components/NavbarComponent";
-
 import RequestsModal from "../../components/RequestsModal";
 import PostTripInspectionModal from "../../components/PostTripInspectionModal";
 import OfficeCodeModal from "../../components/OfficeCodeModal";
 import DriversListModal from "../../components/DriverListModal";
 import FinalApprovalModal from "../../components/FInalApporvalModal";
 import AdminGuideModal from "../../components/AdminGuideApproval";
-
 import VehicleModal from "../../components/VehicleModal";
 import SidebarComponent from "../../components/SideBar";
 import WeatherInfo from "../../components/WeatherInfoComponent";
+
+// Calendar localization setup
+const locales = {
+  'en-US': enUS
+};
+
+const localizer = dateFnsLocalizer({
+  format,
+  parse,
+  startOfWeek,
+  getDay,
+  locales
+});
 
 function MotorpoolHomePage() {
   /** REQUEST MODAL FUNC */
@@ -52,6 +69,94 @@ function MotorpoolHomePage() {
   const [vehicleShow, sevehicleModalShow] = useState(false);
   const vehicleClose = () => sevehicleModalShow(false);
   const vehiclelShow = () => sevehicleModalShow(true);
+
+  // Calendar State
+  const [calendarEvents, setCalendarEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [newEvent, setNewEvent] = useState({
+    title: '',
+    start: '',
+    end: '',
+    desc: ''
+  });
+  const [showEventModal, setShowEventModal] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/admin/approved_travel_events');
+        if (!response.ok) throw new Error('Failed to fetch events');
+        const data = await response.json();
+
+        console.log('API Response:', data);
+
+        const formattedEvents = data.map(event => {
+          try {
+            console.log(`Raw Date: ${event.event_date}, Raw Time: ${event.event_time}`);
+
+            const [month, day, year] = event.event_date.split(' ');
+            const eventTime = event.event_time || '00:00:00';
+
+            const [hourPart, minutePart] = eventTime.split(':');
+            const hours = parseInt(hourPart, 10);
+            const minutes = minutePart ? parseInt(minutePart.split(' ')[0], 10) : 0;
+            const ampm = minutePart ? minutePart.split(' ')[1] : 'AM';
+
+            const adjustedHours = (ampm === 'PM' && hours < 12) ? hours + 12 : (ampm === 'AM' && hours === 12) ? 0 : hours;
+
+            const eventDate = new Date(`${month}-${day}-${year} ${adjustedHours}:${minutes < 10 ? '0' + minutes : minutes}`);
+
+            if (isNaN(eventDate)) {
+              console.error(`Invalid date for event: ${event.event_name}`);
+              return null;
+            }
+
+            return {
+              id: event._id,
+              title: event.event_name,
+              start: eventDate,
+              end: new Date(eventDate.getTime() + 60 * 60 * 1000),
+              desc: event.event_details,
+            };
+          } catch (error) {
+            console.error(`Error parsing event ${event.event_name}:`, error);
+            return null;
+          }
+        }).filter(event => event !== null);
+
+        console.log('Formatted Events:', formattedEvents);
+        setCalendarEvents(formattedEvents);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching events:', error);
+        setError(error.message);
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
+  const handleShow = () => setShowModal(true);
+  const handleClose = () => setShowModal(false);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewEvent(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // Add your logic to save the new event
+    // After saving, you can fetch events again or update the state
+    handleClose();
+  };
 
   // Custom styles for the DataTable
   const customStyles = {
@@ -130,11 +235,59 @@ function MotorpoolHomePage() {
     years.push(year);
   }
 
+  const hardcodedEvents = [
+    {
+      id: 1,
+      title: 'Test Event 1',
+      start: new Date('2024-11-17T17:01:00'),
+      end: new Date('2024-11-17T18:01:00'),
+      desc: 'This is a test event'
+    },
+    {
+      id: 2,
+      title: 'Test Event 2',
+      start: new Date('2024-11-18T17:01:00'),
+      end: new Date('2024-11-18T18:01:00'),
+      desc: 'This is another test event'
+    }
+  ];
+
+
+  const eventDays = calendarEvents.reduce((acc, event) => {
+
+    const eventDate = new Date(event.start).toLocaleDateString('en-CA'); 
+    acc[eventDate] = true; 
+    return acc;
+  }, {});
+
+ 
+  const dayPropGetter = (date) => {
+    const dateString = new Date(date).toLocaleDateString('en-CA');  
+    if (eventDays[dateString]) {
+      return {
+        style: { backgroundColor: '#0D92F4' } // Desired color for event days
+      };
+    }
+    return {};
+  };
+  
+
+  // Handle event selection
+  const handleSelectEvent = (event) => {
+    setSelectedEvent(event);
+    setShowEventModal(true);
+  };
+
+  // Close modal handler
+  const handleCloseEventModal = () => {
+    setShowEventModal(false);
+    setSelectedEvent(null);
+  };
+
   return (
     <>
       {/** HEADER */}
-
-      <NavbarComponent></NavbarComponent>
+      <NavbarComponent />
 
       <main>
         <Container fluid>
@@ -180,7 +333,6 @@ function MotorpoolHomePage() {
                           <div className="customCardAlignment">
                             <h6 className="customH6Card">REQUESTS</h6>
                           </div>
-
                           <div className="customP8">
                             <p className="m-0">Today's Number of Request</p>
                             <p className="customP8Num">#</p>
@@ -194,12 +346,10 @@ function MotorpoolHomePage() {
                           <div className="customCardAlignment">
                             <h6 className="customH6Card">VEHICLES</h6>
                           </div>
-
                           <div className="customP8 pb-0">
                             <p className="m-0">Available</p>
                             <p className="customP8Num">#</p>
                           </div>
-
                           <div className="customP8">
                             <p className="m-0">Total Number of Vehicles</p>
                             <p className="customP8Num">#</p>
@@ -213,7 +363,6 @@ function MotorpoolHomePage() {
                           <div className="customCardAlignment">
                             <h6 className="customH6Card">SERVICES COMPLETED</h6>
                           </div>
-
                           <div className="customP8">
                             <p className="m-0">Monthly Services Completed</p>
                             <p className="customP8Num">#</p>
@@ -242,7 +391,24 @@ function MotorpoolHomePage() {
                   />
                   <div className="mt-4">
                     <p className="customP7">Calendar of Year 2024</p>
-                    <Card style={{ height: "36vh", width: "22vw" }}></Card>
+                    <Card style={{ height: "60vh", width: "100%" }}>
+                      <Calendar
+                        localizer={localizer}
+                        events={calendarEvents}
+                        startAccessor="start"
+                        endAccessor="end"
+                        style={{ height: '100%' }}
+                        onSelectEvent={handleSelectEvent}
+                        views={['month', 'week', 'day']}
+                        defaultView="month"
+                        dayPropGetter={dayPropGetter}
+                      />
+                      {calendarEvents.length === 0 && !loading && (
+                        <div className="text-center mt-2">
+                          <small>No events found in your calendar</small>
+                        </div>
+                      )}
+                    </Card>
                   </div>
                 </div>
               </div>
@@ -255,17 +421,11 @@ function MotorpoolHomePage() {
             vehicleClose={vehicleClose}
             customStyles={customStyles}
           />
-
-          {/** VEHUCLE MODAL */}
-
-          {/** REQUEST MODAL */}
           <RequestsModal
             requestShow={requestShow}
             requestClose={requestClose}
             customStyles={customStyles}
           />
-
-          {/** POST TRIP CREATION MODAL */}
           <PostTripInspectionModal
             postShow={postShow}
             postClose={postClose}
@@ -273,26 +433,96 @@ function MotorpoolHomePage() {
             daysInMonth={daysInMonth}
             years={years}
           />
-
-          {/** OFFICE CODE MODAL */}
           <OfficeCodeModal
             officeShow={officeShow}
             officeClose={officeClose}
             customStyles={customStyles}
           />
-
-          {/** DRIVER'S LIST MODAL */}
           <DriversListModal
             driverShow={driverShow}
             driverClose={driverClose}
             customStyles={customStyles}
           />
-
-          {/** FINAL APPROVAL MODAL */}
           <FinalApprovalModal finalShow={finalShow} finalClose={finalClose} />
-
-          {/** ADMIN GUIDE MODAL */}
           <AdminGuideModal guideShow={guideShow} guideClose={guideClose} />
+
+          {/* Event Details Modal */}
+          <Modal show={showEventModal} onHide={handleCloseEventModal} centered dialogClassName="custom-modal wide-modal" style={{ borderRadius: '0' }}>
+            <Modal.Header style={{ background: '#0760A1', color: 'white', borderRadius: '0', border: 'none' }}>
+              <Modal.Title>Event Details</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              {selectedEvent && (
+                <div className="event-details-container">
+                  <div className="event-header" style={{ borderBottom: '2px solid #0760A1', paddingBottom: '10px', marginBottom: '15px' }}>
+                    <h4 style={{ color: '#0760A1', fontWeight: 'bold', margin: 0 }}>{selectedEvent.title}</h4>
+                  </div>
+                  <div className="event-info" style={{ marginBottom: '20px' }}>
+                    <div className="info-row" style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                      <i className="far fa-clock" style={{ color: '#0760A1', marginRight: '10px', width: '20px' }}></i>
+                      <div>
+                        <p style={{ margin: 0, fontWeight: '500' }}>Start Time</p>
+                        <p style={{ margin: 0, color: '#666' }}>
+                          {new Date(selectedEvent.start).toLocaleString('en-US', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="info-row" style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                      <i className="far fa-clock" style={{ color: '#0760A1', marginRight: '10px', width: '20px' }}></i>
+                      <div>
+                        <p style={{ margin: 0, fontWeight: '500' }}>End Time</p>
+                        <p style={{ margin: 0, color: '#666' }}>
+                          {new Date(selectedEvent.end).toLocaleString('en-US', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="info-row" style={{ display: 'flex', alignItems: 'start', marginTop: '15px' }}>
+                      <i className="far fa-file-alt" style={{ color: '#0760A1', marginRight: '10px', width: '20px', marginTop: '3px' }}></i>
+                      <div>
+                        <p style={{ margin: 0, fontWeight: '500' }}>Description</p>
+                        <p style={{ margin: 0, color: '#666', whiteSpace: 'pre-wrap' }}>
+                          {selectedEvent.desc || 'No description provided'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </Modal.Body>
+            <Modal.Footer style={{ borderTop: '1px solid #dee2e6', padding: '15px 20px' }}>
+              <Button onClick={handleCloseEventModal} style={{ backgroundColor: '#0760A1', border: 'none', padding: '8px 20px', borderRadius: '4px', fontWeight: '500' }}>Close</Button>
+              <Button 
+                onClick={() => {
+                    console.log('Selected Event:', selectedEvent); // Debug log
+                    console.log('Event ID:', selectedEvent.id); // Should show the ID
+                    // Call your delete function here if needed
+                }} 
+                style={{ 
+                    backgroundColor: '#FF2929', 
+                    border: 'none', 
+                    padding: '8px 20px', 
+                    borderRadius: '4px', 
+                    fontWeight: '500' 
+                }}
+              >
+                Delete
+              </Button>
+            </Modal.Footer>
+          </Modal>
         </Container>
       </main>
     </>

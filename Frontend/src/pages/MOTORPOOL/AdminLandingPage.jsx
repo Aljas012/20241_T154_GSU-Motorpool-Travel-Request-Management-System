@@ -187,8 +187,16 @@ function AdminLandingPage() {
                 const role = adminInfo.role
                 console.log(role)
                 console.log(id)
-                
-                navigate(`/admin/homepage?`);
+                if(role === "Head")
+                {
+                  console.log("admin name",adminInfo.name)
+                  console.log('admin role',role)
+                  navigate(`/admin/head_homepage?`);
+                }
+                if(role === "Supervisor")
+                {
+                  navigate(`/admin/homepage?`);
+                }
             } catch (err) {
               setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732121061/no-internet_amyf7a.png')
               setModalMessage('An unexpected error occurred. Please try again later.');

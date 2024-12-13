@@ -3,15 +3,38 @@ import { useParams } from 'react-router-dom';
 import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
 import NavbarComponent from "../../components/NavbarComponent.jsx";
 import ViewRTTModal from "../../components/ViewRTTModal.jsx";
+import ViewATTModal from "../../components/ViewATTModal.jsx";
 import ReactLoading from 'react-loading';
 import 'react-calendar/dist/Calendar.css';
 import Calendar from 'react-calendar';
+
+// Add this helper function near your other utility functions
+const formatTimeValue = (hour, minute, period) => {
+    if (!hour && !minute) return '';
+    const formattedHour = hour.toString().padStart(2, '0');
+    const formattedMinute = minute.toString().padStart(2, '0');
+    return `${formattedHour}:${formattedMinute} ${period}`;
+};
+
+// Make sure your validateTimeInput function is also defined
+const validateTimeInput = (value, max) => {
+    // Allow empty value or numbers
+    if (value === '' || /^\d{0,2}$/.test(value)) {
+        const num = value === '' ? 0 : parseInt(value);
+        return num <= max;
+    }
+    return false;
+};
 
 function ViewRequest() {
 
   const [viewRTTShow, setViewRTTModalShow] = useState(false);
   const viewRTTModalClose = () => setViewRTTModalShow(false);
   const viewRTTModalShow = () => setViewRTTModalShow(true);
+
+  const [viewATTShow, setViewATTModalShow] = useState(false);
+  const viewATTModalClose = () => setViewATTModalShow(false);
+  const viewATTModalShow = () => setViewATTModalShow(true);
 
   /******************************************* SA SELECTION OF YEAR NI SYA ************/
   /** PARA LEGIT ANG DAYS PER MONTH / 30 OR 31 DAYS */
@@ -20,7 +43,20 @@ function ViewRequest() {
   const [listOfAvailableVehicle, setListOfAvailableVehicles] = useState([]);
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [listOfAvailableDrivers, setListOfAvailableDrivers] = useState([]);
-  const [selectedDriver, setSelectedDriver] = useState('');
+  const [selectedDriver, setSelectedDriver] = useState(''); 
+  const [gas_amount,setGasAmount] = useState("")
+  const [verified_gas_amount,setVerifiedGasAmount] = useState("")
+  const [reservation_processed_by,setReservationProcessedBy] = useState("")
+  const [verified_date,setVerifiedDate] = useState("")
+  const [travel_expenses,setTravelExpenses] = useState("")
+  const [date_of_travel, setDateOfTravel] = useState("")
+  const [travel_type,setTravelType] = useState("")
+  const [pre_departure_time,setPreDepartureTime] = useState("")
+  const [pre_arrival_time,setPreArrivalTime] = useState("")
+  const [post_departure_date_time,setPostDepartureTime] = useState("")
+  const [post_arrival_time,setPostArrivalTime] = useState("")
+
+
   const [isVehicleLoading, setIsVehicleLoading] = useState(false);
   const [isDriverLoading, setIsDriverLoading] = useState(false);
   const [value, onChange] = useState(new Date());
@@ -29,8 +65,9 @@ function ViewRequest() {
   // Add this state for calendar visibility
   const [showCalendar, setShowCalendar] = useState(false);
   const { id } = useParams();
-  const [reference_id, setReferenceId] = useState(null);
   const [attData, setAttData] = useState(null);
+
+
 
   useEffect(() => {
     // Determine number of days based on the selected month
@@ -66,7 +103,7 @@ function ViewRequest() {
 
   const availableVehicleHandler = async ()=>
       { 
-        setIsVehicleLoading(true); // Start loading
+        setIsVehicleLoading(true); 
         try{
           const existingVehicle = await fetch ('http://localhost:8000/admin/fetch_available_vehicles',
              {
@@ -120,10 +157,10 @@ function ViewRequest() {
 
   const handleSelectVehicle = (vehicleName) => {
     const vehicle = listOfAvailableVehicle.find((v) => v.vehicleName === vehicleName);
-    setSelectedVehicle(vehicle); // Update selected vehicle
+    setSelectedVehicle(vehicle); 
   };
 
-// Add error checking when accessing localStorage
+
 const getAdminInfo = () => {
   try {
       const adminInfo = localStorage.getItem('admin_info');
@@ -165,8 +202,7 @@ const getAdminInfo = () => {
             
     
             if (result.data.travel_details) {
-           
-                console.log('Travel details:', result.data.travel_details);
+                setDateOfTravel(result.data.travel_details.date_travel);
             }
         } else {
             throw new Error(result.message || 'No data received');
@@ -193,6 +229,84 @@ const getAdminInfo = () => {
 
 
 
+//forward to gsu head
+  const saveAdminRequest = async () => {
+   
+    try {
+        // Add validation before submission
+        if (!selectedVehicle || !selectedDriver) {
+            alert('Please select both vehicle and driver');
+            return;
+        }
+
+        if (!verifiedBy || !verified_date) {
+            alert('Please fill in verification details');
+            return;
+        }
+
+        // Check time fields
+        if (!pre_departure_time || !pre_arrival_time || 
+            !post_departure_date_time || !post_arrival_time) {
+            alert('Please fill in all time fields');
+            return;
+        }
+
+        if (!selectedVehicle || !selectedDriver || !verifiedBy || !verified_date) {
+            alert('Please fill in all required fields');
+            return;
+        }
+
+        const data = {
+          reference_id: id,  // Changed from 'id'
+          assigned_vehicle: selectedVehicle?.vehicleName,  // Changed from selectedVehicle object
+          plate_number: selectedVehicle?.plateNumber,  // Changed from selectedVehicle object
+          driver_name: selectedDriver,
+          gas_amount: gas_amount || '',
+          verified_gas_amount: verified_gas_amount,
+          process_confirmed_personnel: reservation_processed_by || 'Not Specified',  // Changed key name
+          verified_by: verifiedBy,
+          verified_date: verified_date,
+          travel_expense: travel_expenses,  // Changed from travel_expenses to travel_expense
+          travel_type: travel_type,
+          date_of_travel: date_of_travel || '',
+          pre_departure_time: pre_departure_time,
+          pre_arrival_time: pre_arrival_time,
+          post_departure_date_time: post_departure_date_time,
+          post_arrival_time: post_arrival_time
+      };
+
+
+        const response = await fetch('http://localhost:8000/admin/forward_admin_request', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error('Server validation errors:', errorData);
+            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        
+        if (result.success) {
+            alert('Successfully forwarded request');
+        } else {
+            throw new Error(result.message || 'Failed to forward request');
+        }
+    } catch(error) {
+        console.error('Full error details:', error);
+        alert(`Something went wrong during forwarding request: ${error.message}`);
+    }
+};
+
+
+
+
 
 
 
@@ -206,20 +320,37 @@ const [isEditable, setIsEditable] = useState(false);
 
 // Modify the handlers
 const handleEditMode = () => {
+  if (!verifiedBy || verifiedBy.trim() === '') {
+    alert('Please set a default name first');
+    return;
+}
     setIsEditable(true);
-    setVerifiedBy(''); // Clear the input when entering edit mode
-    setShowButtons(true); // Show buttons in edit mode
+    setShowButtons(true);
+
 };
 
 const handleConfirm = () => {
+
+  if (isEditable) {
+    // We're in edit mode, just save the current value and exit edit mode
+    if (!verifiedBy.trim()) {
+        alert('Please enter a name');
+        return;
+    }
     setIsEditable(false);
-    setShowButtons(false); // Hide buttons after confirming
+} else {
+    // We're not in edit mode, this is the check button to set default value
+    if (!verifiedBy || verifiedBy.trim() === '') {
+        setVerifiedBy(userName);
+    }
+}
+setShowButtons(false);
 };
 
-// If you want to add a reset functionality, you can add a separate handler
+// Add a reset handler if you want to explicitly reset to default
 const handleReset = () => {
+    setVerifiedBy(userName || '');
     setIsEditable(false);
-    setVerifiedBy(userName || ''); // Reset to userName
     setShowButtons(true);
 };
 
@@ -227,6 +358,63 @@ const handleReset = () => {
 const toggleCalendar = () => {
     setShowCalendar(!showCalendar);
 };
+
+// Add these state variables for the individual time components
+const [departureHour, setDepartureHour] = useState("");
+const [departureMinute, setDepartureMinute] = useState("");
+const [departurePeriod, setDeparturePeriod] = useState("AM");
+
+// Add these state variables at the top with your other states
+const [arrivalHour, setArrivalHour] = useState("");
+const [arrivalMinute, setArrivalMinute] = useState("");
+const [arrivalPeriod, setArrivalPeriod] = useState("AM");
+
+// Add these state variables at the top with your other states
+const [postDepartureHour, setPostDepartureHour] = useState("");
+const [postDepartureMinute, setPostDepartureMinute] = useState("");
+const [postDeparturePeriod, setPostDeparturePeriod] = useState("AM");
+
+// Add these state variables at the top with your other states
+const [postArrivalHour, setPostArrivalHour] = useState("");
+const [postArrivalMinute, setPostArrivalMinute] = useState("");
+const [postArrivalPeriod, setPostArrivalPeriod] = useState("AM");
+
+
+
+// Add proper time validation
+const validateTimeInput = (value, max) => {
+    if (value === '') return true;
+    const num = parseInt(value);
+    return !isNaN(num) && num >= 0 && num <= max;
+};
+
+// Add time formatting helper
+const formatTime = (hour, minute, period) => {
+    if (!hour || !minute) return '';
+    return `${hour.padStart(2, '0')}:${minute.padStart(2, '0')} ${period}`;
+};
+
+
+const validateRequiredFields = () => {
+    const required = [
+        { value: selectedVehicle, name: 'Vehicle' },
+        { value: selectedDriver, name: 'Driver' },
+        { value: verifiedBy, name: 'Verified By' },
+        { value: verified_date, name: 'Verified Date' },
+        { value: travel_type, name: 'Travel Type' },
+        { value: travel_expenses, name: 'Travel Expenses' }
+    ];
+
+    for (const field of required) {
+        if (!field.value) {
+            alert(`${field.name} is required`);
+            return false;
+        }
+    }
+    return true;
+};
+
+
 
   return (
     <>
@@ -242,7 +430,9 @@ const toggleCalendar = () => {
                   <div>
                     <div className="lineBorderVR1">
                       <div style={{ width: "22vw" }}>
-                        <a className="customA3 alignment2">
+                        <a className="customA3 alignment2"
+                         onClick={viewATTModalShow}
+                        >
                           <h5 className="customH5Request">
                             View ATT Information
                           </h5>
@@ -271,7 +461,10 @@ const toggleCalendar = () => {
                         </h6>
                       </div>
 
-                      <Form>
+                      <Form onSubmit={(e) => {
+                          e.preventDefault();
+                          saveAdminRequest();
+                      }}>
                         <div className="alignVR">
                           {/** TYPE OF VEHICLE */}
                           <div className="alignCenterVR">
@@ -317,7 +510,7 @@ const toggleCalendar = () => {
                                 type="text"
                                 placeholder="Select vehicle to reflect plate number"
                                 value={selectedVehicle ? selectedVehicle.plateNumber : ''} // Display plate number of selected vehicle
-                                className="customFieldVR"
+                                className="customFieldVR" 
                                 readOnly  // Make it read-only so user can't edit
                               />
                                   </div>
@@ -369,6 +562,7 @@ const toggleCalendar = () => {
                                 type="text"
                                 placeholder="Total gas refueled"
                                 className="customFieldVR"
+                                onChange={(e) => setGasAmount(e.target.value)}
                               ></Form.Control>
                             </div>
                           </div>
@@ -386,6 +580,7 @@ const toggleCalendar = () => {
                                 type="text"
                                 placeholder="Verified Total gas refueled"
                                 className="customFieldVR"
+                                onChange={(e) => setVerifiedGasAmount(e.target.value)}
                               ></Form.Control>
                             </div>
                           </div>
@@ -401,6 +596,8 @@ const toggleCalendar = () => {
                             <div>
                               <Form.Control
                                 type="text"
+                                onChange={(e) => setReservationProcessedBy(e.target.value)}
+                                
                                 className="customFieldVR"
                               ></Form.Control>
                             </div>
@@ -421,7 +618,7 @@ const toggleCalendar = () => {
                                     type="text"
                                     value={verifiedBy.toUpperCase()}
                                     onChange={(e) => setVerifiedBy(e.target.value)}
-                                    placeholder="Please input new name  "
+                                    placeholder="Please input new name"
                                     disabled={!isEditable}
                                     style={{ width: !showButtons ? "400px" : isEditable ? "285px" : "168px",border: "1px solid #000" ,textAlign:'center'}}
                                 ></Form.Control>
@@ -429,7 +626,7 @@ const toggleCalendar = () => {
                                 {showButtons && !isEditable && (
                                     <>
                                         <Button
-                                            className="customButtonVR"
+                                            className="customButtonVR "
                                             style={{ marginLeft: ".8rem" }}
                                             onClick={handleConfirm}
                                         >
@@ -464,7 +661,7 @@ const toggleCalendar = () => {
                                 
                                 {showButtons && isEditable && (
                                     <Button
-                                        className="customButtonVR"
+                                        className="customButtonVR " 
                                         style={{ marginLeft: ".8rem" }}
                                         onClick={handleConfirm}
                                     >
@@ -528,8 +725,10 @@ const toggleCalendar = () => {
                                         borderRadius: '4px'
                                     }}>
                                         <Calendar 
+                                        
                                             onChange={(date) => {
                                                 onChange(date);
+                                                setVerifiedDate(date.toISOString().split('T')[0]);
                                                 setShowCalendar(false); // Hide calendar after selection
                                             }}
                                             value={value}
@@ -607,6 +806,7 @@ const toggleCalendar = () => {
                                     readOnly
                                     value={attData?.travel_details?.passenger_names || ''}
                                     className="customFieldVR"
+
                                   />
                                 </div>
                               </div>
@@ -663,6 +863,7 @@ const toggleCalendar = () => {
                                     type="text"
                                     placeholder="FUND 123 (CON FUND)"
                                     className="customFieldVR"
+                                    onChange={(e) => setTravelExpenses(e.target.value)}
                                   ></Form.Control>
                                 </div>
                               </div>
@@ -682,6 +883,7 @@ const toggleCalendar = () => {
                                     type="text"
                                     value={attData?.travel_details?.date_travel || 'Loading'}
                                     className="customFieldVR"
+                                    onChange={(e) => setTravelDate(e.target.value)}
                                   ></Form.Control>
                                 </div>
                               </div>
@@ -699,6 +901,7 @@ const toggleCalendar = () => {
                                     type="text"
                                     placeholder="Specify type of travel"
                                     className="customFieldVR"
+                                    onChange={(e) => setTravelType(e.target.value)}
                                   ></Form.Control>
                                 </div>
                               </div>
@@ -718,16 +921,22 @@ const toggleCalendar = () => {
                                 <div className="alignCenterVRTime">
                                   {/* HOUR */}
                                   <Form.Control
-                                    id="time"
                                     type="text"
-                                    placeholder="Hour"
+                                    placeholder="HH"
                                     className="fieldBorder"
-                                    inputMode="numeric"
                                     maxLength={2}
-                                    onKeyPress={(e) => {
-                                      if (!/[0-9]/.test(e.key)) {
-                                        e.preventDefault();
-                                      }
+                                    value={departureHour}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        if (validateTimeInput(value, 12)) {
+                                            setDepartureHour(value);
+                                            const newTime = formatTimeValue(
+                                                value || '00',
+                                                departureMinute || '00',
+                                                departurePeriod
+                                            );
+                                            setPreDepartureTime(newTime);
+                                        }
                                     }}
                                   />
                                   <span
@@ -741,22 +950,37 @@ const toggleCalendar = () => {
                                   </span>
                                   {/* MINUTE */}
                                   <Form.Control
-                                    id="M"
                                     type="text"
-                                    placeholder="Minute"
+                                    placeholder="MM"
                                     className="fieldBorder"
-                                    inputMode="numeric"
                                     maxLength={2}
-                                    onKeyPress={(e) => {
-                                      if (!/[0-9]/.test(e.key)) {
-                                        e.preventDefault();
-                                      }
+                                    value={departureMinute}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        if (validateTimeInput(value, 59)) {
+                                            setDepartureMinute(value);
+                                            const newTime = formatTimeValue(
+                                                departureHour || '00',
+                                                value || '00',
+                                                departurePeriod
+                                            );
+                                            setPreDepartureTime(newTime);
+                                        }
                                     }}
                                   />
                                   {/* AM OR PM */}
                                   <Form.Select
-                                    id="period"
                                     className="fieldBorder"
+                                    value={departurePeriod}
+                                    onChange={(e) => {
+                                        setDeparturePeriod(e.target.value);
+                                        const newTime = formatTimeValue(
+                                            departureHour || '00',
+                                            departureMinute || '00',
+                                            e.target.value
+                                        );
+                                        setPreDepartureTime(newTime);
+                                    }}
                                   >
                                     <option value="AM">AM</option>
                                     <option value="PM">PM</option>
@@ -777,16 +1001,22 @@ const toggleCalendar = () => {
                                 <div className="alignCenterVRTime">
                                   {/* HOUR */}
                                   <Form.Control
-                                    id="time"
                                     type="text"
-                                    placeholder="Hour"
+                                    placeholder="HH"
                                     className="fieldBorder"
-                                    inputMode="numeric"
                                     maxLength={2}
-                                    onKeyPress={(e) => {
-                                      if (!/[0-9]/.test(e.key)) {
-                                        e.preventDefault();
-                                      }
+                                    value={arrivalHour}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        if (validateTimeInput(value, 12)) {
+                                            setArrivalHour(value);
+                                            const newTime = formatTimeValue(
+                                                value || '00',
+                                                arrivalMinute || '00',
+                                                arrivalPeriod
+                                            );
+                                            setPreArrivalTime(newTime);
+                                        }
                                     }}
                                   />
                                   <span
@@ -800,22 +1030,37 @@ const toggleCalendar = () => {
                                   </span>
                                   {/* MINUTE */}
                                   <Form.Control
-                                    id="M"
                                     type="text"
-                                    placeholder="Minute"
+                                    placeholder="MM"
                                     className="fieldBorder"
-                                    inputMode="numeric"
                                     maxLength={2}
-                                    onKeyPress={(e) => {
-                                      if (!/[0-9]/.test(e.key)) {
-                                        e.preventDefault();
-                                      }
+                                    value={arrivalMinute}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        if (validateTimeInput(value, 59)) {
+                                            setArrivalMinute(value);
+                                            const newTime = formatTimeValue(
+                                                arrivalHour || '00',
+                                                value || '00',
+                                                arrivalPeriod
+                                            );
+                                            setPreArrivalTime(newTime);
+                                        }
                                     }}
                                   />
                                   {/* AM OR PM */}
                                   <Form.Select
-                                    id="period"
                                     className="fieldBorder"
+                                    value={arrivalPeriod}
+                                    onChange={(e) => {
+                                        setArrivalPeriod(e.target.value);
+                                        const newTime = formatTimeValue(
+                                            arrivalHour || '00',
+                                            arrivalMinute || '00',
+                                            e.target.value
+                                        );
+                                        setPreArrivalTime(newTime);
+                                    }}
                                   >
                                     <option value="AM">AM</option>
                                     <option value="PM">PM</option>
@@ -837,16 +1082,22 @@ const toggleCalendar = () => {
                                 <div className="alignCenterVRTime">
                                   {/* HOUR */}
                                   <Form.Control
-                                    id="time"
                                     type="text"
-                                    placeholder="Hour"
+                                    placeholder="HH"
                                     className="fieldBorder"
-                                    inputMode="numeric"
                                     maxLength={2}
-                                    onKeyPress={(e) => {
-                                      if (!/[0-9]/.test(e.key)) {
-                                        e.preventDefault();
-                                      }
+                                    value={postDepartureHour}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        if (validateTimeInput(value, 12)) {
+                                            setPostDepartureHour(value);
+                                            const newTime = formatTimeValue(
+                                                value || '00',
+                                                postDepartureMinute || '00',
+                                                postDeparturePeriod
+                                            );
+                                            setPostDepartureTime(newTime);
+                                        }
                                     }}
                                   />
                                   <span
@@ -860,22 +1111,37 @@ const toggleCalendar = () => {
                                   </span>
                                   {/* MINUTE */}
                                   <Form.Control
-                                    id="M"
                                     type="text"
-                                    placeholder="Minute"
+                                    placeholder="MM"
                                     className="fieldBorder"
-                                    inputMode="numeric"
                                     maxLength={2}
-                                    onKeyPress={(e) => {
-                                      if (!/[0-9]/.test(e.key)) {
-                                        e.preventDefault();
-                                      }
+                                    value={postDepartureMinute}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        if (validateTimeInput(value, 59)) {
+                                            setPostDepartureMinute(value);
+                                            const newTime = formatTimeValue(
+                                                postDepartureHour || '00',
+                                                value || '00',
+                                                postDeparturePeriod
+                                            );
+                                            setPostDepartureTime(newTime);
+                                        }
                                     }}
                                   />
                                   {/* AM OR PM */}
                                   <Form.Select
-                                    id="period"
                                     className="fieldBorder"
+                                    value={postDeparturePeriod}
+                                    onChange={(e) => {
+                                        setPostDeparturePeriod(e.target.value);
+                                        const newTime = formatTimeValue(
+                                            postDepartureHour || '00',
+                                            postDepartureMinute || '00',
+                                            e.target.value
+                                        );
+                                        setPostDepartureTime(newTime);
+                                    }}
                                   >
                                     <option value="AM">AM</option>
                                     <option value="PM">PM</option>
@@ -896,16 +1162,22 @@ const toggleCalendar = () => {
                                 <div className="alignCenterVRTime">
                                   {/* HOUR */}
                                   <Form.Control
-                                    id="time"
                                     type="text"
-                                    placeholder="Hour"
+                                    placeholder="HH"
                                     className="fieldBorder"
-                                    inputMode="numeric"
                                     maxLength={2}
-                                    onKeyPress={(e) => {
-                                      if (!/[0-9]/.test(e.key)) {
-                                        e.preventDefault();
-                                      }
+                                    value={postArrivalHour}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        if (validateTimeInput(value, 12)) {
+                                            setPostArrivalHour(value);
+                                            const newTime = formatTimeValue(
+                                                value || '00',
+                                                postArrivalMinute || '00',
+                                                postArrivalPeriod
+                                            );
+                                            setPostArrivalTime(newTime);
+                                        }
                                     }}
                                   />
                                   <span
@@ -919,22 +1191,37 @@ const toggleCalendar = () => {
                                   </span>
                                   {/* MINUTE */}
                                   <Form.Control
-                                    id="M"
                                     type="text"
-                                    placeholder="Minute"
+                                    placeholder="MM"
                                     className="fieldBorder"
-                                    inputMode="numeric"
                                     maxLength={2}
-                                    onKeyPress={(e) => {
-                                      if (!/[0-9]/.test(e.key)) {
-                                        e.preventDefault();
-                                      }
+                                    value={postArrivalMinute}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        if (validateTimeInput(value, 59)) {
+                                            setPostArrivalMinute(value);
+                                            const newTime = formatTimeValue(
+                                                postArrivalHour || '00',
+                                                value || '00',
+                                                postArrivalPeriod
+                                            );
+                                            setPostArrivalTime(newTime);
+                                        }
                                     }}
                                   />
                                   {/* AM OR PM */}
                                   <Form.Select
-                                    id="period"
                                     className="fieldBorder"
+                                    value={postArrivalPeriod}
+                                    onChange={(e) => {
+                                        setPostArrivalPeriod(e.target.value);
+                                        const newTime = formatTimeValue(
+                                            postArrivalHour || '00',
+                                            postArrivalMinute || '00',
+                                            e.target.value
+                                        );
+                                        setPostArrivalTime(newTime);
+                                    }}
                                   >
                                     <option value="AM">AM</option>
                                     <option value="PM">PM</option>
@@ -982,7 +1269,7 @@ const toggleCalendar = () => {
                               </div>
                             </div>
 
-                            {/** NANE AND SIGNATURE OF THE DRIVER */}
+                            {/** NAME AND SIGNATURE OF THE DRIVER */}
                             <div className="mt-4 mb-3">
                               <div>
                                 <h6 className="customH6DTT noMargMHP">
@@ -1046,6 +1333,11 @@ const toggleCalendar = () => {
             viewRTTModalShow={viewRTTShow}
             viewRTTModalClose={viewRTTModalClose}
           />
+           <ViewATTModal 
+             show={viewATTShow}
+             handleClose={viewATTModalClose}
+             imgUrl={attData?.imgUrl?.file_name}
+             />
         </Container>
       </main>
     </>

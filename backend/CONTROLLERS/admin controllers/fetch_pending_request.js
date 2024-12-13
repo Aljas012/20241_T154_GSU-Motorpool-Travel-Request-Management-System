@@ -5,8 +5,7 @@ const fetchPendingRequest = async (req,res) =>
 {
         try
         {
-        const pendingRequest = await request_model.find({status: "Pending"})
-
+        const pendingRequest = await request_model.find({status: "Submitted"})
         const formattedRequests = pendingRequest.map(request => ({
             request_identifier: request._id,
             reference_id: request.reference_id,
@@ -16,9 +15,6 @@ const fetchPendingRequest = async (req,res) =>
             time: request.request_time,
             status: request.status,
           }));
-
-
-
 
         return res.status(200).json({
             message: 'Successfully fetched pending requests',

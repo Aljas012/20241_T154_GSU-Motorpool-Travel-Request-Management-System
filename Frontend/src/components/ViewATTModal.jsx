@@ -1,15 +1,24 @@
 import React from "react";
 import { Modal, Row, Col, Card } from "react-bootstrap";
+import ReactLoading from "react-loading";
 
 const ViewATTModal = ({ show, handleClose, imgUrl }) => {
-  // Function to check if file is PDF
   const isPDF = (url) => {
     return url?.toLowerCase().endsWith('.pdf');
   };
 
   return (
-    <Modal show={show} onHide={handleClose} size="xl">
-      <Modal.Header closeButton>
+    <Modal 
+      show={show} 
+      onHide={handleClose} 
+      size="xl"
+      centered
+      dialogClassName="modal-no-radius modal-no-scrollbar"
+    >
+      <Modal.Header 
+      
+        style={{ borderRadius: 0 }}
+      >
         <Modal.Title
           style={{
             fontSize: "1.7rem",
@@ -20,23 +29,25 @@ const ViewATTModal = ({ show, handleClose, imgUrl }) => {
           Authority to Travel
         </Modal.Title>
       </Modal.Header>
-      <Modal.Body>
+      <Modal.Body style={{ borderRadius: 0, padding: 0 }}>
         <Row className="mt-3">
           <Col>
             <Card
               style={{
-                backgroundColor: "#F1F1F1",
+             
                 maxHeight: "70vh",
-                overflowY: "auto",
+                borderRadius: 0,
+                margin: 0,
               }}
             >
-              <Card.Body>
+              <Card.Body style={{ padding: '1rem' }}>
                 {imgUrl ? (
                   <div style={{ 
                     display: 'flex', 
                     justifyContent: 'center', 
                     alignItems: 'center',
-                    minHeight: '60vh'
+                    minHeight: '60vh',
+                    overflow: 'hidden'
                   }}>
                     {isPDF(imgUrl) ? (
                       <object
@@ -44,7 +55,8 @@ const ViewATTModal = ({ show, handleClose, imgUrl }) => {
                         type="application/pdf"
                         style={{
                           width: '100%',
-                          height: '70vh'
+                          height: '70vh',
+                          overflow: 'hidden'
                         }}
                       >
                         <embed
@@ -52,12 +64,10 @@ const ViewATTModal = ({ show, handleClose, imgUrl }) => {
                           type="application/pdf"
                           style={{
                             width: '100%',
-                            height: '70vh'
+                            height: '70vh',
+                            overflow: 'hidden'
                           }}
                         />
-                        <p>This browser does not support PDFs. Please download the PDF to view it: 
-                          <a href={imgUrl}>Download PDF</a>
-                        </p>
                       </object>
                     ) : (
                       <img 
@@ -73,11 +83,17 @@ const ViewATTModal = ({ show, handleClose, imgUrl }) => {
                   </div>
                 ) : (
                   <div style={{ 
-                    textAlign: 'center', 
-                    padding: '2rem',
-                    color: '#666'
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    minHeight: '60vh'
                   }}>
-                    No document available
+                    <ReactLoading 
+                      type="bubbles" 
+                      color="#CD8800" 
+                      height={100} 
+                      width={100} 
+                    />
                   </div>
                 )}
               </Card.Body>
@@ -85,8 +101,27 @@ const ViewATTModal = ({ show, handleClose, imgUrl }) => {
           </Col>
         </Row>
       </Modal.Body>
+      <Modal.Footer />
     </Modal>
   );
 };
+
+const styles = `
+  .modal-no-radius .modal-content {
+    border-radius: 0;
+  }
+  
+  .modal-no-scrollbar .modal-content {
+    overflow: hidden;
+  }
+  
+  .modal-no-scrollbar .modal-body {
+    overflow: hidden;
+  }
+`;
+
+const styleSheet = document.createElement("style");
+styleSheet.innerText = styles;
+document.head.appendChild(styleSheet);
 
 export default ViewATTModal;

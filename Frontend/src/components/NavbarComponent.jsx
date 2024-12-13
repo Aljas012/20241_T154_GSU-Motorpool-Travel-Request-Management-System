@@ -5,8 +5,8 @@ const NavbarComponent = () => {
   return (
     <Navbar className="customNavMHP">
       <Container fluid style={{ padding: "0 3rem 0 3rem" }}>
-        <Navbar.Brand href="/PANG_REFRESH_LANG">
-          <div className="d-flex">
+        <Navbar.Brand href="http://localhost:5173/admin/homepage">
+          <div className="d-flex">  
             <div>
               <img
                 src="https://res.cloudinary.com/dx6ccf6ey/image/upload/v1732383925/BukSULogo.svg"

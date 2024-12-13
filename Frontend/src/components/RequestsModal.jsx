@@ -39,7 +39,7 @@ const RequestsModal = ({ requestShow, requestClose, customStyles }) => {
     fetchPendingRequest();  // Fetch pending requests when the component mounts
   }, []); 
 
-  // State to handle clickable ATT/RTT column
+
   const [selectedAttRtt, setSelectedAttRtt] = useState(null);
 
   const handleAttRttClick = async (row) => {

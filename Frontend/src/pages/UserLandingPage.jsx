@@ -1,18 +1,64 @@
-import React, { useState,useRef } from "react";
+import React, { useState,useRef, } from "react";
 import { Container, Row, Col, Form, Button, InputGroup,Modal, Stack, ModalBody } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faLock } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router-dom"; // Fixed missing import
+import { useNavigate ,useLocation} from "react-router-dom"; 
 import Swal from "sweetalert2";
 import "../styles/LandingPage.css";
-//import ReCAPTCHA from "react-google-recaptcha";
+import ReCAPTCHA from "react-google-recaptcha";
 
 
 
 function UserLandingPage() {
   const navigate = useNavigate();
   const [modal, setModal] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [showEmailModal, setShowEmailModal] = useState(false); 
+  const [showPinModal, setShowPinModal] = useState(false);
+  const [showChangePassword,setShowNewPassword] = useState(false)
+  const [newPassword,setNewPassword] = useState("")
+  const [confirmPassword,setConfirmPassword] = useState("")
+  const toggleEmailModal = () => setShowEmailModal(!showEmailModal);
+  const togglePinModal = () => setShowPinModal(!showPinModal);
+  const toggleChangePassword = () => setShowNewPassword(!showChangePassword);
+  const [captchaData,setCaptchaData] = useState('')
+
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalImage,setModalImage] = useState('')
+  const [modalButton,setModalButton] =useState('')
+  const [buttonColor,setButtonColor] = useState('')
+  const inputsRef = useRef([]);
+  const [captchaToken, setCaptchaToken] = useState(""); // State to store reCAPTCHA token
+  const [showCaptchaModal, setShowCaptchaModal] = useState(false);
+  const [errorModal,setShowErrorModal] = useState(false)
+  const [errorMessage,setErrorMessage] = useState('')
+  const [errorColor,setErrorColor] = useState('')
+  const [errorIcon,setErrorIcon] = useState('')
+  const [errorDiv,setErrorDiv] = useState('')
+  const warning = '#FCC737'
+  const danger = '#C63C51'
+
+
+
+
+  const location = useLocation();
   
+  // Function to get query parameters from the URL
+  const getQueryParam = (token) => {
+    const params = new URLSearchParams(location.search);
+    return params.get(token); // Returns the value of the query parameter
+  };
+
+  // Example usage: Extracting the "redirectedFrom" query parameter
+  const redirectedFrom = getQueryParam('redirectedFrom');
+  
+  // Now you can use redirectedFrom in your component
+  console.log('Redirected from:', redirectedFrom);
+
+
+
+
   const toggleModal = () => {
     setModal(!modal);
   };
@@ -86,10 +132,9 @@ function UserLandingPage() {
   const [email, setEmail] = useState(""); // For email input
   const [password, setPassword] = useState(""); // For password input
   const [error, setError] = useState(null); // For handling errors
-  
+
   
   function validateEmail(email) {
-    // Define the allowed email domains
     if(email !== "")
     {
     const allowedDomains = ['@buksu.edu.ph', '@student.buksu.edu.ph'];
@@ -102,90 +147,51 @@ function UserLandingPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const data = { email, password };
-    
-            
-          if (email === "" || password === "") {
-              Swal.fire({
-                icon: 'error',
-                title: 'null input fields',
-                text: 'Please occupy all input fields to',
-                confirmButtonText: 'Try Again',
-                confirmButtonColor: '#FF0000',
-              });
-              return; 
-            }
-            
-            
+    if (email === "" || password === "") {
+      setShowErrorModal(true)
+      setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1733419224/warning_3_pkhfuq.png')
+      setErrorColor('white')
+      setErrorDiv(warning)
+      setErrorMessage('Input cannot be empty! Please complete all required fields before proceeding.')
+      return;
+    }
+
     if (!validateEmail(email)) {
       alert('invalid email  -login')
-      return; 
+      return;
     }
 
-    try {
-      const response = await fetch("http://localhost:8000/user/login", {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-        
-      const json = await response.json();
-      if (!response.ok) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Invalid Credentials',
-          text: 'The email or password you entered is incorrect. Please try again.',
-          confirmButtonText: 'Try Again',
-          confirmButtonColor: '#FF0000',
-        });
-        return; 
-      } else {
-        // Clear the form and reset state if login is successful
-
-        setEmail("");
-        setPassword("");
-        setError(null);
-        localStorage.setItem("auth_token", json.token); 
-        localStorage.setItem("user_info", JSON.stringify(json.user));
-        console.log("email: " + email);
-        console.log("password: " + password);
-        const userInfo = JSON.parse(localStorage.getItem("user_info")); // Parse the stored JSON
-        const id = userInfo.user_id; // Access the correct key for the user ID
-        navigate(`/user/id=${id}/homepage`);
-      }
-    } catch (err) {
-      alertWindow();
-    }
-
-
+    // Show captcha modal
+    setShowCaptchaModal(true);
   };
 
 
+
+  async function handleGoogleSignup() {
+    try {
+      const response = await fetch('http://localhost:8000/user/signup_as_google', {
+        method: 'POST',
+      });
+      const data = await response.json();
+      console.log('Response from backend:', data); 
+        
+      if (data.url) {
+        window.location.href = data.url;
+      
+      } else {
+        console.error('Authorization URL not received from the backend');
+        return;
+      }
+    } catch (error) {
+      console.error('Error during Google signup:', error);
+    }
+  }
 
 
 
 
   //===========================================================================================
-  const [forgotEmail, setForgotEmail] = useState("");
-  const [showEmailModal, setShowEmailModal] = useState(false); // Set to false initially
-  const [showPinModal, setShowPinModal] = useState(false);
-  const [showChangePassword,setShowNewPassword] = useState(false)
-  const [newPassword,setNewPassword] = useState("")
-  const [confirmPassword,setConfirmPassword] = useState("")
-  const toggleEmailModal = () => setShowEmailModal(!showEmailModal);
-  const togglePinModal = () => setShowPinModal(!showPinModal);
-  const toggleChangePassword = () => setShowNewPassword(!showChangePassword);
 
-
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [modalMessage, setModalMessage] = useState('');
-  const [modalImage,setModalImage] = useState('')
-  const [modalButton,setModalButton] =useState('')
-  const [buttonColor,setButtonColor] = useState('')
-  const inputsRef = useRef([]);
-  
 
 
 
@@ -217,9 +223,6 @@ function notifyModal (imageUrl,message,buttonColor)
 
 
   
-
-  // const [recaptcha,setRecaptcha] = useState(null)
-  // const captchaKey = "6LfKIXsqAAAAABQzfWWmEnNZxRj-KOZRpV3XqIny";
 
  /**================ EMAIL CHECKER =================== */
 
@@ -384,28 +387,17 @@ function notifyModal (imageUrl,message,buttonColor)
   const changePasswordHandler = async () => {
    
     const isValid = await newPasswordValidator(newPassword, confirmPassword);
-  if (!isValid) {
-    return;
-  }
-    
+      if (!isValid) { return;}
   
     const data = { newPassword, forgotEmail};
     alert(''+forgotEmail)
-    try {
-      const response = await fetch('http://localhost:8000/user/change_password', {
-        method: 'PATCH',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+    try {  const response = await fetch('http://localhost:8000/user/change_password', {
+        method: 'PATCH',  body: JSON.stringify(data), headers: {
+          'Content-Type': 'application/json',}, });
   
       const json = await response.json();
   
-      if (!response.ok) {
-       
-        return;
-      } 
+      if (!response.ok) { return;  } 
         setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732265851/verified_qylqds.png')
         setModalMessage('Congratulations! Your password has been changed successfully.');
         setButtonColor('success')
@@ -418,13 +410,111 @@ function notifyModal (imageUrl,message,buttonColor)
     }
   };
   
-  
-  const recaptchaHandler = async () =>
-        {
-              setRecaptcha(true);
+  const recaptchaHandler = async (token) => {
+    try {
+      const response = await fetch("http://localhost:8000/user/verify_captcha", {
+        method: "POST", headers: {"Content-Type": "application/json",
+        },body: JSON.stringify({ token }), });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setShowCaptchaModal(false);
+
+        const loginData = { email, password, token };
+        
+        try {
+          const loginResponse = await fetch("http://localhost:8000/user/login", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(loginData),
+          });
+
+          const json = await loginResponse.json();
+
+          if (!loginResponse.ok) {
+            setShowErrorModal(true)
+            setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732120207/error_rbqoyb.png')
+            setErrorColor('white')
+            setErrorDiv(danger)
+            setErrorMessage('Invalid credentials. Please check your email and password')
+            return;
+          }
+
+          // Success handling
+          setEmail("");
+          setPassword("");
+          setError(null);
+          localStorage.setItem("auth_token", json.token);
+          localStorage.setItem("user_info", JSON.stringify(json.user));
+          const userInfo = JSON.parse(localStorage.getItem("user_info"));
+          const id = userInfo.user_id;
+          navigate(`/user/id=${id}/homepage`);
+
+        } catch (error) {
+          alertWindow();
         }
+      } else {
+        setShowErrorModal(true)
+        setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732116882/warning_xpcpdr.png')
+        setErrorColor('white')
+        setErrorDiv(danger)
+        setErrorMessage('Captcha Failed')
+      }
+    } catch (error) {
+      console.error("Captcha verification error:", error);
+      setShowErrorModal(true)
+      setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732116882/warning_xpcpdr.png')
+      setErrorColor('white')
+      setErrorDiv(danger)
+      setErrorMessage('Failed to verify Captcha!')
+    }
+  };
 
 
+
+
+    async function handleGoogleLogin() {
+
+      
+      try {
+        const response = await fetch('http://localhost:8000/user/login_as_google', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const data = await response.json();
+        console.log('Response from backend:', data);
+
+        if (data.url) {
+          // Try different navigation methods
+          try {
+            // Method 1: window.location
+            window.location.href = data.url;
+            
+            // Method 2: navigate (as backup)
+            setTimeout(() => {
+              if (window.location.href !== data.url) {
+                navigate(data.url);
+              }
+            }, 100);
+          } catch (navError) {
+            console.error('Navigation error:', navError);
+            // Method 3: window.open as last resort
+            window.open(data.url, '_self');
+          }
+        } else {
+          throw new Error('No authorization URL received');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        // Show error modal to user
+      }
+    }
 
     
   return (
@@ -443,7 +533,7 @@ function notifyModal (imageUrl,message,buttonColor)
           lg={{ span: 4, offset: 0 }}
         >
           <div style={{ marginBottom: "2rem" }}>
-            <Form id="landingpage" onSubmit={handleSubmit}>
+            <Form  onSubmit={handleSubmit}>
               <h2
                 style={{
                   ...headerStyle,
@@ -519,6 +609,7 @@ function notifyModal (imageUrl,message,buttonColor)
                   value={password}
                 />
               </InputGroup>
+             
               <Button
                 variant="primary"
                 size="lg"
@@ -533,14 +624,16 @@ function notifyModal (imageUrl,message,buttonColor)
                 style={{ fontFamily: "Helvetica", color: "#767676" }}
               >
                 or sign in with{" "}
-                <a
-                  href=""
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                   onClick={(e) => {
+                    e.preventDefault(); // Prevent form submission
+                    handleGoogleSignup();
+                  }}
                   style={{
                     fontFamily: "Helvetica",
                     fontWeight: "bold",
                     textDecoration: "none",
+                    border: "none",
                   }}
                 >
                   <span style={{ color: "#FF4B26" }}>G</span>
@@ -549,7 +642,7 @@ function notifyModal (imageUrl,message,buttonColor)
                   <span style={{ color: "#0F993E" }}>g</span>
                   <span style={{ color: "#167EE6" }}>l</span>
                   <span style={{ color: "#167EE6" }}>e</span>
-                </a>
+                </button>
               </h5>
               {/** FORGOT PASSWORD */}
               <h5
@@ -782,24 +875,35 @@ function notifyModal (imageUrl,message,buttonColor)
 
 
 
-          {/* <Modal show={recaptchaHandler} className="d-flex align-items-center">
-                  <Modal.Header >
-                      <Modal.Title className="d-flex align-items-center ">GOOGLE RECAPTCHA</Modal.Title>
-                  </Modal.Header>
-              <Modal.Body>  
-              <form onSubmit={handleSubmit}>
-               
-                    <ReCAPTCHA
-                      sitekey={captchaKey}
-                      onChange={handleRecaptchaChange}
-                    />
-                    <br />
-                    <button type="submit">Submit</button>
-                  </form>
+          <Modal show={showCaptchaModal} onHide={() => setShowCaptchaModal(false)}  centered>
+                  <Modal.Body style={{ backgroundColor: '#FEFEFF', borderRadius: '0px', display: 'flex',
+                      justifyContent: 'center',alignItems: 'center',flexDirection: 'column',}}>
+                    <form style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' ,marginTop:'1rem'}}>
+                      <ReCAPTCHA
+                        sitekey="6LeNWpMqAAAAAGPC8sroRz2YudH6Kbb_jhSzzyKX"
+                        onChange={(token) => recaptchaHandler(token)}
+                        onErrored={() => {
+                          alert('Invalid captcha!');
+                        }}
+                      />
+                      <h6 style={{ marginTop: '1rem', color: 'red', textAlign: 'center' }}>
+                        Please verify that you're not a robot to continue.
+                      </h6>
+                    </form>
+                  </Modal.Body>
+          </Modal>
 
-              </Modal.Body>
 
-          </Modal> */}
+          <Modal show={errorModal} centered>
+                  <Modal.Body style={{ backgroundColor: errorColor, borderRadius: '0px', display: 'flex',
+                      justifyContent: 'center',alignItems: 'center',flexDirection: 'column',padding: 0,}}>
+                    <img src={errorIcon} alt="no internet" height="90px" width="90px" draggable={false} style={{marginBottom: "1.5em",marginTop:'2rem'}}/>
+                    <p style={{color: 'black',textAlign:'center',margin:'.5rem'}}>{errorMessage}</p>
+                    <div style={{display:'flex',backgroundColor:errorDiv,width:'100%',  padding: '10px',marginTop:'1em',justifyContent:'center'}}>
+                    <button style={{ backgroundColor: 'transparent',border:'none',margin:'.8em',color:'white'}} onClick={()=>setShowErrorModal(false)}> DISMISS </button>
+                   </div>
+                  </Modal.Body>
+          </Modal>
 
 
 
