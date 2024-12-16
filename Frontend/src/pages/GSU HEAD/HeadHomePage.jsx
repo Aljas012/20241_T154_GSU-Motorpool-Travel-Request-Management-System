@@ -4,7 +4,7 @@ import DataTable from "react-data-table-component";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../STYLES/MotorpoolHomePage.css";
-import NavbarComponent from "../../components/NavbarComponent";
+import HeadNavbar from "../../components/HeadNavbar";
 import HeadSidebarComponent from "../../components/HeadSideBar";
 import WeatherInfo from "../../components/WeatherInfoComponent";
 import MotorpoolApprovedModal from "../../components/MotorpoolApprovedModal";
@@ -28,6 +28,7 @@ function HeadHomePage() {
   const requestClose = () => setRequestModalShow(false);
   const requestModalShow = () => setRequestModalShow(true);
   const [data,setData] = useState([])
+  const [headApproved,setheadApproved] = useState('')
     const [errorModal,setShowErrorModal] = useState(false)
           const [errorMessage,setErrorMessage] = useState('')
           const [errorColor,setErrorColor] = useState('')
@@ -183,9 +184,42 @@ fetchEvents()
           setErrorMessage('Something went wrong. Please check your internet connection.')
         }
   }
-
   fetchedApprovedRequest()
 },[])
+
+
+
+useEffect(() => {
+
+    const fetchHeadApprovedTravels = async () =>{ //mao ni ang gi approved na sa heads
+      const adminInfo = JSON.parse(localStorage.getItem("admin_info"))
+      const token = adminInfo.admin_token;
+      try{
+          const getApproved = await fetch('http://localhost:8000/admin/head_approved_request',{
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
+            }})
+            if(!getApproved.ok){
+              
+              return;
+            }
+            const receivedData = await getApproved.json()
+            console.log(receivedData)
+            setheadApproved(receivedData)
+      }catch(error){
+        alert(error)
+        setShowErrorModal(true)     
+        setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+        setErrorColor('white')
+        setErrorDiv(danger)
+        setErrorMessage('Something went wrong. Please check your internet connection.')
+      }
+    }
+    fetchHeadApprovedTravels()
+  },[])
+
 
 
   const customStyles = {
@@ -231,30 +265,27 @@ fetchEvents()
   };
 
 
-
-
-
-
-
-
-
-
-
-
-  const columns = [ 
+  const columns = [
     {
       name: "Requestor",
-      selector: (row) => row.requestor_name,
+      selector: (row) => row.user?.requestor_name,
     },
     {
       name: "Date of Request",
-      selector: (row) => row.request_date,
-    },
+       selector: (row) => {
+      const [month, day, year] = row.date_of_travel.split(" ");
+      const date = new Date(`${month} ${day}, ${year}`); // Convert to a Date object
+      return date.toLocaleDateString('en-US', {
+        month: 'long',  
+        day: 'numeric',
+        year: 'numeric', 
+      });
+    }},
     {
       name: "Time of Approval",
       selector: (row) => {
-        const time = new Date(row.updatedAt).toLocaleTimeString('en-US', { hour12: true }); 
-        return time; 
+        const time = new Date(row.updatedAt).toLocaleTimeString('en-US', { hour12: true });
+        return time;
       },
     },
     {
@@ -263,7 +294,12 @@ fetchEvents()
       cell: (row) => (
         <span
           style={{
-            color: row.status === "Approved" ? "green" : row.status === "Pending" ? "orange" : "red",
+            color:
+              row.status === "Approved"
+                ? "green"
+                : row.status === "Pending"
+                ? "orange"
+                : "red",
             fontWeight: "bold",
           }}
         >
@@ -273,11 +309,12 @@ fetchEvents()
     },
   ];
 
+
   return (
     <>
       {/** HEADER */}
 
-      <NavbarComponent username="GSU Head" />
+      <HeadNavbar username="GSU Head" />
 
 
       <main>
@@ -331,7 +368,7 @@ fetchEvents()
                       <div>
                         <DataTable
                           columns={columns}
-                          data={data}
+                          data={headApproved}
                           customStyles={customStyles}
                           highlightOnHover
                           pagination

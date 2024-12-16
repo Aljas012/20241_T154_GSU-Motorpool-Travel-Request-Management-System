@@ -1,0 +1,166 @@
+{
+  "hash": "71281980",
+  "configHash": "f61496c4",
+  "lockfileHash": "87dcdf06",
+  "browserHash": "a42ba562",
+  "optimized": {
+    "react": {
+      "src": "../../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "2ab9383b",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "46825921",
+      "needsInterop": true
+    },
+    "react-loading": {
+      "src": "../../../node_modules/react-loading/dist/react-loading.js",
+      "file": "react-loading.js",
+      "fileHash": "5b85a375",
+      "needsInterop": true
+    },
+    "react-big-calendar": {
+      "src": "../../../node_modules/react-big-calendar/dist/react-big-calendar.esm.js",
+      "file": "react-big-calendar.js",
+      "fileHash": "99747e2a",
+      "needsInterop": false
+    },
+    "date-fns/format": {
+      "src": "../../../node_modules/date-fns/format.js",
+      "file": "date-fns_format.js",
+      "fileHash": "ad2829dd",
+      "needsInterop": false
+    },
+    "date-fns/parse": {
+      "src": "../../../node_modules/date-fns/parse.js",
+      "file": "date-fns_parse.js",
+      "fileHash": "b7319e11",
+      "needsInterop": false
+    },
+    "date-fns/startOfWeek": {
+      "src": "../../../node_modules/date-fns/startOfWeek.js",
+      "file": "date-fns_startOfWeek.js",
+      "fileHash": "46ab2c18",
+      "needsInterop": false
+    },
+    "date-fns/getDay": {
+      "src": "../../../node_modules/date-fns/getDay.js",
+      "file": "date-fns_getDay.js",
+      "fileHash": "9d199b7b",
+      "needsInterop": false
+    },
+    "date-fns/locale/en-US": {
+      "src": "../../../node_modules/date-fns/locale/en-US.js",
+      "file": "date-fns_locale_en-US.js",
+      "fileHash": "105c4d57",
+      "needsInterop": false
+    },
+    "framer-motion/client": {
+      "src": "../../../node_modules/framer-motion/dist/es/client.mjs",
+      "file": "framer-motion_client.js",
+      "fileHash": "e8be5a65",
+      "needsInterop": false
+    },
+    "react-router-dom": {
+      "src": "../../../node_modules/react-router-dom/dist/index.mjs",
+      "file": "react-router-dom.js",
+      "fileHash": "cfcbcbeb",
+      "needsInterop": false
+    },
+    "react-bootstrap": {
+      "src": "../../../node_modules/react-bootstrap/esm/index.js",
+      "file": "react-bootstrap.js",
+      "fileHash": "3b683f01",
+      "needsInterop": false
+    },
+    "react-bootstrap/Spinner": {
+      "src": "../../../node_modules/react-bootstrap/esm/Spinner.js",
+      "file": "react-bootstrap_Spinner.js",
+      "fileHash": "651ee5bd",
+      "needsInterop": false
+    },
+    "@fortawesome/react-fontawesome": {
+      "src": "../../../node_modules/@fortawesome/react-fontawesome/index.es.js",
+      "file": "@fortawesome_react-fontawesome.js",
+      "fileHash": "5923b894",
+      "needsInterop": false
+    },
+    "react-data-table-component": {
+      "src": "../../../node_modules/react-data-table-component/dist/index.es.js",
+      "file": "react-data-table-component.js",
+      "fileHash": "3ca52bb8",
+      "needsInterop": false
+    },
+    "react-calendar": {
+      "src": "../../../node_modules/react-calendar/dist/esm/index.js",
+      "file": "react-calendar.js",
+      "fileHash": "96a55e2d",
+      "needsInterop": false
+    },
+    "react-toastify": {
+      "src": "../../../node_modules/react-toastify/dist/react-toastify.esm.mjs",
+      "file": "react-toastify.js",
+      "fileHash": "e3ff325f",
+      "needsInterop": false
+    },
+    "@fortawesome/fontawesome-svg-core": {
+      "src": "../../../node_modules/@fortawesome/fontawesome-svg-core/index.mjs",
+      "file": "@fortawesome_fontawesome-svg-core.js",
+      "fileHash": "22d244b9",
+      "needsInterop": false
+    },
+    "react-pro-sidebar": {
+      "src": "../../../node_modules/react-pro-sidebar/dist/index.es.js",
+      "file": "react-pro-sidebar.js",
+      "fileHash": "7cc1a99e",
+      "needsInterop": false
+    },
+    "jwt-decode": {
+      "src": "../../../node_modules/jwt-decode/build/esm/index.js",
+      "file": "jwt-decode.js",
+      "fileHash": "63abe633",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-6LVHBLUB": {
+      "file": "chunk-6LVHBLUB.js"
+    },
+    "chunk-QCGI7QGR": {
+      "file": "chunk-QCGI7QGR.js"
+    },
+    "chunk-YIMWTC3H": {
+      "file": "chunk-YIMWTC3H.js"
+    },
+    "chunk-TY2L3B4X": {
+      "file": "chunk-TY2L3B4X.js"
+    },
+    "chunk-FWG3XDFM": {
+      "file": "chunk-FWG3XDFM.js"
+    },
+    "chunk-NRLAWEIT": {
+      "file": "chunk-NRLAWEIT.js"
+    },
+    "chunk-7TJMZAOD": {
+      "file": "chunk-7TJMZAOD.js"
+    },
+    "chunk-NC5HDFZE": {
+      "file": "chunk-NC5HDFZE.js"
+    },
+    "chunk-QH276DS2": {
+      "file": "chunk-QH276DS2.js"
+    },
+    "chunk-MQSTGHVO": {
+      "file": "chunk-MQSTGHVO.js"
+    },
+    "chunk-BTS5FBP5": {
+      "file": "chunk-BTS5FBP5.js"
+    },
+    "chunk-EWTE5DHJ": {
+      "file": "chunk-EWTE5DHJ.js"
+    }
+  }
+}

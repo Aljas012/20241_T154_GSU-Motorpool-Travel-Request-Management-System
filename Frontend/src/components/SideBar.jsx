@@ -11,11 +11,6 @@ const SidebarComponent = ({
 }) => {
 
 
-  const handleLogout =()=>
-  {
-    localStorage.removeItem("admin_info");
-    window.location.href = "http://localhost:5173/admin/AdminLandingPage"; 
-  }
 
   return (
     <Sidebar className="sidebarBG">
@@ -108,16 +103,7 @@ const SidebarComponent = ({
             Admin Guide
           </div>
         </MenuItem>
-        <MenuItem className="menuItem" /*onClick={requestModalShow}*/>
-          <div className="menuItemDiv" onClick={handleLogout}>
-            <img
-              src="https://res.cloudinary.com/dx6ccf6ey/image/upload/v1732346281/LogoutIcon_mayv7x.svg"
-              alt="icon"
-              className="sidebarIconSize"
-            />
-            Sign Out
-          </div>
-        </MenuItem>
+       
       </Menu>
     </Sidebar>
   );

@@ -354,7 +354,7 @@ function UserHomePage() {
 
             if (!response.ok) {
                 setShowErrorModal(true)
-                setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1733419224/warning_3_pkhfuq.png')
+                setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
                 setErrorColor('white')
                 setErrorDiv(warning)
                 setErrorMessage('Something went wrong while processing your request.')
@@ -369,7 +369,7 @@ function UserHomePage() {
         } catch (error) {
             console.error('Error deleting event:', error);
             setShowErrorModal(true)
-            setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732120207/error_rbqoyb.png')
+            setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
             setErrorColor('white')
             setErrorDiv(danger)
             setErrorMessage('Something went wrong. Please check your internet connection.')
@@ -429,7 +429,7 @@ function UserHomePage() {
         } catch (error) {
           console.error('Error fetching events:', error);
           setShowErrorModal(true);
-          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732120207/error_rbqoyb.png');
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png');
           setErrorColor('white');
           setErrorDiv(danger);
           setErrorMessage('Something went wrong. Please check your internet connection.');
@@ -438,8 +438,6 @@ function UserHomePage() {
       fetchTravelEvents();
     },[]);
     
-    
-   
   return (
     <>
       <NavBarWithBellComponent />
@@ -733,7 +731,7 @@ function UserHomePage() {
                       <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", marginTop: "3rem" }}>
                         <div style={{ display: "flex", alignItems: "center" }}>
                           <div style={{ position: "relative", display: "inline-block", marginTop: "8px", marginRight: "0.5rem" }}>
-                            <img src="../images/Ell2.png" alt="Descriptive text" style={{ width: "2.5rem", height: "auto" }} />
+                            <img src="https://res.cloudinary.com/dvhfgstud/image/upload/v1734349319/Circle_x7dbft.svg" alt="Descriptive text" style={{ width: "2.5rem", height: "auto" }} />
                             <span style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", fontFamily: "Helvetica", color: "#FFFFFF", fontWeight: "600", fontSize: "1.3rem" }}>1</span>
                           </div>
                           <button onClick={handleButtonClickATT} style={{ padding: "0.5rem 1rem", background: "linear-gradient(to right, #0760A1 80%, #CD8800 80%)", color: "#FFFFFF", border: "none", borderRadius: "4px", cursor: "pointer", width: "15rem", fontFamily: "Helvetica", fontWeight: "600", display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "0.5rem" }}>
@@ -746,7 +744,7 @@ function UserHomePage() {
                       <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
                         <div style={{ display: "flex", alignItems: "center" }}>
                           <div style={{ position: "relative", display: "inline-block", marginTop: "8px", marginRight: "0.5rem" }}>
-                            <img src="../images/Ell2.png" alt="Descriptive text" style={{ width: "2.5rem", height: "auto" }} />
+                            <img src="https://res.cloudinary.com/dvhfgstud/image/upload/v1734351443/Group_112_d4r9ao.png" alt="Descriptive text" style={{ width: "2.5rem", height: "auto" }} />
                             <span style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", fontFamily: "Helvetica", color: "#FFFFFF", fontWeight: "600", fontSize: "1.3rem" }}>2</span>
                           </div>
                           <button onClick={handleButtonClickRTT} style={{ padding: "0.5rem 1rem", background: "linear-gradient(to right, #0760A1 80%, #CD8800 80%)", color: "#FFFFFF", border: "none", borderRadius: "4px", cursor: "pointer", width: "15rem", fontFamily: "Helvetica", fontWeight: "600", display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "0.5rem" }}>

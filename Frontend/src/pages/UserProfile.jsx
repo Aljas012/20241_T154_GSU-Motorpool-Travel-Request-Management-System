@@ -1036,7 +1036,7 @@ const handleClick = () => {
                 }}
               >
                 <img
-                  src="./images/UserProfileBG.png"
+                  src="https://res.cloudinary.com/dvhfgstud/image/upload/v1734351642/Watch_app-pana_1_szrapk.png"
                   alt="bg"
                   style={{ width: "60%", height: "auto" }}
                 />

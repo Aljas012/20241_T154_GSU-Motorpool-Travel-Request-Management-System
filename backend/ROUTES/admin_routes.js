@@ -38,7 +38,7 @@ const {fetchPersonalEvent} = require('../CONTROLLERS/admin controllers/fetch_per
 const {countTodaysRequest} = require('../CONTROLLERS/admin controllers/count_todays_request')
 const {vehicleTotal} = require('../CONTROLLERS/admin controllers/count_available_vehicle')
 const {sendDeclinedEmail} = require('../CONTROLLERS/admin controllers/send_declined_email');
-const { authenticate } = require('passport');
+const findAllHeadApprovedRequest = require('../CONTROLLERS/admin controllers/fetch_head_approved_travel')
 
 
 router.post('/login',login_admin)  //admin login
@@ -78,4 +78,5 @@ router.get('/fetch_personal_event/:adminId',authenticateToken,fetchPersonalEvent
 router.get('/todays_total_request',authenticateToken,countTodaysRequest)
 router.get('/available_vehicle',authenticateToken,vehicleTotal)
 router.post('/decline_email',authenticateToken,sendDeclinedEmail)
+router.get('/head_approved_request',authenticateToken,findAllHeadApprovedRequest)
 module.exports = router

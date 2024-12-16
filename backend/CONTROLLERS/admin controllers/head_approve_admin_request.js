@@ -42,7 +42,7 @@ const gsu_password =process.env.PASSWORD_NODE;
             try {
                 const updateStatus = await admin_request_data.findOneAndUpdate(
                     { reference_id: userId },
-                    { $set: { status: "Approved" } }
+                    { $set: { status: "Approved", updatedAt: new Date() } }
                 );
 
                 if (!updateStatus) {

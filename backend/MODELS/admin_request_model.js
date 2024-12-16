@@ -21,5 +21,5 @@ const admin_request = new Schema({
             pre_arrival_time: {type:String,required:true},
             post_departure_date_time: {type:String,required:true},
             post_arrival_time: {type:String,required:true},
-}) 
+},{timestamps:true}) 
 module.exports = mongoose.model('admin_request_data', admin_request)

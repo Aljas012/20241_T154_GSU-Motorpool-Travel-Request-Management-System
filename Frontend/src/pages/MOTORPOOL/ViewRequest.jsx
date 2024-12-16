@@ -581,7 +581,8 @@ const validateRequiredFields = () => {
                                 placeholder="Select vehicle to reflect plate number"
                                 value={selectedVehicle ? selectedVehicle.plateNumber : ''} // Display plate number of selected vehicle
                                 className="customFieldVR" 
-                                readOnly  // Make it read-only so user can't edit
+                                style={{borderTop:'none',borderLeft:'none',borderRight:'none',borderRadius:'0',backgroundColor:'transparent'}}
+                               disabled  // Make it read-only so user can't edit
                               />
                                   </div>
                           </div>
@@ -632,6 +633,8 @@ const validateRequiredFields = () => {
                                 type="text"
                                 placeholder="Total gas refueled"
                                 className="customFieldVR"
+                                style={{borderTop:'none',borderLeft:'none',borderRight:'none',borderRadius:'0',backgroundColor:'transparent'}}
+                                disabled
                                 onChange={(e) => setGasAmount(e.target.value)}
                               ></Form.Control>
                             </div>
@@ -835,6 +838,8 @@ const validateRequiredFields = () => {
                                     value={selectedDriver}
                                     placeholder="Select driver to reflect name"
                                     className="customFieldVR"
+                                    style={{borderTop:'none',borderLeft:'none',borderRight:'none',borderRadius:'0',backgroundColor:'transparent'}}
+                                    disabled
                                   ></Form.Control>
                                 </div>
                               </div>
@@ -855,6 +860,8 @@ const validateRequiredFields = () => {
                                     value={selectedVehicle ? `${selectedVehicle.vehicleName} ${selectedVehicle.plateNumber}` : ''}
                                     placeholder="Select vehicle to reflect plate number"
                                     className="customFieldVR"
+                                    style={{borderTop:'none',borderLeft:'none',borderRight:'none',borderRadius:'0',backgroundColor:'transparent'}}
+                                    disabled
                                   ></Form.Control>
                                 </div>
                               </div>
@@ -873,10 +880,10 @@ const validateRequiredFields = () => {
                                   <Form.Control
                                     type="text"
                                     placeholder="Loading..."
-                                    readOnly
                                     value={attData?.travel_details?.passenger_names || ''}
                                     className="customFieldVR"
-
+                                    style={{borderTop:'none',borderLeft:'none',borderRight:'none',borderRadius:'0',backgroundColor:'transparent'}}
+                                    disabled
                                   />
                                 </div>
                               </div>
@@ -894,6 +901,8 @@ const validateRequiredFields = () => {
                                     type="text"
                                     value={attData?.travel_purpose || 'Loading'}
                                     className="customFieldVR"
+                                    style={{borderTop:'none',borderLeft:'none',borderRight:'none',borderRadius:'0',backgroundColor:'transparent'}}
+                                    disabled
                                   ></Form.Control>
                                 </div>
                               </div>
@@ -911,7 +920,8 @@ const validateRequiredFields = () => {
                                 <div>
                                   <Form.Control
                                     type="text"
-                                    
+                                    style={{borderTop:'none',borderLeft:'none',borderRight:'none',borderRadius:'0',backgroundColor:'transparent'}}
+                                    disabled
                                     value={attData?.travel_details?.destination || 'Loading'}
                                     className="customFieldVR"
                                   ></Form.Control>
@@ -931,9 +941,9 @@ const validateRequiredFields = () => {
                                 <div>
                                   <Form.Control
                                     type="text"
-                                    placeholder="FUND 123 (CON FUND)"
                                     className="customFieldVR"
                                     onChange={(e) => setTravelExpenses(e.target.value)}
+
                                   ></Form.Control>
                                 </div>
                               </div>
@@ -954,6 +964,8 @@ const validateRequiredFields = () => {
                                     value={attData?.travel_details?.date_travel || 'Loading'}
                                     className="customFieldVR"
                                     onChange={(e) => setTravelDate(e.target.value)}
+                                    style={{borderTop:'none',borderLeft:'none',borderRight:'none',borderRadius:'0',backgroundColor:'transparent'}}
+                                    disabled
                                   ></Form.Control>
                                 </div>
                               </div>
@@ -1314,9 +1326,9 @@ const validateRequiredFields = () => {
                                 <Form.Control
                                
                                   type="text"
-                                  placeholder="Only when Printed"
                                    className="customFieldVR text-center"
-                                  disabled
+                                   style={{borderTop:'none',borderLeft:'none',borderRight:'none',borderRadius:'0',backgroundColor:'transparent'}}
+                                   disabled
                                 ></Form.Control>
                               </div>
                             </div>
@@ -1332,9 +1344,10 @@ const validateRequiredFields = () => {
                               <div className="mt-3">
                                 <Form.Control
                                   type="text"
-                                  placeholder="Department Head"
+                              
                                   className="customFieldVR text-center"
-                                  disabled
+                                  style={{borderTop:'none',borderLeft:'none',borderRight:'none',borderRadius:'0',backgroundColor:'transparent'}}
+                               disabled
                                 ></Form.Control>
                               </div>
                             </div>
@@ -1353,7 +1366,8 @@ const validateRequiredFields = () => {
                                   type="text"
                                   value={selectedDriver}
                                   className="customFieldVR text-center"
-                                  disabled
+                                  style={{borderTop:'none',borderLeft:'none',borderRight:'none',borderRadius:'0',backgroundColor:'transparent'}}
+                               disabled
                                 ></Form.Control>
                               </div>
                             </div>

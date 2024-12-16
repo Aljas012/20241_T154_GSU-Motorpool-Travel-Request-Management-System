@@ -320,7 +320,7 @@ function RequestToTravelForm() {
                           }}
                         >
                           <img
-                            src="./images/OFF_ICON.png"
+                            src="https://res.cloudinary.com/dvhfgstud/image/upload/v1734349320/officeMHP_t5cyhy.svg"
                             alt="Requestor"
                             style={{
                               width: "auto",
@@ -357,7 +357,7 @@ function RequestToTravelForm() {
                           }}
                         >
                           <img
-                            src="./images/REQUESTOR_ICON.png"
+                            src="https://res.cloudinary.com/dvhfgstud/image/upload/v1734351968/fi-rs-comment-user_yifbsw.png"
                             alt="Requestor"
                             style={{
                               width: "auto",
@@ -393,7 +393,7 @@ function RequestToTravelForm() {
                           }}
                         >
                           <img
-                            src="./images/CONTACT_ICON.png"
+                            src="https://res.cloudinary.com/dvhfgstud/image/upload/v1734352135/fi-rr-phone-call_zcdxon.png"
                             alt="Requestor"
                             style={{
                               width: "auto",
@@ -441,7 +441,7 @@ function RequestToTravelForm() {
                           }}
                         >
                           <img
-                            src="./images/CALENDAR_ICON.png"
+                            src="https://res.cloudinary.com/dvhfgstud/image/upload/v1734352141/01_align_center_ttm3fu.png"
                             alt="Calendar"
                             style={{
                               width: "auto",
@@ -539,7 +539,7 @@ function RequestToTravelForm() {
                           }}
                         >
                           <img
-                            src="./images/TIME_ICON.png"
+                            src="https://res.cloudinary.com/dvhfgstud/image/upload/v1734352147/fi-rr-time-fast_um7bjf.png"
                             alt="Calendar"
                             style={{
                               width: "auto",
