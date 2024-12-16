@@ -21,7 +21,7 @@ const authorityToTravelSchema = new Schema({
 
 const user_schema = new Schema({
     name: { type: String, required: true },
-    email: { type: String, required: true },
+    email: { type: String, required: true ,unique: true},
     password: { type: String, required: false },
     office_code: { type: String, required: false },
     college_name: { type: String, required: false },

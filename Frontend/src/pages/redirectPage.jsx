@@ -24,10 +24,10 @@ const RedirectPage = () => {
         office_code: params.get("office_code"),
         college_name: params.get("college_name"),
       };
+      
       console.log("Extracted user info:", userInfo);
 
       if (token) {
-        // Perform async operations
         await localStorage.setItem("auth_token", token);
         await localStorage.setItem("user_info", JSON.stringify(userInfo));
         console.log("Redirecting to homepage...");

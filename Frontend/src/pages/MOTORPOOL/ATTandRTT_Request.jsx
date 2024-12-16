@@ -21,56 +21,6 @@ import "../STYLES/ATTandRTT_Request.css";
 
 function ATTandRTT_Request() {
   // Sample data
-  const data = [
-    {
-      requestor: "qwe",
-      collegeOffice: "qwe",
-      officeCode: "qwe",
-      attRtt: "we",
-      time: "qwe",
-      status: "qwe",
-    },
-    {
-      requestor: "qwe",
-      collegeOffice: "qwe",
-      officeCode: "qwe",
-      attRtt: "we",
-      time: "qwe",
-      status: "qwe",
-    },
-    {
-      requestor: "qwe",
-      collegeOffice: "qwe",
-      officeCode: "qwe",
-      attRtt: "we",
-      time: "qwe",
-      status: "qwe",
-    },
-    {
-      requestor: "qwe",
-      collegeOffice: "qwe",
-      officeCode: "qwe",
-      attRtt: "we",
-      time: "qwe",
-      status: "qwe",
-    },
-    {
-      requestor: "qwe",
-      collegeOffice: "qwe",
-      officeCode: "qwe",
-      attRtt: "we",
-      time: "qwe",
-      status: "qwe",
-    },
-    {
-      requestor: "qwe",
-      collegeOffice: "qwe",
-      officeCode: "qwe",
-      attRtt: "we",
-      time: "qwe",
-      status: "qwe",
-    },
-  ];
 
   // Columns configuration
   const columns = [
@@ -156,7 +106,7 @@ function ATTandRTT_Request() {
 
   return (
     <>
-      {/** HEADER */}
+    
       <Navbar className="customNavMHP" sticky="top">
         <Container>
           <Navbar.Brand href="/MART_balikLandingPageNiSya">

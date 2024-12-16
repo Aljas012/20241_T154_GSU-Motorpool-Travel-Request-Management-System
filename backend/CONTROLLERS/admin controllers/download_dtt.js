@@ -12,7 +12,6 @@ const buksuLogo = 'https://res.cloudinary.com/dvhfgstud/image/upload/v1733117339
                 margin: 50
             });
         }
-
         async addHeader(leftLogoUrl, rightLogoUrl) {
             try {
                 const leftResponse = await fetch(leftLogoUrl);
@@ -33,7 +32,7 @@ const buksuLogo = 'https://res.cloudinary.com/dvhfgstud/image/upload/v1733117339
                     "January", "February", "March", "April", "May", "June",
                     "July", "August", "September", "October", "November", "December"
                 ];
-                const month = monthNames[currentDate.getMonth()]; // Get month name
+                const month = monthNames[currentDate.getMonth()]; 
                 const day = String(currentDate.getDate()).padStart(2, '0'); // Get day and pad with zero if needed
                 const year = currentDate.getFullYear();
                 const formattedDate = `${month} ${day},${year}`;
@@ -71,10 +70,10 @@ const buksuLogo = 'https://res.cloudinary.com/dvhfgstud/image/upload/v1733117339
         }
 
         drawFooter() {
-            const startX = 25;  // Same as table's startX
+            const startX = 25; 
             const pageHeight = this.doc.page.height;
-            const footerHeight = 20; // Adjust this value based on your footer content height
-            const footerY = pageHeight - footerHeight - 20; // 10 is the margin from the bottom
+            const footerHeight = 20; 
+            const footerY = pageHeight - footerHeight - 20; 
 
             this.doc
                 .fontSize(8)
@@ -318,7 +317,6 @@ const buksuLogo = 'https://res.cloudinary.com/dvhfgstud/image/upload/v1733117339
             this.startY += initialRowHeight;
             this.checkPageOverflow();
 
-            // Draw the footer only after all content is added
             this.drawFooter();
 
             return this;
@@ -328,30 +326,23 @@ const buksuLogo = 'https://res.cloudinary.com/dvhfgstud/image/upload/v1733117339
 
             this.doc.fontSize(fontSize).font(font);
 
-            // Calculate the height of the text
-            const textHeight = fontSize * 1.2; // Adjust line height as needed
+            const textHeight = fontSize * 1.2; 
 
-            // Calculate the vertical position to center the text
             const verticalCenterY = y + (height - textHeight) / 2;
 
-            let horizontalX = x + leftMargin; // Default to the provided x
+            let horizontalX = x + leftMargin; 
             if (align === 'center') {
-                horizontalX = (this.doc.page.width - width) / 2; // Center horizontally
+                horizontalX = (this.doc.page.width - width) / 2; 
             } else if (align === 'right') {
-                horizontalX = this.doc.page.width - width - 50; // Adjust for right alignment (50 is an example margin)
-            }
-            
-            // Draw the text at the calculated position
+                horizontalX = this.doc.page.width - width - 50;         }
+
             this.doc.text(text, x, verticalCenterY, {
                 width: width,
                 align: align,
                 height: height,
-                ellipsis: false, // Set to false to allow wrapping
-                lineBreak: true // Ensure line breaks are respected
+                ellipsis: false,
+                lineBreak: true 
             });
-
-            // Draw the cell border (optional)
-
         }
     }
 

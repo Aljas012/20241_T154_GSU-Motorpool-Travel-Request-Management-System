@@ -18,7 +18,7 @@ const addDriver = async (req,res) =>
                 contactInformation: contactInformation
             });
     
-            await newDriver.save(); // Save the new driver
+            await newDriver.save(); 
             return res.status(200).json({ message: 'Successfully added the driver' });
 
         }catch(error)

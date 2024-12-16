@@ -1,6 +1,4 @@
 const admin_form_data = require('../../MODELS/admin_request_model')
-//para ni sa view approved rtt modal tapos drivers ticket
-
 const fetchDriversTripTicket = async (req,res) => {
     const {requestId} = req.params
     console.log('fetch drivers trip ticket -The reference id is ',requestId)

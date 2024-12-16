@@ -23,8 +23,6 @@ const updateDriverStatus = async (driver_name) => {
         throw error;
     }
 };
-
-
 const updateVehicleStatus = async (plate_number) =>
     {   
         try
@@ -34,8 +32,6 @@ const updateVehicleStatus = async (plate_number) =>
                 { $set: { status: 'On Service' } }, 
                 { new: true } 
             );
-
-
             if(!updatedVehicle)
              {
                 throw new Error(`Plate number ${plate_number} not found`);
@@ -45,12 +41,9 @@ const updateVehicleStatus = async (plate_number) =>
                
         }
 }
-
         const updateRequestStatus = async (reference_id) =>
          {
             try{
-
-    
                 const updateRequest  = await request_data.findOneAndUpdate(
                         {_id: reference_id},
                          {status: 'Pending'},
@@ -65,10 +58,7 @@ const updateVehicleStatus = async (plate_number) =>
                         console.error('Error updating vehicle status:', error);
                         throw error;
                     }
-
-
         }
-
 
 
 const forwardToGsu = async (req, res) => {

@@ -6,7 +6,6 @@ const deleteEvent = async (req, res) => {
     if (!eventId || !userId) {
         return res.status(400).json({ error: 'Event ID and User ID are required' });
     }
-
     try {
         console.log('Attempting to delete event:', { eventId, userId });
         
@@ -36,10 +35,7 @@ const deleteEvent = async (req, res) => {
         await user.save();
         console.log('Event deleted successfully');
         
-        return res.status(200).json({ 
-            message: 'Event deleted successfully',
-            eventId: eventId
-        });
+        return res.status(200).json({  message: 'Event deleted successfully', eventId: eventId });
 
     } catch (error) {
         console.error('Error deleting event:', error);

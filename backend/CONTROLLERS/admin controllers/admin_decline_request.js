@@ -8,14 +8,13 @@ const driver_data = require('../../MODELS/driver_model');
     const declineRequest = async (req,res) =>
            {
                 const {requestId} = req.body
-                console.log('Decline request reached!');
-                console.log('userId from request:', requestId);  // Add this log
+                const countDown = 3 * 24 * 60 * 60 * 1000;
+
             try{
                         const adminRequest = await admin_request_data.findOne({ 
                             reference_id: requestId 
                         });
-                        console.log('Query criteria:', { reference_id: requestId });  
-                       console.log('Found admin request:', adminRequest);  
+
                     if(!adminRequest)
                         {
                             console.log('admin request not found')
@@ -48,7 +47,7 @@ const driver_data = require('../../MODELS/driver_model');
                     const updateStatus = await request_data.findOneAndUpdate(
                         { _id: requestId },
                         { 
-                            $set: {  status: 'Declined', updated_at: new Date() } 
+                            $set: {  status: 'Declined', updated_at: new Date(), deadline: new Date(Date.now() + countDown) } 
                         },
                         { new: true }
                     );
@@ -58,11 +57,14 @@ const driver_data = require('../../MODELS/driver_model');
                             console.log(' request datas not found')
                            return res.status(404).json({ success: false, message: 'request resource not found!' });
                    }
-
                     const deleteAdminRequest = await admin_request_data.findOneAndDelete({
                         reference_id: requestId
-                    });
-
+                    }); 
+                    
+                    if (!deleteAdminRequest) {
+                        console.log('Failed to delete admin request.');
+                        return res.status(404).json({ success: false, message: 'Failed to delete admin request.' });
+                    }
 
                     return res.status(200).json({ success: true,message: 'Successfully updated and deleted resource' });
             }catch(error) 

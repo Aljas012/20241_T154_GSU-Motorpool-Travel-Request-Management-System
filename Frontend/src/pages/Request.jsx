@@ -21,13 +21,13 @@ function Request() {
   const [contentType, setContentType] = useState('');
   const [loadError, setLoadError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [errorModal,setShowErrorModal] = useState(false)
-      const [errorMessage,setErrorMessage] = useState('')
-      const [errorColor,setErrorColor] = useState('')
-      const [errorIcon,setErrorIcon] = useState('')
-      const [errorDiv,setErrorDiv] = useState('')
-      const warning = '#FCC737'
-      const danger = '#C63C51'
+     const [errorModal,setShowErrorModal] = useState(false)
+     const [errorMessage,setErrorMessage] = useState('')
+     const [errorColor,setErrorColor] = useState('')
+     const [errorIcon,setErrorIcon] = useState('')
+     const [errorDiv,setErrorDiv] = useState('')
+     const warning = '#FCC737'
+     const danger = '#C63C51'
       const [pdfKey, setPdfKey] = useState(0);
 
 
@@ -51,19 +51,21 @@ function Request() {
     console.log('Content URL:', content); // Debug log
 
     if (type === 'pdf') {
-      // Try to get the direct PDF URL
       try {
         const response = await fetch(content);
         if (!response.ok) throw new Error('Failed to load PDF');
-        
-        // Get the direct URL from the response
+
         const pdfBlob = await response.blob();
         const pdfUrl = URL.createObjectURL(pdfBlob);
         setModalContent(pdfUrl);
       } catch (error) {
-        console.error('Error loading PDF:', error);
+        setShowErrorModal(true)
+        setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+        setErrorColor('white')
+        setErrorDiv(danger)
+        setErrorMessage('Something went wrong while processing your request.')
         setLoadError(true);
-        setModalContent(content); // Fallback to original URL
+        setModalContent(content); 
       }
     } else {
       setModalContent(content);
@@ -149,6 +151,7 @@ function Request() {
 
   useEffect(() => {
     const listOfPendingSubmition = async () => {
+      const token = localStorage.getItem("auth_token")
       setIsLoading(true); // Start loading
       const userInfo = JSON.parse(localStorage.getItem("user_info"));
       const reference_id = userInfo?.user_id;
@@ -159,16 +162,17 @@ function Request() {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
             },
             body: JSON.stringify({ reference_id: reference_id }),
           });
           if(!response.ok)
               {
-                setShowErrorModal(true);
-                setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732290025/complain_z5n7bb.png');
-                setErrorColor('white');
-                setErrorDiv(warning);
-                setErrorMessage('Something went wrong!. Not on you but on the server. ');
+                setShowErrorModal(true)
+                setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+                setErrorColor('white')
+                setErrorDiv(danger)
+                setErrorMessage('Something went wrong while processing your request.')
                 setIsLoading(false);
           }
 
@@ -176,12 +180,12 @@ function Request() {
         setData(responseData);
         setIsLoading(false); // Stop loading after data is received
       } catch(error) {
-        setShowErrorModal(true);
-        setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732116882/warning_xpcpdr.png');
-        setErrorColor('white');
-        setErrorDiv(danger);
-        setErrorMessage('Something went wrong. Please check your internet connection and try again.');
-        setIsLoading(false); // Stop loading on error
+        setShowErrorModal(true)
+        setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+        setErrorColor('white')
+        setErrorDiv(warning)
+        setErrorMessage('Something went wrong. Please check your internet connection.')
+        setIsLoading(false); 
       }
     };
     listOfPendingSubmition(); 
@@ -425,17 +429,16 @@ function Request() {
 
 
 
-              <Modal show={errorModal} centered>
-                            <Modal.Body style={{ backgroundColor: errorColor, borderRadius: '0px', display: 'flex',
-                                justifyContent: 'center',alignItems: 'center',flexDirection: 'column',padding: 0,}}>
-                              <img src={errorIcon} alt="no internet" height="90px" width="90px" draggable={false} style={{marginBottom: "1.5em",marginTop:'2rem'}}/>
-                              <p style={{color: 'black',textAlign:'center',margin:'.5rem'}}>{errorMessage}</p>
-                              <div style={{display:'flex',backgroundColor:errorDiv,width:'100%',  padding: '10px',marginTop:'1em',justifyContent:'center'}}>
-                              <button style={{ backgroundColor: 'transparent',border:'none',margin:'.8em',color:'white'}} onClick={()=>setShowErrorModal(false)}> DISMISS </button>
-                            </div>
-                            </Modal.Body>
-                      </Modal>
-
+                                <Modal show={errorModal} centered>
+                                      <Modal.Body style={{ backgroundColor: errorColor, borderRadius: '0px', display: 'flex',
+                                          justifyContent: 'center',alignItems: 'center',flexDirection: 'column',padding: 0,}}>
+                                        <img src={errorIcon} alt="no internet" height="70px" width="70px" draggable={false} style={{marginBottom: "1.5em",marginTop:'2rem'}}/>
+                                        <p style={{color: 'black',textAlign:'center',margin:'.5rem'}}>{errorMessage}</p>
+                                        <div style={{display:'flex',backgroundColor:errorDiv,width:'100%',  padding: '10px',marginTop:'1em',justifyContent:'center'}}>
+                                        <button style={{ backgroundColor: 'transparent',border:'none',margin:'.8em',color:'white'}} onClick={()=>setShowErrorModal(false)}> DISMISS </button>
+                                       </div>
+                                      </Modal.Body>
+                                </Modal>
 
             </Col>
           </Row>

@@ -2,21 +2,14 @@ const admin_data = require ('../../MODELS/admin_model')
 const {emailSender } = require('./email_message_sender')
 const crypto = require('crypto');
 
-
-       
-
-
     function generatePin(length = 6) {  //para sa recover password
         const randomBytes = crypto.randomBytes(length);
         const pin = randomBytes.readUIntBE(0, length) % (10 ** length);
         return pin.toString().padStart(length, '0');
     }   
-    
-
 
    const emailVerifier = async (req,res) => //para ni sa change password email verifier
-        {       
-                
+        {             
                 const {forgotEmail} = req.body;
                 console.log('email sent to backend is ',forgotEmail)
                 const verificationCode = generatePin();

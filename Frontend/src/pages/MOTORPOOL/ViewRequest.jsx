@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from 'react-router-dom';
-import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
+import { Container, Row, Col, Card, Form, Button,Modal } from "react-bootstrap";
 import NavbarComponent from "../../components/NavbarComponent.jsx";
 import ViewRTTModal from "../../components/ViewRTTModal.jsx";
 import ViewATTModal from "../../components/ViewATTModal.jsx";
@@ -55,7 +55,15 @@ function ViewRequest() {
   const [pre_arrival_time,setPreArrivalTime] = useState("")
   const [post_departure_date_time,setPostDepartureTime] = useState("")
   const [post_arrival_time,setPostArrivalTime] = useState("")
-
+   const [errorModal,setShowErrorModal] = useState(false)
+    const [errorMessage,setErrorMessage] = useState('')
+    const [errorColor,setErrorColor] = useState('')
+    const [errorIcon,setErrorIcon] = useState('')
+    const [errorDiv,setErrorDiv] = useState('')
+    const warning = '#FCC737'
+    const danger = '#C63C51'
+    const success = '#6EC207'
+  
 
   const [isVehicleLoading, setIsVehicleLoading] = useState(false);
   const [isDriverLoading, setIsDriverLoading] = useState(false);
@@ -103,13 +111,16 @@ function ViewRequest() {
 
   const availableVehicleHandler = async ()=>
       { 
+        const adminInfo = JSON.parse(localStorage.getItem("admin_info"))
+         const token = adminInfo.admin_token;
         setIsVehicleLoading(true); 
         try{
           const existingVehicle = await fetch ('http://localhost:8000/admin/fetch_available_vehicles',
              {
               method:'GET',
               headers: {
-                "Content-Type": "application/json",
+                "Content-Type": "application/json",        
+                  Authorization: `Bearer ${token}`
               }
             }
           )
@@ -117,8 +128,11 @@ function ViewRequest() {
           setListOfAvailableVehicles(responseData.data);
         }catch(error)
          {
-          alert('error fertching data')
-          console.log('Something went wrong. Unable to fetch available vehicles:', error);
+          setShowErrorModal(true)     
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+          setErrorColor('white')
+          setErrorDiv(danger)
+          setErrorMessage('Something went wrong. Please check your internet connection.')
         } finally {
           setIsVehicleLoading(false); // Stop loading
         }
@@ -126,11 +140,14 @@ function ViewRequest() {
 
   const availableDriverHandler = async () => {
     setIsDriverLoading(true); // Start loading
+    const adminInfo = JSON.parse(localStorage.getItem("admin_info"))
+    const token = adminInfo.admin_token;
     try {
         const response = await fetch('http://localhost:8000/admin/fetch_available_drivers', {
             method: 'GET',
             headers: {
                 "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
             }
         });
 
@@ -138,9 +155,13 @@ function ViewRequest() {
         setListOfAvailableDrivers(data.data);
 
     } catch (error) {
-        console.error('Error fetching available drivers:', error);
+      setShowErrorModal(true)     
+      setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+      setErrorColor('white')
+      setErrorDiv(danger)
+      setErrorMessage('Something went wrong. Please check your internet connection.')
     } finally {
-        setIsDriverLoading(false); // Stop loading
+        setIsDriverLoading(false); 
     }
 };
 
@@ -175,8 +196,11 @@ const getAdminInfo = () => {
       }
       return parsedInfo;
   } catch (error) {
-      console.error('Error parsing adminInfo:', error);
-      return null;
+    setShowErrorModal(true)     
+    setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+    setErrorColor('white')
+    setErrorDiv(danger)
+    setErrorMessage('Something went wrong. Please check your internet connection.')
   }
 };
 
@@ -184,10 +208,14 @@ const getAdminInfo = () => {
 
    async function fetchAttHandler(id) { 
     try {
+              
+        const adminInfo = JSON.parse(localStorage.getItem("admin_info"))
+        const token = adminInfo.admin_token;
         const response = await fetch('http://localhost:8000/admin/fetch_att_information', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
             },
             body: JSON.stringify({ reference: id })
         });
@@ -209,8 +237,11 @@ const getAdminInfo = () => {
         }
         
     } catch(error) {
-        console.error('Error in fetchAttHandler:', error);
-        alert(`Failed to fetch request details: ${error.message}`);
+      setShowErrorModal(true)     
+      setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+      setErrorColor('white')
+      setErrorDiv(danger)
+      setErrorMessage('Something went wrong. Please check your internet connection.')
     }
 }
 
@@ -235,38 +266,54 @@ const getAdminInfo = () => {
     try {
         // Add validation before submission
         if (!selectedVehicle || !selectedDriver) {
-            alert('Please select both vehicle and driver');
+          setShowErrorModal(true)
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734241668/warning-sign_ajxpqp.png')
+          setErrorColor('white')
+          setErrorDiv(warning)
+          setErrorMessage('Please select both vehicle and driver.')
             return;
         }
 
         if (!verifiedBy || !verified_date) {
-            alert('Please fill in verification details');
+          setShowErrorModal(true)
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734241668/warning-sign_ajxpqp.png')
+          setErrorColor('white')
+          setErrorDiv(warning)
+          setErrorMessage('Input cannot be empty! Please complete all required fields before proceeding.')
             return;
         }
 
         // Check time fields
         if (!pre_departure_time || !pre_arrival_time || 
             !post_departure_date_time || !post_arrival_time) {
-            alert('Please fill in all time fields');
+              setShowErrorModal(true)
+              setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734241668/warning-sign_ajxpqp.png')
+              setErrorColor('white')
+              setErrorDiv(warning)
+              setErrorMessage('Input cannot be empty! Please complete all required fields before proceeding.')        
             return;
         }
 
         if (!selectedVehicle || !selectedDriver || !verifiedBy || !verified_date) {
-            alert('Please fill in all required fields');
+          setShowErrorModal(true)
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734241668/warning-sign_ajxpqp.png')
+          setErrorColor('white')
+          setErrorDiv(warning)
+          setErrorMessage('Input cannot be empty! Please complete all required fields before proceeding.')    
             return;
         }
 
         const data = {
-          reference_id: id,  // Changed from 'id'
-          assigned_vehicle: selectedVehicle?.vehicleName,  // Changed from selectedVehicle object
-          plate_number: selectedVehicle?.plateNumber,  // Changed from selectedVehicle object
+          reference_id: id, 
+          assigned_vehicle: selectedVehicle?.vehicleName,  
+          plate_number: selectedVehicle?.plateNumber, 
           driver_name: selectedDriver,
           gas_amount: gas_amount || '',
           verified_gas_amount: verified_gas_amount,
-          process_confirmed_personnel: reservation_processed_by || 'Not Specified',  // Changed key name
+          process_confirmed_personnel: reservation_processed_by || 'Not Specified', 
           verified_by: verifiedBy,
           verified_date: verified_date,
-          travel_expense: travel_expenses,  // Changed from travel_expenses to travel_expense
+          travel_expense: travel_expenses, 
           travel_type: travel_type,
           date_of_travel: date_of_travel || '',
           pre_departure_time: pre_departure_time,
@@ -275,12 +322,14 @@ const getAdminInfo = () => {
           post_arrival_time: post_arrival_time
       };
 
-
+      const adminInfo = JSON.parse(localStorage.getItem("admin_info"))
+      const token = adminInfo.admin_token;
         const response = await fetch('http://localhost:8000/admin/forward_admin_request', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json",
+                Authorization: `Bearer ${token}`
             },
             body: JSON.stringify(data)
         });
@@ -294,13 +343,25 @@ const getAdminInfo = () => {
         const result = await response.json();
         
         if (result.success) {
-            alert('Successfully forwarded request');
+          setShowErrorModal(true)     
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734277000/check_jmj8om.png')
+          setErrorColor('white')
+          setErrorDiv(success)
+          setErrorMessage('Successfully forwarded request')
+          return;
         } else {
-            throw new Error(result.message || 'Failed to forward request');
+          setShowErrorModal(true)     
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+          setErrorColor('white')
+          setErrorDiv(danger)
+          setErrorMessage('Something went wrong. Please check your internet connection.')
         }
     } catch(error) {
-        console.error('Full error details:', error);
-        alert(`Something went wrong during forwarding request: ${error.message}`);
+      setShowErrorModal(true)     
+      setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+      setErrorColor('white')
+      setErrorDiv(danger)
+      setErrorMessage('Something went wrong. Please check your internet connection.')
     }
 };
 
@@ -419,7 +480,16 @@ const validateRequiredFields = () => {
   return (
     <>
       <NavbarComponent />
-
+      <Modal show={errorModal} centered>
+                  <Modal.Body style={{ backgroundColor: errorColor, borderRadius: '0px', display: 'flex',
+                      justifyContent: 'center',alignItems: 'center',flexDirection: 'column',padding: 0,}}>
+                    <img src={errorIcon} alt="no internet" height="60px" width="60px" draggable={false} style={{marginBottom: "1.5em",marginTop:'2rem'}}/>
+                    <p style={{color: 'black',textAlign:'center',margin:'.5rem'}}>{errorMessage}</p>
+                    <div style={{display:'flex',backgroundColor:errorDiv,width:'100%',  padding: '10px',marginTop:'1em',justifyContent:'center'}}>
+                    <button style={{ backgroundColor: 'transparent',border:'none',margin:'.8em',color:'white'}} onClick={()=>setShowErrorModal(false)}> DISMISS </button>
+                   </div>
+                  </Modal.Body>
+          </Modal>
       <main>
         <Container>
           

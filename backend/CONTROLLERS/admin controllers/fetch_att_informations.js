@@ -5,12 +5,7 @@ const fetchAttInformation = async (req, res) => {
     const { reference } = req.body;
 
     try {
-        // Find the document by _id
         const attInfo = await request_data.findById(reference);
-
-    
-
-        console.log('Sending successful response');
         res.status(200).json({
             success: true,
             data: attInfo

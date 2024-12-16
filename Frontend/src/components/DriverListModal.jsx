@@ -10,15 +10,29 @@ const DriversListModal = ({ driverShow, driverClose, customStyles }) => {
 
   const fetchDriverList = async () => {
     setIsDataLoading(true);
+    
+ const adminInfo = JSON.parse(localStorage.getItem("admin_info"))
+ const token = adminInfo.admin_token;
     try {
-      const response = await fetch('http://localhost:8000/admin/get_all_drivers');
+      const response = await fetch('http://localhost:8000/admin/get_all_drivers',{
+        method:'GET',
+        headers:{
+        'Content-Type': 'application/json',
+         Authorization: `Bearer ${token}`
+        }
+      });
+
       if (!response.ok) {
         console.log('response not okay. may due to no drivers are stored in the db')
       }
       const data = await response.json();
       setDriverInformationData(data);
     } catch (error) {
-      console.log("Failed to fetch driver data.");
+      setShowErrorModal(true)     
+      setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+      setErrorColor('white')
+      setErrorDiv(danger)
+      setErrorMessage('Something went wrong. Please check your internet connection.')
     } finally {
       setIsDataLoading(false);
     }
@@ -30,7 +44,14 @@ const DriversListModal = ({ driverShow, driverClose, customStyles }) => {
 
 
   
-  
+   const [errorModal,setShowErrorModal] = useState(false)
+        const [errorMessage,setErrorMessage] = useState('')
+        const [errorColor,setErrorColor] = useState('')
+        const [errorIcon,setErrorIcon] = useState('')
+        const [errorDiv,setErrorDiv] = useState('')
+        const warning = '#FCC737'
+        const danger = '#C63C51'
+        const success = '#6EC207'
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   const [modalImage,setModalImage] = useState('')
@@ -64,14 +85,16 @@ const DriversListModal = ({ driverShow, driverClose, customStyles }) => {
 
 
   const handleAddDriver = async () => {
+    const adminInfo = localStorage.getItem("admin")
     setIsClicked(true)
     setLoading(true)
     if (!newDriver.driverName || !newDriver.contactInformation) {
       
-      setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732290025/complain_z5n7bb.png');
-      setModalMessage('All fields are required. Please make sure to complete the form.');
-      setButtonColor('danger');
-      setModalIsOpen(true); 
+      setShowErrorModal(true)
+      setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734241668/warning-sign_ajxpqp.png')
+      setErrorColor('white')
+      setErrorDiv(warning)
+      setErrorMessage('Input cannot be empty! Please complete all required fields before proceeding.')
       setIsClicked(false)
       setLoading(false)
       return;
@@ -83,7 +106,6 @@ const DriversListModal = ({ driverShow, driverClose, customStyles }) => {
     };
   
     try {
-      // Make POST request to backend to add the driver
       const response = await fetch('http://localhost:8000/admin/add_driver', {
         method: 'POST',
         body: JSON.stringify(data),
@@ -91,33 +113,29 @@ const DriversListModal = ({ driverShow, driverClose, customStyles }) => {
           'Content-Type': 'application/json',
         },
       });
-  
-      // Check if the response is okay
       if (!response.ok) {
-        // Show error if the response is not successful
-        setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732290025/complain_z5n7bb.png');
-        setModalMessage('Failed to add driver. The driver already exist.');
-        setButtonColor('danger');
-        setModalIsOpen(true); // Show error modal
+        setShowErrorModal(true)     
+        setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+        setErrorColor('white')
+        setErrorDiv(danger)
+        setErrorMessage('Something went wrong while processing your request.')
         setIsClicked(false)
         setLoading(false)
         return;
       }
-  
-      // Success feedback
-      setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732265851/verified_qylqds.png');
-      setModalMessage('Driver added successfully!');
-      setButtonColor('primary');
-      setModalIsOpen(true); // Show success modal
+      setShowErrorModal(true)
+      setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734277000/check_jmj8om.png')
+      setErrorColor('white')
+      setErrorDiv(success)
+      setErrorMessage('Driver added successfully!')
       setIsClicked(false)
      setLoading(false)
     } catch (error) {
-      // Catch and handle any unexpected errors
-      console.error('Error while adding driver:', error);
-      setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732290025/complain_z5n7bb.png');
-      setModalMessage('There was an error while adding the driver. Please try again.');
-      setButtonColor('danger');
-      setModalIsOpen(true); // Show error modal
+      setShowErrorModal(true)     
+      setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+      setErrorColor('white')
+      setErrorDiv(danger)
+      setErrorMessage('Something went wrong. Please check your internet connection.')
       setIsClicked(false)
       setLoading(false)
       return;
@@ -131,36 +149,42 @@ const DriversListModal = ({ driverShow, driverClose, customStyles }) => {
 
   const handleDeleteDriver = async (index) => {
     const driverToDelete = driverInformationData[index];
-  setConditionModal(false); 
-  
+    setConditionModal(false); 
+      
+      const adminInfo = JSON.parse(localStorage.getItem("admin_info"))
+      const token = adminInfo.admin_token;
 
       try{
         const response = await fetch(`http://localhost:8000/admin/delete_driver/${driverToDelete._id}`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
           },
         });
         const result  = await response.json();
         if(!response.ok)
            {
-            setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732290025/complain_z5n7bb.png')
-            setModalMessage('Something went wrong while deleting driver')
-            setButtonColor('danger')
-            setModalIsOpen(true);
+            setShowErrorModal(true)     
+            setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+            setErrorColor('white')
+            setErrorDiv(danger)
+            setErrorMessage('Something went wrong while processing your request.')
         }
-        setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732291143/checked_prbxuf.png')
-        setModalMessage(`successfully Deleted ${driverToDelete.driverName}`)
-        setButtonColor('success')
-        setModalIsOpen(true);
+        setShowErrorModal(true)     
+        setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734277000/check_jmj8om.png')
+        setErrorColor('white')
+        setErrorDiv(success)
+        setErrorMessage('Successful deletion of driver.')
         const updatedData = driverInformationData.filter((_, i) => i !== index);
         setDriverInformationData(updatedData); 
       }catch(error)
       {
-        setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732290025/complain_z5n7bb.png')
-        setModalMessage('Something went wrong when deleting driver')
-        setButtonColor('danger')
-        setModalIsOpen(true);
+        setShowErrorModal(true)     
+        setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+        setErrorColor('white')
+        setErrorDiv(danger)
+        setErrorMessage('Something went wrong. Please check your internet connection.')
       }
 
   
@@ -177,6 +201,8 @@ const DriversListModal = ({ driverShow, driverClose, customStyles }) => {
 
   // Function to update driver information
   const handleUpdateDriver = async () => {
+    const adminInfo = JSON.parse(localStorage.getItem("admin_info"))
+    const token = adminInfo.admin_token;
     setIsClicked(true)
     setLoading(true)
 
@@ -196,25 +222,28 @@ const DriversListModal = ({ driverShow, driverClose, customStyles }) => {
           body: JSON.stringify(data),
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
           },
         });
   
         const result = await response.json();
   
         if (!response.ok) {
-          setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732290025/complain_z5n7bb.png');
-          setModalMessage('The name you want to update is already present in the driver list');
-          setButtonColor('danger');
-          setModalIsOpen(true);
+          setShowErrorModal(true)     
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+          setErrorColor('white')
+          setErrorDiv(danger)
+          setErrorMessage('Something went wrong while processing your request.')
           setIsClicked(false)
           setLoading(false)
           return;
         }
   
-        setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732291143/checked_prbxuf.png');
-        setModalMessage('Successfully updated driver information');
-        setButtonColor('success');
-        setModalIsOpen(true);
+        setShowErrorModal(true)
+        setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734277000/check_jmj8om.png')
+        setErrorColor('white')
+        setErrorDiv(success)
+        setErrorMessage("Driver's information has been successfully updated..")
         setIsClicked(false)
         setLoading(false)
       
@@ -223,25 +252,27 @@ const DriversListModal = ({ driverShow, driverClose, customStyles }) => {
         );
        
         await fetchDriverList();
-        setShowUpdateDriverModal(false); // Close the modal after updating
-        setDriverToEdit(null); // Clear the edited driver
+        setShowUpdateDriverModal(false); 
+        setDriverToEdit(null); 
         
       } catch (error) {
-        setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732290025/complain_z5n7bb.png');
-        setModalMessage('Server error while editing the driver');
-        setButtonColor('danger');
-        setModalIsOpen(true);
+        setShowErrorModal(true)     
+        setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+        setErrorColor('white')
+        setErrorDiv(danger)
+        setErrorMessage('Something went wrong. Please check your internet connection.')
         setIsClicked(false)
         setLoading(false)
         return;
       }
     } else {
-      setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732290025/complain_z5n7bb.png');
-        setModalMessage('Please fill out all fields before updating.');
-        setButtonColor('danger');
-        setModalIsOpen(true);
-        setIsClicked(false)
-        setLoading(false)
+      setShowErrorModal(true)    
+      setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+      setErrorColor('white')
+      setErrorDiv(danger)
+      setErrorMessage('Something went wrong while processing your request.')
+      setIsClicked(false)
+      setLoading(false)
     }
   };
   
@@ -312,11 +343,21 @@ const DriversListModal = ({ driverShow, driverClose, customStyles }) => {
                   })
                   if(!response.ok)
                   {
-                    alert('something went wrong in the backend while adding -if not response')
+                    setShowErrorModal(true)    
+                    setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+                    setErrorColor('white')
+                    setErrorDiv(danger)
+                    setErrorMessage('Something went wrong while processing your request.')
+                    return;
                   }
           }catch(error)
            {
-              alert("There's an error while adding driver! -catch")
+            setShowErrorModal(true)     
+            setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+            setErrorColor('white')
+            setErrorDiv(danger)
+            setErrorMessage('Something went wrong. Please check your internet connection.')
+
               ;
           }
 
@@ -328,6 +369,17 @@ const DriversListModal = ({ driverShow, driverClose, customStyles }) => {
 
   return (
     <>
+      <Modal show={errorModal} centered>
+                          <Modal.Body style={{ backgroundColor: errorColor,
+                           borderRadius: '0px', display: 'flex', justifyContent: 'center',
+                           alignItems: 'center',flexDirection: 'column',padding: 0,}}>
+                          <img src={errorIcon} alt="no internet" height="60px" width="60px" draggable={false} style={{marginBottom: "1.5em",marginTop:'2rem'}}/>
+                           <p style={{color: 'black',textAlign:'center',margin:'.5rem'}}>{errorMessage}</p>
+                          <div style={{display:'flex',backgroundColor:errorDiv,width:'100%',  padding: '10px',marginTop:'1em',justifyContent:'center'}}>
+                          <button style={{ backgroundColor: 'transparent',border:'none',margin:'.8em',color:'white'}} onClick={()=>setShowErrorModal(false)}> DISMISS </button>
+                          </div>
+                          </Modal.Body>
+                   </Modal>
     <Modal
       show={driverShow}
       onHide={driverClose}
@@ -357,6 +409,7 @@ const DriversListModal = ({ driverShow, driverClose, customStyles }) => {
                       color="#CD8800" 
                       height={50} 
                       width={50} 
+                      style={{alignItems:'center'}}
                     />
                     <p style={{ marginTop: '10px', color: '#666' }}>Loading drivers...</p>
                   </div>

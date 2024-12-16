@@ -115,19 +115,21 @@ function validateEmail(email) {
 
       if(password === "" && confirm_password === "")
       {
-        setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732118396/warning_1_vj16yl.png')
-        setModalMessage('Unable to continue due to null input field')
-        setButtonColor('danger')
-        setModalIsOpen(true)
+        setShowErrorModal(true)
+        setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734241668/warning-sign_ajxpqp.png')
+        setErrorColor('white')
+        setErrorDiv(warning)
+        setErrorMessage('Input cannot be empty! Please complete all required fields before proceeding.')
         return false;
       }
 
       if(password !== confirm_password)
       {
-        setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732118396/warning_1_vj16yl.png')
-        setModalMessage('Passwords do not match. Please ensure both password fields are identical.')
-        setButtonColor('danger')
-        setModalIsOpen(true)
+        setShowErrorModal(true)
+        setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734241668/warning-sign_ajxpqp.png')
+        setErrorColor('white')
+        setErrorDiv(warning)
+        setErrorMessage('Passwords do not match. Please ensure both password fields are identical.')
         return false;    
       }
      
@@ -142,10 +144,12 @@ function validateEmail(email) {
         email = email.trim();
 
         if (email === "") {
-          setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732118396/warning_1_vj16yl.png')
-          setModalMessage('Email is required')
-          setButtonColor('warning')
-          setModalIsOpen(true)
+        
+          setShowErrorModal(true)
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734241668/warning-sign_ajxpqp.png')
+          setErrorColor('white')
+          setErrorDiv(warning)
+          setErrorMessage('Email is required')
             return false;
         }
     
@@ -153,12 +157,12 @@ function validateEmail(email) {
         const isValid = allowedDomains.some(domain => email.endsWith(domain));
         
         if (!isValid) {
+        
           setShowErrorModal(true)
-          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732290025/complain_z5n7bb.png');
-          setErrorMessage('Non-Institutional Accounts are not allowed!')
-          setErrorDiv(warning)
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734241668/warning-sign_ajxpqp.png')
           setErrorColor('white')
-
+          setErrorDiv(warning)
+          setErrorMessage('Non-Institutional Accounts are not allowed!')
             return false;
         }
        return true;
@@ -807,8 +811,8 @@ const signupAsGoogleHandler = async () => {
                     <img 
                       src={errorIcon} 
                       alt="no internet" 
-                      height="90px" 
-                      width="90px" 
+                      height="70px" 
+                      width="70px" 
                       draggable={false} 
                       style={{
                         marginBottom: "1.5em",
@@ -859,38 +863,6 @@ const signupAsGoogleHandler = async () => {
 
 
                       
-{/* 
-    <Modal show={modalIsOpen}
-            onHide={() => setModalIsOpen(false)}
-            centered
-            size="sm"
-            animation={true}
-          >
-            <Modal.Body
-              style={{
-                textAlign: 'center',  
-                padding: '20px',
-                backgroundColor: 'white',
-                color: '#721c24',
-              }}
-            >
-        
-              {modalImage && <img src={modalImage} alt="Modal Image" style={{ width: '50px', height: '50px', marginBottom: '20px', borderRadius: '8px' }} />}
-              
-              <p style={{fontSize:".9rem"}}>{modalMessage}</p>
-              <Button
-                variant= {buttonColor}
-                onClick={() => setModalIsOpen(false)}
-                style={{
-                  marginTop: '15px',
-                  width: '100%',
-                  borderRadius: '5px',
-                }}
-              >
-              continue
-              </Button>
-            </Modal.Body>
-          </Modal> */}
 
 
 

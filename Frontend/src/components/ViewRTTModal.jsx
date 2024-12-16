@@ -80,16 +80,20 @@ const [returnPeriod, setReturnPeriod] = useState('');
 
   const { id } = useParams();
   async function fetchAttHandler(id) { 
+    const adminInfo = JSON.parse(localStorage.getItem("admin_info"))
+    const token = adminInfo.admin_token;
     try {
         const response = await fetch('http://localhost:8000/admin/fetch_att_information', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
             },
             body: JSON.stringify({ reference: id })
         });
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            console.error(`HTTP error! status: ${response.status}`);
+            return;
         }
         const result = await response.json();
         

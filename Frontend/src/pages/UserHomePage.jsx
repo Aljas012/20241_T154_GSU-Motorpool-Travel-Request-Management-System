@@ -6,6 +6,7 @@ import { Navbar, Container, Row, Col, Form, Card, Modal, Button } from "react-bo
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowAltCircleRight } from "@fortawesome/free-regular-svg-icons";
 import FooterComponent from "../components/FooterComponents";
+import WeatherInfo from "../components/WeatherInfoComponent";
 import '../styles/Calendar.css'; 
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
 import format from 'date-fns/format';
@@ -24,6 +25,13 @@ function UserHomePage() {
   const [calendarEvents, setCalendarEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+    const [errorModal,setShowErrorModal] = useState(false)
+    const [errorMessage,setErrorMessage] = useState('')
+    const [errorColor,setErrorColor] = useState('')
+    const [errorIcon,setErrorIcon] = useState('')
+    const [errorDiv,setErrorDiv] = useState('')
+    const warning = '#FCC737'
+    const danger = '#C63C51'
   const [receivedData, setReceivedData] = useState({
     location: '',
     temperature: '',
@@ -73,8 +81,12 @@ function UserHomePage() {
     setNewEvent({ title: '', start: '', end: '', desc: '' });
   };
 
+
+
+  
   useEffect(() => {
     const fetchEvents = async () => {
+      const token = localStorage.getItem("auth_token")
       if (!userInfo || !userInfo.user_id) {
         console.log('User info not available:', userInfo);
         return;
@@ -86,24 +98,27 @@ function UserHomePage() {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
             'user_id': userInfo.user_id
           },
           credentials: 'include'
         });
 
         if (!response.ok) {
-          throw new Error('Failed to fetch events');
+          setShowErrorModal(true)
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1733419224/warning_3_pkhfuq.png')
+          setErrorColor('white')
+          setErrorDiv(warning)
+          setErrorMessage('Something went wrong while processing your request.')
+          return;
         }
 
         const data = await response.json();
         console.log('Raw events data received:', data); // Debug log
 
-        if (!Array.isArray(data)) {
-          console.error('Received data is not an array:', data);
+        if (!Array.isArray(data)) { console.error('Received data is not an array:', data);
           return;
         }
-
-        // Format the events for the calendar
         const formattedEvents = data.map(event => {
           const startDate = new Date(event.event_date || event.start);
           const endDate = new Date(event.event_date || event.end);
@@ -117,24 +132,19 @@ function UserHomePage() {
               end: endDate,
               desc: event.event_details || event.desc
             }
-          }); // Debug log
+          }); 
 
-          return {
-            id: event._id || event.id,
-            title: event.event_name || event.title,
-            start: startDate,
-            end: endDate,
-            desc: event.event_details || event.desc
-          };
-        });
-
-        console.log('Final formatted events:', formattedEvents); // Debug log
+          return { id: event._id || event.id, title: event.event_name || event.title,
+            start: startDate,end: endDate, desc: event.event_details || event.desc };});
         setCalendarEvents(formattedEvents);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching events:', error);
-        setError('Failed to fetch events');
-        setLoading(false);
+          console.error('Error fetching events:', error);
+          setShowErrorModal(true)
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732120207/error_rbqoyb.png')
+          setErrorColor('white')
+          setErrorDiv(danger)
+          setErrorMessage('Something went wrong. Please check your internet connection.')
       }
     };
 
@@ -145,9 +155,13 @@ function UserHomePage() {
     console.log('Calendar events updated:', calendarEvents);
   }, [calendarEvents]);
 
+
+
+
+
   const handleSelectEvent = (event) => {
     console.log('Selected event object:', event);
-    console.log('Event ID:', event._id); // If using MongoDB _id
+    console.log('Event ID:', event._id); 
     console.log('Event data:', {
         id: event._id || event.id,
         title: event.title,
@@ -180,6 +194,7 @@ function UserHomePage() {
   };
 
   const handleSubmit = async () => {
+    const token = localStorage.getItem("auth_token")
     const userId = userInfo.user_id;
     const eventData = {
         userId: userId,
@@ -190,23 +205,27 @@ function UserHomePage() {
     };
 
     try {
-        // First, save to your database
         console.log('Saving event:', eventData);
+
         const response = await fetch('http://localhost:8000/user/save_event', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
             },
             body: JSON.stringify(eventData)
         });
 
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'Failed to save event');
+          setShowErrorModal(true)
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1733419224/warning_3_pkhfuq.png')
+          setErrorColor('white')
+          setErrorDiv(warning)
+          setErrorMessage('Something went wrong while processing your request.')
+          return;
         }
 
         const data = await response.json();
-        console.log('Event saved successfully:', data);
         setShowModal(false);
         setNewEvent({ title: '', start: '', end: '', desc: '' });
         const googleEvent = {
@@ -221,29 +240,34 @@ function UserHomePage() {
                 timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
             }
         };
-
-        // Create event in Google Calendar
+        
         const calendarResponse = await fetch('http://localhost:8000/user/create_google_event', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify(googleEvent)
         });
 
         if (!calendarResponse.ok) {
-            throw new Error('Failed to create Google Calendar event');
+          setShowErrorModal(true)
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1733419224/warning_3_pkhfuq.png')
+          setErrorColor('white')
+          setErrorDiv(warning)
+          setErrorMessage('Something went wrong while processing your request.')
+          return;
         }
 
         const calendarData = await calendarResponse.json();
         console.log('Google Calendar event created:', calendarData);
 
-        // Add the new event to the calendar
+
         const newCalendarEvent = {
-            title: newEvent.title,
+            title: 'fwef',
             start: new Date(newEvent.start),
-            end: new Date(newEvent.end),
-            desc: newEvent.desc || ''
+            end: '',
+            desc: 'dawdnhiw'
         };
 
         console.log('Adding new event to calendar:', newCalendarEvent);
@@ -253,10 +277,16 @@ function UserHomePage() {
         setNewEvent({ title: '', start: '', end: '', desc: '' });
     } catch (error) {
         console.error('Error saving event:', error);
+          setShowErrorModal(true)
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732120207/error_rbqoyb.png')
+          setErrorColor('white')
+          setErrorDiv(danger)
+          setErrorMessage('Something went wrong. Please check your internet connection.')
     }
   };
 
   const sendLocation = async () => {
+    const token = localStorage.getItem("auth_token")
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             async (position) => {
@@ -269,6 +299,7 @@ function UserHomePage() {
                         body: JSON.stringify({ latitude, longitude }),
                         headers: {
                             "Content-Type": "application/json",
+                            Authorization: `Bearer ${token}`,
                         },
                     });
 
@@ -302,56 +333,113 @@ function UserHomePage() {
 
 
     const deleteEvent = async (event) => {
-      
         if (!event || !event.id) {
             console.error('Invalid event or missing event ID:', event);
-            return;
-        }
-
+            return;}
+        const token = localStorage.getItem("auth_token")
         const eventId = event.id;
         const userId = userInfo.user_id;
         const requestData = { eventId, userId };
-        console.log('Attempting to delete event with ID:', eventId);
 
         try {
             const response = await fetch('http://localhost:8000/user/delete_event', {
                 method: 'DELETE',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify(requestData),
                 credentials: 'include'
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Failed to delete event');
+                setShowErrorModal(true)
+                setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1733419224/warning_3_pkhfuq.png')
+                setErrorColor('white')
+                setErrorDiv(warning)
+                setErrorMessage('Something went wrong while processing your request.')
+                return;
             }
 
             const responseData = await response.json();
-            console.log('Event deleted successfully:', responseData);
-
-            // Update the UI
             setCalendarEvents(prevEvents => 
                 prevEvents.filter(e => e.id !== eventId)
             );
-
-            // Close the modal after successful deletion
             handleCloseEventModal();
-
         } catch (error) {
             console.error('Error deleting event:', error);
-            alert('Failed to delete event: ' + error.message);
+            setShowErrorModal(true)
+            setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732120207/error_rbqoyb.png')
+            setErrorColor('white')
+            setErrorDiv(danger)
+            setErrorMessage('Something went wrong. Please check your internet connection.')
         }
     };
 
 
 
-
-
-
-
-
+    useEffect(() => {
+      const fetchTravelEvents = async (e) => {
+        e.preventDefault();
+        const token = localStorage.getItem("auth_token");
+        const userInfo = JSON.parse(localStorage.getItem("user_info"));
+        const userId = userInfo?.user_id;
+        const data = { userId };
+      
+        try {
+          const response = await fetch('http://localhost:8000/user/fetch_approved_events', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(data),
+          });
+      
+          if (!response.ok) {
+            console.log("Currently, there's no event assigned.");
+            return;
+          }
+      
+          const eventData = await response.json();
+          console.log('Raw event data:', eventData);
+        
+          const formattedEvents = eventData.events.map(event => {
+            const eventStartDate = new Date(event.start); 
+            const eventEndDate = new Date(event.end); 
+      
+            const eventId = event.id;
+      
+            if (isNaN(eventStartDate)) {
+              console.log('Invalid start date:', event.start);
+            }
+      
+            return {
+              id: eventId,
+              title: event.title,
+              start: eventStartDate, 
+              end: eventEndDate, 
+              desc: event.description || 'No description available',
+            };
+          });
+         
+          setCalendarEvents(formattedEvents);
+          console.log('appproveddd formatted events:', formattedEvents);
+          
+        } catch (error) {
+          console.error('Error fetching events:', error);
+          setShowErrorModal(true);
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732120207/error_rbqoyb.png');
+          setErrorColor('white');
+          setErrorDiv(danger);
+          setErrorMessage('Something went wrong. Please check your internet connection.');
+        }
+      };
+      fetchTravelEvents();
+    },[]);
+    
+    
+   
   return (
     <>
       <NavBarWithBellComponent />
@@ -382,32 +470,19 @@ function UserHomePage() {
             </Row>
             <Row>
               <Col>
-                <h6 style={{ fontFamily: "Helvetica", marginTop: "1rem" }}>
-                  Results for{" "}
-                  <span style={{ fontWeight: "700" }}>
-                    {receivedData.location || "Loading..."}
-                  </span>
-                </h6>
-                <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                  <img src="../images/WEATHER_ICON.png" alt="weatherIcon" style={{ width: "55px", height: "auto" }} />
-                  <h6 style={{ fontFamily: "Helvetica", fontWeight: "500", marginLeft: "0.8rem", marginTop: "5px", fontSize: "50px" }}>
-                    {receivedData.temperature ? `${receivedData.temperature} ` : "Loading..."}
-                  </h6>
-                  <div style={{ marginBottom: "1.2rem" }}>
-                    <span style={{ fontFamily: "Helvetica", fontWeight: "400", marginLeft: "0.8rem", fontSize: "16px" }}>°C</span>
-                  </div>
-                  <div style={{ marginLeft: "1rem" }}>
-                    <p style={{ fontFamily: "Helvetica", margin: "0", padding: "0", lineHeight: "1.2", fontSize: "14px" }}>Description: {receivedData.description || "Loading..."}</p>
-                    <p style={{ fontFamily: "Helvetica", margin: "0", padding: "0", lineHeight: "1.2", fontSize: "14px" }}>Humidity:  {receivedData.humidity || "Loading..."}</p>
-                    <p style={{ fontFamily: "Helvetica", margin: "0", padding: "0", lineHeight: "1.2", fontSize: "14px" }}>Wind: {receivedData.windSpeed ? `${receivedData.windSpeed} km/h  ` : "Loading..."}</p>
-                  </div>
-                </div>
+              <WeatherInfo 
+                    city=  {receivedData.location || "Loading..."}
+                    temperature= {receivedData.temperature ? `${receivedData.temperature} ` : "Loading..."}
+                    description={receivedData.description || "Loading..."}
+                    humidity={receivedData.humidity || "Loading..."}
+                    windSpeed={receivedData.windSpeed ? `${receivedData.windSpeed} km/h  ` : "Loading..."}
+                  />
                 <div style={{ margin: "2rem 0 2rem 0" }}>
                   <Card style={{ width: "100%", minHeight: "25rem" }}>
                     <Card.Body>
                       {error && (
                         <div className="alert alert-danger">
-                          {error}
+                          {error} <p>Please check your internet connection</p>
                         </div>
                       )}
                       {loading ? (
@@ -486,8 +561,8 @@ function UserHomePage() {
                               <small>No events found in your calendar</small>
                             </div>
                           )}
-                          <Modal show={showModal} onHide={handleClose} centered dialogClassName="custom-modal wide-modal" style={{ borderRadius: '0' }}>
-                            <Modal.Header style={{ background: '#0760A1', color: 'white', borderRadius: '0', border: 'none' }}>
+                          <Modal show={showModal}  centered  dialogClassName="custom-modal wide-modal" style={{ borderRadius: '0' }}>
+                            <Modal.Header style={{ background: '#0760A1', color: 'white', borderRadius: '0', border: 'none' }} >
                               <Modal.Title>Add New Event</Modal.Title>
                             </Modal.Header>
                             <Modal.Body style={{ borderRadius: '0' }}>
@@ -542,6 +617,27 @@ function UserHomePage() {
                               </Form>
                             </Modal.Body>
                           </Modal>
+
+
+
+
+
+
+                             <Modal show={errorModal} centered>
+                                 <Modal.Body style={{ backgroundColor: errorColor, borderRadius: '0px', display: 'flex',
+                                   justifyContent: 'center',alignItems: 'center',flexDirection: 'column',padding: 0,}}>
+                                       <img src={errorIcon} alt="no internet" height="70px" width="70px" draggable={false} style={{marginBottom: "1.5em",marginTop:'2rem'}}/>
+                                         <p style={{color: 'black',textAlign:'center',margin:'.5rem'}}>{errorMessage}</p>
+                                          <div style={{display:'flex',backgroundColor:errorDiv,width:'100%',  padding: '10px',marginTop:'1em',justifyContent:'center'}}>
+                                          <button style={{ backgroundColor: 'transparent',border:'none',margin:'.8em',color:'white'}} onClick={()=>setShowErrorModal(false)}> DISMISS </button>
+                                       </div>
+                                  </Modal.Body>
+                                </Modal>
+                             
+
+
+
+
 
 
                           <Modal show={showEventModal} onHide={handleCloseEventModal} centered dialogClassName="custom-modal wide-modal" style={{ borderRadius: '0' }}>

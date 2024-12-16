@@ -13,7 +13,7 @@ const loginAsGoogleCallback = async (req, res) => {
     );
       
     try {
-        // Get tokens from Google with calendar scope
+
         const response = await oAuth2Client.getToken(code);
         const { tokens } = response;
         oAuth2Client.setCredentials(tokens);
@@ -21,14 +21,12 @@ const loginAsGoogleCallback = async (req, res) => {
         const userData = await getUserData(tokens.access_token);
         const { id, email, name } = userData;
 
-        // Find or create user
         let user = await user_data.findOne({ google_id: id });
         
-        if (!user) { 
+        if (user) { 
             return res.redirect(`http://localhost:5173/user/signup_google`);
         }
 
-        // Update user with tokens and calendar access
         await user_data.findOneAndUpdate(
             { google_id: id },
             { 
@@ -42,7 +40,6 @@ const loginAsGoogleCallback = async (req, res) => {
             { new: true }
         );
 
-        // Redirect to home page
         res.redirect(`http://localhost:5173/user/home`);
 
     } catch(error) {
@@ -51,7 +48,7 @@ const loginAsGoogleCallback = async (req, res) => {
     }
 }
 
-// Update the OAuth2Client initialization to include calendar scope
+
 const getGoogleAuthURL = () => {
     const oAuth2Client = new OAuth2Client(
         process.env.GOOGLE_AUTH_CLIENT_ID,

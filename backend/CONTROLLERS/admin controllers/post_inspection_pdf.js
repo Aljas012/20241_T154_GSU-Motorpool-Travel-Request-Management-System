@@ -38,8 +38,6 @@ class InspectionPDF {
                 );
         }
     }
-
-
     drawBelowCell(x, y, width, height, texts = [], options = {}) {
         const {
             align = 'left',
@@ -71,7 +69,6 @@ class InspectionPDF {
                         lineGap: 2
                     }); 
         }
-        
         if (texts[1]) {
             this.doc
                 .font(font)
@@ -365,8 +362,6 @@ class InspectionPDF {
         return this;
     }
 }
-
-
 const sum = arr => arr.reduce((a, b) => a + b, 0);
 const formatDate = (date) => {
     if (!date) return '';
@@ -374,11 +369,9 @@ const formatDate = (date) => {
     if (typeof date === 'string') {
         return date;
     }
-      // If date is an object with month, day, year properties
     if (date.month && date.day && date.year) {
         return `${date.month} ${date.day}, ${date.year}`;
     }
-    
     const d = new Date(date);
     if (isNaN(d.getTime())) return '';
     
@@ -386,7 +379,6 @@ const formatDate = (date) => {
         'January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'
     ];
-    
     return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
 };
 

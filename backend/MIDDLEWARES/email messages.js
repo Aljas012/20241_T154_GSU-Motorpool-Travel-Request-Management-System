@@ -442,5 +442,95 @@ const approvedAdminRTT = (requestor_name,request_date,departure_time,passenger_n
 `
 }
 
+const declinedAdminRTT = (requestor_name, request_date, departure_time, passenger_names) => 
+  { 
+    return `
+    <!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Request Declined</title>
+      <style>
+          body {
+              font-family: Arial, sans-serif;
+              background-color: #f9f9f9;
+              margin: 0;
+              padding: 0;
+          }
+          .email-container {
+              max-width: 600px;
+              margin: 20px auto;
+              background-color: #ffffff;
+              border: 1px solid #dddddd;
+              border-radius: 8px;
+              overflow: hidden;
+          }
+          .header {
+              background-color: #FF0000;
+              color: #ffffff;
+              text-align: center;
+              padding: 20px;
+          }
+          .header h1 {
+              margin: 0;
+              font-size: 24px;
+          }
+          .content {
+              padding: 20px;
+              color: #333333;
+              line-height: 1.6;
+          }
+          .content p {
+              margin: 0 0 20px;
+          }
+          .footer {
+              background-color: #f1f1f1;
+              text-align: center;
+              padding: 10px;
+              font-size: 12px;
+              color: #666666;
+          }
+          .footer a {
+              color: #ffa500;
+              text-decoration: none;
+          }
+          .button {
+              display: inline-block;
+              padding: 10px 20px;
+              color: #ffffff;
+              background-color: #ffa500;
+              text-decoration: none;
+              border-radius: 5px;
+              font-size: 16px;
+          }
+      </style>
+  </head>
+  <body>
+      <div class="email-container">
+          <div class="header">
+              <h1>Request Declined</h1>
+          </div>
+          <div class="content">
+              <p>Dear ${requestor_name},</p>
+              <p>We regret to inform you that your request to travel has been declined. Below are the details of your request:</p>
+              <ul>
+                  <li><strong>Date:</strong> ${request_date}</li>
+                  <li><strong>Time:</strong> ${departure_time}</li>
+                  <li><strong>Details:</strong> ${passenger_names}</li>
+              </ul>
+              <p>We understand this may be disappointing, and we apologize for any inconvenience caused. If you have any questions or need clarification, feel free to contact us.</p>
+              <p><a href="mailto:gsumotorpools@gmail.com">Contact Support</a></p>
+          </div>
+          <div class="footer">
+              <p>Thank you for your understanding.</p>
+              <p>&copy; 2024 GSU MOTORPOOL. All rights reserved.</p>
+          </div>
+      </div>
+  </body>
+  </html>
+  `;
+  }
+  
 
-module.exports = { signupVerification, forgotPassword,passwordGeneratorForGoogleSignup,adminPinEmailTemplate,approvedAdminRTT };
+module.exports = { signupVerification, forgotPassword,passwordGeneratorForGoogleSignup,adminPinEmailTemplate,approvedAdminRTT,declinedAdminRTT };

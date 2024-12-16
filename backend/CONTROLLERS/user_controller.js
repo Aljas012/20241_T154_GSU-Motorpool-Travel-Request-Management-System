@@ -46,10 +46,8 @@ const pinGmailSender = async (req, res) => {
             return res.status(400).json({error:'email address is not yet registered'});
           }
 
-          existingUser.temporary_key = changePasswordPin; // Save the PIN in the database temporaryPin field
+          existingUser.temporary_key = changePasswordPin; 
           await existingUser.save(); 
-        
-        // Create the transporter object using Gmail's SMTP settings
         const transporter = nodemailer.createTransport(
           {
                 host: 'smtp.gmail.com',
@@ -61,12 +59,11 @@ const pinGmailSender = async (req, res) => {
                 },
           });
 
-
         const mailOptions = {
           from: gsu_email,
           to: emailData,
           subject: 'Password Reset PIN',
-          html:  emailMessage,  // Use the dynamically generated HTML with the PIN
+          html:  emailMessage, 
         };
 
      
@@ -123,24 +120,14 @@ const pinGmailSender = async (req, res) => {
 /**============================  CREATE ACCOUNT CONTROLLER  ========================= */
 
 const create_account = async (req, res) => {
-  // Create user function (for signup)
   const { name, email, password, office_code, college_name } = req.body;
-  // Add this for debugging
-
   try {    
-
-
-
-        // Check if the email already exists in the database
         const existingUser = await user_data.findOne({ email });
         if (existingUser) {
           return res.status(400).json({ error: "Email already in use" });
         }
-
-        // Hash the password before saving to the database
         const hashedPassword = await bcrypt.hash(password, 12);
 
-        // Save the new user to the database
         const userInfo = await user_data.create({
           name,
           email,
@@ -149,7 +136,6 @@ const create_account = async (req, res) => {
           college_name,
         });
 
-    // Return success response
     res.status(201).json({
       message: "User created successfully",
       user: {
@@ -157,10 +143,10 @@ const create_account = async (req, res) => {
         email: userInfo.email,
         office_code,
         college_name,
-      }, // Return a subset of the user info to avoid exposing the password
+      },
     });
   } catch (error) {
-    console.error(error); // It's a good practice to log the error to the server console
+    console.error(error); 
     res.status(500).json({ error: "Failed to create user: " + error.message });
   }
 };
@@ -226,7 +212,7 @@ const verifyEmailSignup = async (req, res) => {
   console.log('received name: ',name)
   console.log('received email', email)
 
-  const existingUser = await user_data.findOne({ email });
+  const existingUser = await user_data.findOne({ email: email });
   if (existingUser) {
     console.log('user attempting to signup is already registered!')
     return res.status(400).json({ error: "Email already in use" });
@@ -270,23 +256,19 @@ const verifyEmailSignup = async (req, res) => {
 const verifyPinAndCreateUser = async (req, res) => {
   const { inputtedCode, name, email, password, office_code, college_name } = req.body;
 
-  try {
-    // Check if a verification code exists for this email
+  try { 
     if (!tempPins[email]) {
       return res.status(400).json({ error: 'No verification code found for this email' });
     }
 
-    // Check if the inputted PIN matches the stored PIN
     const storedPin = tempPins[email];
     
     if (storedPin.pin === inputtedCode) {
-      // Successfully verified PIN, remove it from the temporary storage
+
       delete tempPins[email];
       
-      // Hash the password before storing it in the database
       const hashedPassword = await bcrypt.hash(password, 12);
 
-      // Create a new user in the database
       const newUser = await user_data.create({
         name,
         email,
@@ -295,14 +277,12 @@ const verifyPinAndCreateUser = async (req, res) => {
         college_name
       });
 
-      // Return a success message along with the user data (excluding password)
       const { password: _, ...userWithoutPassword } = newUser.toObject();
       return res.status(201).json({
         message: 'User created successfully! Please log in.',
         user: userWithoutPassword
       });
     } else {
-      // Invalid PIN, return an error response
       return res.status(400).json({ error: "Invalid PIN, please try again" });
     }
   } catch (error) {
@@ -343,7 +323,7 @@ const changePassword = async (req, res) => {
     existingUser.password = hashedPassword;
     await existingUser.save();
 
-    console.log("The new hashed Password is " + hashedPassword); // Log hashed password for debugging
+    console.log("The new hashed Password is " + hashedPassword); 
     console.log("Password updated successfully!"); // Added success console message
     existingUser.temporary_key = ""; 
     await existingUser.save(); 

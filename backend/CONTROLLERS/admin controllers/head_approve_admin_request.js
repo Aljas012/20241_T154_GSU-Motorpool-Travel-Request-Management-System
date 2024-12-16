@@ -13,9 +13,8 @@ const gsu_password =process.env.PASSWORD_NODE;
         async function createEvent(request_date, reference_id, departure_time) {
             try {
                 console.log(reference_id, request_date, departure_time);
-                console.log('approved_events_data:', approved_events_data); // Debugging line
+                console.log('approved_events_data:', approved_events_data); 
 
-                // Ensure the model has a `create` method
                 if (typeof approved_events_data.create !== 'function') {
                     throw new TypeError('approved_events_data.create is not a function. Check if the model is properly defined.');
                 }
@@ -76,7 +75,7 @@ const gsu_password =process.env.PASSWORD_NODE;
 
                                try{
                                          await transporter.sendMail(mailOptions);
-                                         console.log('successful sending email')
+                                         console.log('successful sending email to ', user_email)
                                }catch(error)
                                     {
                                         console.error('Error sending email:', error);
@@ -94,7 +93,6 @@ const approvedRequestData = async (req, res) => {
         if (!requestData) {
             return res.status(404).json({ message: `Request with ID ${requestId} not found` });
         }
-
         const request_date = requestData.travel_details.date_travel;
         const reference_id = requestData.reference_id;
         const departure_time = requestData.travel_details.departure_time;

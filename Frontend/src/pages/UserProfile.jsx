@@ -68,10 +68,8 @@ function UserProfile() {
   const [storageChange, setStorageChange] = useState(0);
   const warning = '#FCC737'
   const danger = '#C63C51'
-
-
+  
   useEffect(() => {
-    // This function will run when localStorage changes in other windows
     const handleStorageChange = (e) => {
         if (e.key === "user_info") {
             const userInfo = JSON.parse(localStorage.getItem("user_info"));
@@ -116,7 +114,7 @@ function UserProfile() {
 
   const officeSelected = (event) => {
     const selectedOffice = event.target.value;
-    const [code, college] = selectedOffice.split(" | "); // Split the values by comma
+    const [code, college] = selectedOffice.split(" | ");
     setCode(code);
     setOffice(college.toUpperCase());
   };
@@ -125,12 +123,14 @@ function UserProfile() {
 
     const checkUpdates = async () => {
         const userInfo = JSON.parse(localStorage.getItem("user_info"));
+        const token = localStorage.getItem("auth_token")
         const userId = userInfo?.user_id; 
         try {
             const response = await fetch(`http://localhost:8000/user/${userId}/check_updates`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
                 },
             });
             
@@ -154,7 +154,11 @@ function UserProfile() {
                 localStorage.setItem("user_info", JSON.stringify(updatedUserInfo));
             }
         } catch (error) {
-            console.error("Error checking updates:", error);
+          setShowErrorModal(true)     
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+          setErrorColor('white')
+          setErrorDiv(danger)
+          setErrorMessage('Something went wrong. Please check your internet connection.')
         }
     };
 
@@ -170,13 +174,14 @@ function UserProfile() {
   const handleUpdate = async (e) => {
     e.preventDefault();
     const userInfo = JSON.parse(localStorage.getItem("user_info"));
+    const token = localStorage.getItem("auth_token")
     const userId = userInfo?.user_id; 
     const updatedInformation = {
         inputName,
         inputOffice,
         newCode,
         userId,
-        inputEmail: userInfo.email  // Include email in the update
+        inputEmail: userInfo.email 
     };
 
     try {
@@ -185,30 +190,31 @@ function UserProfile() {
             body: JSON.stringify(updatedInformation),
             headers: {
                 "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`
             },
         });
 
         const data = await response.json();
 
         if (!response.ok) {
-            setShowErrorModal(true);
-            setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1733419224/warning_3_pkhfuq.png');
-            setErrorColor('white');
-            setErrorDiv(warning);
-            setErrorMessage('Status (404) - User not found');
+            setShowErrorModal(true)    
+            setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732120207/error_rbqoyb.png')
+            setErrorColor('white')
+            setErrorDiv(danger)
+            setErrorMessage("Sorry, the page or resource you're looking for can't be found.");
             return;
         }
 
-        // Update state with the response data
+      
         setName(data.user.name);
-        setEmail(userInfo.email);  // Keep the existing email
+        setEmail(userInfo.email); 
         setOffice(data.user.college_name);
         setCode(data.user.office_code);
 
         const updatedUserInfo = {
             ...userInfo,  
             name: data.user.name,
-            email: userInfo.email,  // Keep the existing email
+            email: userInfo.email,  
             college_name: data.user.college_name,
             office_code: data.user.office_code
         };
@@ -217,10 +223,11 @@ function UserProfile() {
         updateSuccess();
 
     } catch (error) {
-        setShowErrorModal(true);
-        setErrorColor('white');
-        setErrorDiv(warning);
-        setErrorMessage('Something went wrong while updating your information! Please check your internet connection.');
+      setShowErrorModal(true)     
+      setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+      setErrorColor('white')
+      setErrorDiv(danger)
+      setErrorMessage('Something went wrong. Please check your internet connection.')
     }
 };
 
@@ -233,6 +240,7 @@ function UserProfile() {
   const countTotalRequest = async () => {
     
   const userInfo = JSON.parse(localStorage.getItem("user_info"));
+  const token = localStorage.getItem("auth_token")
   const userId = userInfo?.user_id; 
     const data = {userId};
     setLoading(true);
@@ -243,6 +251,7 @@ function UserProfile() {
         body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json",
+           Authorization: `Bearer ${token}`
         },
       });
   
@@ -252,11 +261,11 @@ function UserProfile() {
       setRequestCount(responseData.requestCount);
       setTodaysRequest(responseData.totalToday)
     } catch (error) {
-      setShowErrorModal(true)
-      setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1733419224/warning_3_pkhfuq.png')
+      setShowErrorModal(true)     
+      setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
       setErrorColor('white')
-      setErrorDiv(warning)
-      setErrorMessage('Something went wrong while fetching total request. Please check your internet connection')
+      setErrorDiv(danger)
+      setErrorMessage('Something went wrong. Please check your internet connection.')
     }
   };
   
@@ -265,6 +274,7 @@ function UserProfile() {
 
   const completedServices = async () => {
     const userInfo = JSON.parse(localStorage.getItem("user_info"));
+    const token = localStorage.getItem("auth_token")
     const userId = userInfo?.user_id; 
     const data = {userId};
     setLoading(true);
@@ -274,6 +284,7 @@ function UserProfile() {
             body: JSON.stringify(data), 
             headers: {
                 "Content-Type": "application/json",  
+                 Authorization: `Bearer ${token}`
             },
         });
 
@@ -285,15 +296,19 @@ function UserProfile() {
           console.log(`Completed Services: ${responseData.completedCount}`);
           setCompletedServices(responseData.completedCount); // Update state
       } else {
-          console.error("Unexpected response format:", responseData);
-          alert("An error occurred while processing the response.");
+        setShowErrorModal(true)     
+        setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+        setErrorColor('white')
+        setErrorDiv(danger)
+        setErrorMessage('Something went wrong while processing your request.')
       }
   } catch (error) {
-    setShowErrorModal(true)
-    setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1733419224/warning_3_pkhfuq.png')
-    setErrorColor('white')
-    setErrorDiv(warning)
-    setErrorMessage('Something went wrong while fetching completed services. Please check your internet connection')
+          setShowErrorModal(true)    
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+          setErrorColor('white')
+          setErrorDiv(danger)
+          setErrorMessage('Something went wrong. Please check your internet connection.')
+
   }
 };
 
@@ -1055,16 +1070,18 @@ const handleClick = () => {
             </Col>
           </Row>
           
-          <Modal show={errorModal} centered>
-                  <Modal.Body style={{ backgroundColor: errorColor, borderRadius: '0px', display: 'flex',
-                      justifyContent: 'center',alignItems: 'center',flexDirection: 'column',padding: 0,}}>
-                    <img src={errorIcon} alt="no internet" height="90px" width="90px" draggable={false} style={{marginBottom: "1.5em",marginTop:'2rem'}}/>
-                    <p style={{color: 'black',textAlign:'center',margin:'.5rem'}}>{errorMessage}</p>
-                    <div style={{display:'flex',backgroundColor:errorDiv,width:'100%',  padding: '10px',marginTop:'1em',justifyContent:'center'}}>
-                    <button style={{ backgroundColor: 'transparent',border:'none',margin:'.8em',color:'white'}} onClick={()=>setShowErrorModal(false)}> DISMISS </button>
-                   </div>
-                  </Modal.Body>
-          </Modal>
+          
+                          <Modal show={errorModal} centered>
+                                   <Modal.Body style={{ backgroundColor: errorColor, borderRadius: '0px', display: 'flex',
+                                    justifyContent: 'center',alignItems: 'center',flexDirection: 'column',padding: 0,}}>
+                                     <img src={errorIcon} alt="no internet" height="70px" width="70px" draggable={false} style={{marginBottom: "1.5em",marginTop:'2rem'}}/>
+                                    <p style={{color: 'black',textAlign:'center',margin:'.5rem'}}>{errorMessage}</p>
+                                    <div style={{display:'flex',backgroundColor:errorDiv,width:'100%',  padding: '10px',marginTop:'1em',justifyContent:'center'}}>
+                                    <button style={{ backgroundColor: 'transparent',border:'none',margin:'.8em',color:'white'}} onClick={()=>setShowErrorModal(false)}> DISMISS </button>
+                                     </div>
+                                 </Modal.Body>
+                          </Modal>
+
         </Container>
       </main>
 

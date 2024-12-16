@@ -13,7 +13,7 @@ const fetchPendingRequest = async (req,res) =>
             collegeOffice: request.collegeName,
             officeCode: request.officeCode,
             time: request.request_time,
-            status: request.status,
+            status:'Pending for approval',
           }));
 
         return res.status(200).json({

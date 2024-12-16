@@ -33,7 +33,11 @@ function HeadFinalApproved() {
       const [responseMessage,setResponseMessage] = useState('')
       const [reponseModal,setResponseModal] = useState(false)
       const [responseIcon,setResponseIcon] = useState('')
-      const [errorDiv,setErrorDiv] = useState('')
+     const [errorModal,setShowErrorModal] = useState(false)
+           const [errorMessage,setErrorMessage] = useState('')
+           const [errorColor,setErrorColor] = useState('')
+           const [errorIcon,setErrorIcon] = useState('')
+           const [errorDiv,setErrorDiv] = useState('')
       const warning = '#FCC737'
       const danger = '#C63C51'
       const success = '#72BF78'
@@ -60,26 +64,61 @@ function HeadFinalApproved() {
       };
 
       const conditionModal = () => {
-                  switch(action) {
-                            case 'send':
-                              approvedRequesthandler();
-                              break;
-                            case 'decline':
-                             removeRequest();
-                              break;
-                            case 'approve':
-                              setApprovedButton(true)
-                              setDeclineButton(true)
-                              setSendButton(false)
-                              break;
-                            default:
-                              alert('No action specified');
+             switch(action) {
+                 case 'send':
+                  approvedRequesthandler();
+                   break;
+                  case 'decline':
+                    removeRequest();
+                  break;
+                  case 'approve':
+                    setApprovedButton(true)
+                   setDeclineButton(true)
+                    setSendButton(false)
+                    break;
+                 default: 
+                 console.log('No action specified');
                   }
         handleClose();
       };
 
+
+
+         const sendDeclinedEmail = async () =>{
+                const data = {requestId};
+                const adminInfo = JSON.parse(localStorage.getItem("admin_info"))
+                const token = adminInfo.admin_token;
+                      try{
+                            const sendEmail = await fetch('http://localhost:8000/admin/decline_email',{
+                                  method: 'POST',
+                                  headers: {
+                                      'Content-Type': 'application/json',
+                                      Authorization: `Bearer ${token}`
+                                  },
+                                  body: JSON.stringify(data)
+                                })
+
+                              if(!sendEmail){
+                               console.log('Something went wrong in the backend while processing your request. Please try again later')
+                                return false;
+                              }
+                                alert('Success sending declined email')
+                                return true;
+                      }catch(error){
+                        setShowErrorModal(true)     
+                        setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+                        setErrorColor('white')
+                        setErrorDiv(danger)
+                        setErrorMessage('Something went wrong. Please check your internet connection.')
+                      }
+
+              }
+
+
               const removeRequest = async () =>
                   {
+                    const adminInfo = JSON.parse(localStorage.getItem("admin_info"))
+                    const token = adminInfo.admin_token;
                         const data = {requestId};
                         let cooldown = 5;
                         setLoading(true);
@@ -88,24 +127,40 @@ function HeadFinalApproved() {
                                 { 
                                     method: 'POST',
                                     headers: {
-                                        'Content-Type': 'application/json'
+                                        'Content-Type': 'application/json',
+                                        Authorization: `Bearer ${token}`
                                     },
                                     body: JSON.stringify(data)
                                 })
-                                if(!response.ok)
-                                    {
-                                        setLoading(false)
-                                        setResponseModal(true)
-                                        setErrorDiv(danger)
-                                        setResponseIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732290025/complain_z5n7bb.png')
-                                        setResponseMessage('Something went wrong in the backend')
+                                if(!response.ok){
+                                                                            
+                                      setShowErrorModal(true)     
+                                      setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+                                      setErrorColor('white')
+                                      setErrorDiv(danger)
+                                      setErrorMessage('Something went wrong while processing your request.')
+
                                         return;
                                     }
-                                    
+                                    const sendingEmail = await sendDeclinedEmail()
+                                    if(!sendingEmail){
+                                        setLoading(false)
+                                        setShowErrorModal(true)
+                                        setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734277000/check_jmj8om.png')
+                                        setErrorColor('white')
+                                        setErrorDiv(success)
+                                        setErrorMessage("Driver's information has been successfully updated..")
+                                      return;
+                                    }
+                                    await sendDeclinedEmail()
                                     setLoading(false);
                                     setResponseModal(true)
                                     setErrorDiv(success)
-                                    setResponseIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732291143/checked_prbxuf.png')
+                                    setShowErrorModal(true)
+                                    setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734277000/check_jmj8om.png')
+                                    setErrorColor('white')
+                                    setErrorDiv(success)
+                                    setErrorMessage("Successfully remove request")
                                     let countdown = cooldown;
                                     setResponseMessage(`You have successfully deleted the request. We will redirect you to home page in ${countdown}.`)
                                     const interval = setInterval(() => {
@@ -119,10 +174,11 @@ function HeadFinalApproved() {
                       }catch(error) 
                       {
                         setLoading(false);
-                        setResponseModal(true)
-                        setErrorDiv(success)
-                        setResponseIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732291143/checked_prbxuf.png')
-                        setResponseMessage('Something went wrong! Please check your internet connection.')
+                        setShowErrorModal(true)
+        setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734277000/check_jmj8om.png')
+        setErrorColor('white')
+        setErrorDiv(success)
+        setErrorMessage("Driver's information has been successfully updated..")
    } }
 
 
@@ -131,6 +187,8 @@ function HeadFinalApproved() {
 
         const approvedRequesthandler = async () =>
            {
+            const adminInfo = JSON.parse(localStorage.getItem("admin_info"))
+            const token = adminInfo.admin_token;
             const data  = {requestId};
             let cooldown = 5;
                   try
@@ -139,7 +197,8 @@ function HeadFinalApproved() {
                           {
                               method: 'POST',
                               headers: {
-                                'Content-Type': 'application/json'
+                                'Content-Type': 'application/json',
+                                Authorization: `Bearer ${token}`
                             },
                             body: JSON.stringify(data)
                           } )
@@ -190,6 +249,20 @@ function HeadFinalApproved() {
       <NavbarComponent />
 
       <main>
+      <Modal show={errorModal} centered>
+         <Modal.Body style={{ backgroundColor: errorColor,
+                               borderRadius: '0px', display: 'flex', justifyContent: 'center',
+                               alignItems: 'center',flexDirection: 'column',padding: 0,}}>
+                              <img src={errorIcon} alt="no internet" height="60px" width="60px" draggable={false} style={{marginBottom: "1.5em",marginTop:'2rem'}}/>
+                               <p style={{color: 'black',textAlign:'center',margin:'.5rem'}}>{errorMessage}</p>
+                              <div style={{display:'flex',backgroundColor:errorDiv,width:'100%',  padding: '10px',marginTop:'1em',justifyContent:'center'}}>
+                              <button style={{ backgroundColor: 'transparent',border:'none',margin:'.8em',color:'white'}} onClick={()=>setShowErrorModal(false)}> DISMISS </button>
+                              </div>
+         </Modal.Body>
+        </Modal> 
+
+
+
         <Container>
           <Row style={{ height: "100vh" }}>
             <Col>

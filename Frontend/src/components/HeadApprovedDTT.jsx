@@ -15,13 +15,15 @@ const HeadApprovedDTT = ({
   useEffect(() => {
     
     const fetchedApprovedRtt =async() => {  //para ni sa view approved rtt modal
-
+      const adminInfo = JSON.parse(localStorage.getItem("admin_info"))
+      const token = adminInfo.admin_token;
       try{
         console.log('The user id is ',requestId)
           const response = await fetch(`http://localhost:8000/admin/fetch_approved_rtt/${requestId}`,{
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
           },
         });
         const data = await response.json()
@@ -40,10 +42,13 @@ const HeadApprovedDTT = ({
 
           const fetchDriversTripTicket = async() => {
             try{
+              const adminInfo = JSON.parse(localStorage.getItem("admin_info"))
+             const token = adminInfo.admin_token;
               const response = await fetch(`http://localhost:8000/admin/fetch_drivers_trip_ticket/${requestId}`,{
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`
                 },
               });
               const result = await response.json()

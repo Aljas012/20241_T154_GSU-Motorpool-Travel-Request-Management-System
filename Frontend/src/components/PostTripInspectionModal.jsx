@@ -26,17 +26,27 @@ const PostTripInspectionModal = ({ postShow, postClose, handleMonthChange, daysI
   const [minutes, setMinutes] = useState('');
   const [timeType, setSelectedTimeType] = useState('');
   const inspectionTime = hours + ':' + minutes + ':' + timeType;
-
+   const [errorModal,setShowErrorModal] = useState(false)
+        const [errorMessage,setErrorMessage] = useState('')
+        const [errorColor,setErrorColor] = useState('')
+        const [errorIcon,setErrorIcon] = useState('')
+        const [errorDiv,setErrorDiv] = useState('')
+        const warning = '#FCC737'
+        const danger = '#C63C51'
+        const success = '#6EC207'
 
 
   const fetchAlldrivers = async () =>
       {
+        const adminInfo = JSON.parse(localStorage.getItem("admin_info"))
+         const token = adminInfo.admin_token;
         try{
           const response  = await fetch('http://localhost:8000/admin/fetch_onduty_drivers',
             {
                 method: 'GET',
                 headers: {
                   "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`
                 },
               })
           
@@ -45,7 +55,11 @@ const PostTripInspectionModal = ({ postShow, postClose, handleMonthChange, daysI
         console.log('available data ',responseData);
         }catch(error)
           {
-     
+            setShowErrorModal(true)     
+            setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+            setErrorColor('white')
+            setErrorDiv(danger)
+            setErrorMessage('Something went wrong. Please check your internet connection.')
         }
   }
 
@@ -53,10 +67,13 @@ const PostTripInspectionModal = ({ postShow, postClose, handleMonthChange, daysI
 
   const fetchDrivers = async () => {
     try {
+      const adminInfo = JSON.parse(localStorage.getItem("admin_info"))
+      const token = adminInfo.admin_token;
         const response = await fetch('http://localhost:8000/admin/fetch_onduty_drivers', {
             method: 'GET',
             headers: {
                 "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
             }
         });
         
@@ -65,8 +82,11 @@ const PostTripInspectionModal = ({ postShow, postClose, handleMonthChange, daysI
             setDrivers(data.data);
         }
     } catch (error) {
-        console.error('Error fetching drivers:', error);
-       
+      setShowErrorModal(true)     
+      setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+      setErrorColor('white')
+      setErrorDiv(danger)
+      setErrorMessage('Something went wrong. Please check your internet connection.')
     }
 };
 
@@ -88,12 +108,15 @@ const PostTripInspectionModal = ({ postShow, postClose, handleMonthChange, daysI
 
 const fetchDriverInfo = async (driverName) => {
     try {
+      const adminInfo = JSON.parse(localStorage.getItem("admin_info"))
+      const token = adminInfo.admin_token;
         const response = await fetch(
             `http://localhost:8000/admin/fetch_onduty_drivers?driverName=${encodeURIComponent(driverName)}`,
             {
                 method: 'GET',
                 headers: {
                     "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
                 }
             }
         );
@@ -103,7 +126,11 @@ const fetchDriverInfo = async (driverName) => {
             setDriverInfo(data.data[0]);
         }
     } catch (error) {
-        console.error('Error fetching driver info:', error);
+      setShowErrorModal(true)     
+      setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+      setErrorColor('white')
+      setErrorDiv(danger)
+      setErrorMessage('Something went wrong. Please check your internet connection.')
     }
 };
 
@@ -167,6 +194,8 @@ const formatDate = (dateString) => {
 
 const exportPdfHandler = async (e) => {
     e.preventDefault();
+    const adminInfo = JSON.parse(localStorage.getItem("admin_info"))
+    const token = adminInfo.admin_token;
     if (!isTimeValid()) {
       alert('Please enter a valid time');
       return;
@@ -183,19 +212,24 @@ const exportPdfHandler = async (e) => {
           inspectionTime: inspectionTime,
           verified_by: driverInfo.verified_by
         };
-      
+        
         const response = await fetch('http://localhost:8000/admin/inspection_list_generate_pdf', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`  
             },
             body: JSON.stringify(data),
         });
 
 
         if (!response.ok) {
-          const errorData = await response.json();
-            throw new Error(`HTTP error! status: ${response.status}, message: ${data.message || 'Unknown error'}`);
+          setShowErrorModal(true)     
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+          setErrorColor('white')
+          setErrorDiv(danger)
+          setErrorMessage('Something went wrong while processing your request.')
+          return;
         }
         setShowNoInternet(false);
         setWaiting(false)
@@ -213,7 +247,11 @@ const exportPdfHandler = async (e) => {
         URL.revokeObjectURL(pdfUrl);
         refreshInput();
     } catch (error) {
-        console.error('Full error details:', error);
+      setShowErrorModal(true)     
+      setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+      setErrorColor('white')
+      setErrorDiv(danger)
+      setErrorMessage('Something went wrong. Please check your internet connection.')
         setShowNoInternet(true);
         setWaiting(false)
     }
@@ -223,6 +261,20 @@ const exportPdfHandler = async (e) => {
 
   return (
     <>
+    
+      <Modal show={errorModal} centered>
+         <Modal.Body style={{ backgroundColor: errorColor,
+                               borderRadius: '0px', display: 'flex', justifyContent: 'center',
+                               alignItems: 'center',flexDirection: 'column',padding: 0,}}>
+                              <img src={errorIcon} alt="no internet" height="60px" width="60px" draggable={false} style={{marginBottom: "1.5em",marginTop:'2rem'}}/>
+                               <p style={{color: 'black',textAlign:'center',margin:'.5rem'}}>{errorMessage}</p>
+                              <div style={{display:'flex',backgroundColor:errorDiv,width:'100%',  padding: '10px',marginTop:'1em',justifyContent:'center'}}>
+                              <button style={{ backgroundColor: 'transparent',border:'none',margin:'.8em',color:'white'}} onClick={()=>setShowErrorModal(false)}> DISMISS </button>
+                              </div>
+         </Modal.Body>
+        </Modal>
+
+
     <Modal show={postShow} onHide={postClose} size="xl" >
       <Modal.Header closeButton>
         <Modal.Title
@@ -488,21 +540,7 @@ const exportPdfHandler = async (e) => {
       </ModalBody>
     </Modal>
     
-    <Modal show={noInternet} centered size="sm" animation={true}>
-      <ModalBody
-        style={{
-          backgroundColor: '#FFC400',
-          borderRadius: '0px',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          flexDirection: 'column',
-        }}
-      >
-        <img src={noInternetLogo} alt="no internet" height="50px" width="50px" draggable={false} style={{marginBottom: "10px"}}/>
-        <p style={{color:'black',fontSize:'.8rem',textAlign:'center'}}>Something went wrong! please check your internet connection.</p> <button onClick={exportPdfHandler} style={{border:"none",backgroundColor:"#FFC400",color: "red",fontSize:".8rem"}}>Try again</button>
-      </ModalBody>
-    </Modal>
+  
     </>
   );
 };

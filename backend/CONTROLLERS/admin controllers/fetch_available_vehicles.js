@@ -4,7 +4,6 @@ const fetchAvailableVehicles = async (req, res) => {
   try {
 
     const vehicles = await vehicle_data.find({ status: 'Available' });
-
     
     const totalVehicles = vehicles.map(vehicle => ({
       vehicleName: vehicle.vehicleName,
@@ -23,5 +22,4 @@ const fetchAvailableVehicles = async (req, res) => {
     });
   }
 };
-
 module.exports = { fetchAvailableVehicles };

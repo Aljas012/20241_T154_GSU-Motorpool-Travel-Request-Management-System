@@ -5,12 +5,21 @@ import { useNavigate } from "react-router-dom";
 
 const MotorpoolApprovedModal = ({ requestShow, requestClose, customStyles }) => {
   const [combinedData, setCombinedData] = useState([]); // Holds fetched data
-
+  const [errorModal,setShowErrorModal] = useState(false)
+          const [errorMessage,setErrorMessage] = useState('')
+          const [errorColor,setErrorColor] = useState('')
+          const [errorIcon,setErrorIcon] = useState('')
+          const [errorDiv,setErrorDiv] = useState('')
+          const warning = '#FCC737'
+          const danger = '#C63C51'
+          const success = '#6EC207'
   const navigate = useNavigate();
 
   // Fetch data on component mount
   useEffect(() => {
     const fetchData = async () => {
+      const adminInfo = JSON.parse(localStorage.getItem("admin_info"))
+      const token = adminInfo.admin_token;
       try {
         const response = await fetch(
           "http://localhost:8000/admin/fetch_pending_request_approval",
@@ -18,6 +27,7 @@ const MotorpoolApprovedModal = ({ requestShow, requestClose, customStyles }) => 
             method: "GET",
             headers: {
               "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
             },
           }
         );
@@ -41,8 +51,11 @@ const MotorpoolApprovedModal = ({ requestShow, requestClose, customStyles }) => 
 
 
       } catch (error) {
-        console.error("Error fetching data:", error);
-        console.log("Something went wrong! Please check your internet connection.");
+        setShowErrorModal(true)     
+        setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+        setErrorColor('white')
+        setErrorDiv(danger)
+        setErrorMessage('Something went wrong. Please check your internet connection.')
       }
     };
     fetchData();
@@ -97,6 +110,22 @@ const MotorpoolApprovedModal = ({ requestShow, requestClose, customStyles }) => 
   ];
 
   return (
+    <>
+
+        <Modal show={errorModal} centered>
+               <Modal.Body style={{ backgroundColor: errorColor,
+                                     borderRadius: '0px', display: 'flex', justifyContent: 'center',
+                                     alignItems: 'center',flexDirection: 'column',padding: 0,}}>
+                                    <img src={errorIcon} alt="no internet" height="60px" width="60px" draggable={false} style={{marginBottom: "1.5em",marginTop:'2rem'}}/>
+                                     <p style={{color: 'black',textAlign:'center',margin:'.5rem'}}>{errorMessage}</p>
+                                    <div style={{display:'flex',backgroundColor:errorDiv,width:'100%',  padding: '10px',marginTop:'1em',justifyContent:'center'}}>
+                                    <button style={{ backgroundColor: 'transparent',border:'none',margin:'.8em',color:'white'}} onClick={()=>setShowErrorModal(false)}> DISMISS </button>
+                                    </div>
+               </Modal.Body>
+              </Modal>
+      
+
+
     <Modal show={requestShow} onHide={requestClose} size="xl">
       <Modal.Header closeButton>
         <Modal.Title
@@ -129,6 +158,7 @@ const MotorpoolApprovedModal = ({ requestShow, requestClose, customStyles }) => 
         </Row>
       </Modal.Body>
     </Modal>
+    </>
   );
 };
 

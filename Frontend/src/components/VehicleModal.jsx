@@ -32,19 +32,23 @@ const VehicleModal = ({ vehicleShow, vehicleClose, customStyles }) => {
 
   const fetchVehicles = async () => {
     setLoading(true);
+    const adminInfo = JSON.parse(localStorage.getItem("admin_info"))
+    const token = adminInfo.admin_token;
     try {
         const response = await fetch('http://localhost:8000/admin/get_all_vehicle', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
             },
         });
 
         if (!response.ok) {
-        setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732290025/complain_z5n7bb.png');
-        setModalMessage(`Error: Unable to fetch vehicles. Status: ${response.status}`);
-        setButtonColor('danger');
-        setModalIsOpen(true); 
+          setShowErrorModal(true)     
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+          setErrorColor('white')
+          setErrorDiv(danger)
+          setErrorMessage('Something went wrong while processing your request.')
         setLoading(false);
             return;
         }
@@ -53,10 +57,11 @@ const VehicleModal = ({ vehicleShow, vehicleClose, customStyles }) => {
         setVehicleInformationData(allVehicleData.data);
         return;
     } catch (error) {
-        setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732290025/complain_z5n7bb.png');
-        setModalMessage('Something went wrong while fetching vehicle data. Please try again later.',error.message);
-        setButtonColor('danger');
-        setModalIsOpen(true); 
+      setShowErrorModal(true)     
+      setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+      setErrorColor('white')
+      setErrorDiv(danger)
+      setErrorMessage('Something went wrong. Please check your internet connection.')
     }
 };
 
@@ -127,61 +132,61 @@ const VehicleModal = ({ vehicleShow, vehicleClose, customStyles }) => {
         vehicleName: newVehicle.vehicleName,
         plateNumber: newVehicle.plateNumber,
      };
-  
+     const adminInfo = JSON.parse(localStorage.getItem("admin_info"))
+     const token = adminInfo.admin_token;
       try {
-        // Make the POST request to the backend
         const response = await fetch('http://localhost:8000/admin/add_vehicle', {
           method: 'POST',
           body: JSON.stringify(data),
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
           },
         });
   
-        // Parse the response from the backend
-        const responseData = await response.json();
   
-        // If the response is not OK (error occurred), alert the user
+        const responseData = await response.json();
+ 
         if (!response.ok) {
-          setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732290025/complain_z5n7bb.png');
-          setModalMessage('Error adding vehicle. Vehicle already exists.');
-          setButtonColor('danger');
-          setModalIsOpen(true); 
+          setShowErrorModal(true)     
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+          setErrorColor('white')
+          setErrorDiv(danger)
+          setErrorMessage('Error adding vehicle')
           setIsClicked(false);
         setLoading(false);
           return;
         }
+ 
+        console.log('New vehicle data:', responseData.vehicle); 
   
-        // Assuming the response contains the newly added vehicle data
-        console.log('New vehicle data:', responseData.vehicle); // Log the response data to verify
-  
-     
         setVehicleInformationData((prevData) => [...prevData, responseData.vehicle]);
         
         setNewVehicle({ vehicleName: '', plateNumber: '', status: '' });
         setShowModal(false);
-    
-        setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732291143/checked_prbxuf.png');
-        setModalMessage('Successfully adding Vehicle');
-        setButtonColor('success');
-        setModalIsOpen(true); 
+        
+        setShowErrorModal(true)     
+        setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732291143/checked_prbxuf.png')
+        setErrorColor('white')
+        setErrorDiv(success)
+        setErrorMessage('Successfully adding Vehicle')
         setIsClicked(false);
         setLoading(false);
       } catch (error) {
 
-        setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732290025/complain_z5n7bb.png');
-        setModalMessage('Something went wrong!',error);
-        setButtonColor('danger');
-        setModalIsOpen(true); 
-        setIsClicked(false);
-        setLoading(false);
+        setShowErrorModal(true)     
+        setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+        setErrorColor('white')
+        setErrorDiv(danger)
+        setErrorMessage('Something went wrong. Please check your internet connection.')
       }
   
     } else {
-      setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732290025/complain_z5n7bb.png');
-      setModalMessage('Please fill out all fields before submitting.');
-      setButtonColor('warning');
-      setModalIsOpen(true); 
+      setShowErrorModal(true)
+      setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734241668/warning-sign_ajxpqp.png')
+      setErrorColor('white')
+      setErrorDiv(warning)
+      setErrorMessage('Input cannot be empty! Please complete all required fields before proceeding.')
       setIsClicked(false);
         setLoading(false);
       return;
@@ -193,7 +198,9 @@ const VehicleModal = ({ vehicleShow, vehicleClose, customStyles }) => {
   const handleDeleteVehicle = async (vehicleToDelete) => {
     setIsClicked(true);
     setLoading(true);
-      const data = { plateNumber: vehicleToDelete.plateNumber }; // Payload
+    const adminInfo = JSON.parse(localStorage.getItem("admin_info"))
+    const token = adminInfo.admin_token;
+    const data = { plateNumber: vehicleToDelete.plateNumber }; 
   
       try {
           const response = await fetch('http://localhost:8000/admin/delete_vehicle', {
@@ -201,14 +208,16 @@ const VehicleModal = ({ vehicleShow, vehicleClose, customStyles }) => {
           body: JSON.stringify(data),
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
           },
         });
      
         if (!response.ok) {
-          setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732290025/complain_z5n7bb.png');
-          setModalMessage('Failed to delete the vehicle. Please try again. Please try again.');
-          setButtonColor('danger');
-          setModalIsOpen(true); // Show error modal
+          setShowErrorModal(true)     
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+          setErrorColor('white')
+          setErrorDiv(danger)
+          setErrorMessage('Failed to delete vehicle')
           setIsClicked(false);
           setLoading(false);
           return;
@@ -221,20 +230,21 @@ const VehicleModal = ({ vehicleShow, vehicleClose, customStyles }) => {
         );
 
         fetchVehicles()
-        setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732291143/checked_prbxuf.png');
-        setModalMessage('Successfully deleted vehicle');
-        setButtonColor('success');
-        setModalIsOpen(true); 
+        setShowErrorModal(true)     
+        setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732291143/checked_prbxuf.png')
+        setErrorColor('white')
+        setErrorDiv(success)
+        setErrorMessage('Successfully deleted vehicle')
         setIsClicked(false);
         setLoading(false);
       } catch (error) {
-        setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732290025/complain_z5n7bb.png');
-        setModalMessage('Something went wrong while deleting the vehicle.',error);
-        setButtonColor('danger');
-        setModalIsOpen(true); 
+        setShowErrorModal(true)     
+         setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+         setErrorColor('white')
+        setErrorDiv(danger)
+         setErrorMessage('Something went wrong. Please check your internet connection.')
         setIsClicked(false);
         setLoading(false);
-        return;
       }
     
   };

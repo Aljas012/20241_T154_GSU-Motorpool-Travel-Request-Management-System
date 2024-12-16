@@ -25,7 +25,8 @@ function FinalApproved() {
   const [fileUrl, setFileUrl] = useState(''); // State to hold the file URL
 
   const fetchUsersAtt = async () => {
-// Ensure you get these from useParams
+    const adminInfo = JSON.parse(localStorage.getItem("admin_info"))
+    const token = adminInfo.admin_token;
     const data = { userId, requestId };
     console.log('Fetching data with:', data);
     try {
@@ -33,6 +34,7 @@ function FinalApproved() {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
         },
       });
       if (!response.ok) {
@@ -57,7 +59,10 @@ function FinalApproved() {
     if (fileUrl) {
       window.open(fileUrl, '_blank'); // Open the file URL in a new tab
     } else {
-      console.error("File URL is not available for download.");
+      setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734241668/warning-sign_ajxpqp.png')
+      setErrorColor('white')
+      setErrorDiv(warning)
+      setErrorMessage('File URL is not available for download.')
     }
   };
 
@@ -85,7 +90,6 @@ function FinalApproved() {
           }
           console.log('generate pdf success')
           const rttPdf = await generateRttPdf.json();
-
         }catch(error)
            {
             console.log('Something went wrong while fetching the rtt pdf', error)
@@ -93,7 +97,8 @@ function FinalApproved() {
     }
 
     const generateDttPdf = async (e) =>{
-      
+      const adminInfo = JSON.parse(localStorage.getItem("admin_info"))
+      const token = adminInfo.admin_token;
         const dttData = {requestId};
         alert(requestId)
         try{
@@ -101,12 +106,18 @@ function FinalApproved() {
             method: "POST",
             headers: {
               'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
             },
             body: JSON.stringify(dttData)
           })
           console.log('success')
           if(!generateDttPdf.ok){
-            console.log('Something is wrong in the backend. Cannot create pdf')
+            setShowErrorModal(true)     
+            setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+            setErrorColor('white')
+            setErrorDiv(danger)
+            setErrorMessage('Something went wrong while processing your pdf.')
+
             return;
           }
 
@@ -122,7 +133,11 @@ function FinalApproved() {
         document.body.removeChild(link); 
         URL.revokeObjectURL(pdfUrl);
         }catch(error){
-          console.log('Something went wrong while fetching the dtt pdf', error)
+          setShowErrorModal(true)     
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+          setErrorColor('white')
+          setErrorDiv(danger)
+          setErrorMessage('Something went wrong. Please check your internet connection.')
         }
     }
 

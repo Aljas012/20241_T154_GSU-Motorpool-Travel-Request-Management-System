@@ -1,7 +1,7 @@
 const request_model = require('../../MODELS/request_form_model')
 
 const fetchPendingRtt = async(req,res) => {
-    console.log('Full request params:', req.params); // Debug all params
+    console.log('Full request params:', req.params); 
     const {requestId} = req.params;
     
     try{

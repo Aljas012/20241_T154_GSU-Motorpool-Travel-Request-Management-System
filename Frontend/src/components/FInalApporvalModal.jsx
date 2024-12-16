@@ -14,11 +14,14 @@ const FinalApprovalModal = ({ finalShow, finalClose, customStyles }) => {
     
   const fetchApprovedRequest = async ()=>
       {
+        const adminInfo = JSON.parse(localStorage.getItem("admin_info"))
+        const token = adminInfo.admin_token;
       try{
           const response = await fetch('http://localhost:8000/admin/fetch_approved_request',{
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
             }
           })
             if(!response.ok)

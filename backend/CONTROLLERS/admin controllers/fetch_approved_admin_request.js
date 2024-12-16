@@ -10,7 +10,7 @@ const fetchingApprovedRequest = async (req, res) => {
       console.log('There are no currently approved requests.');
       return res.status(404).json({ message: 'No approved requests found' });
     }
-    console.log('The admin request data is',requestData)
+
     const reference_id = requestData.reference_id;
 
     const fetchUserRequestData = await request_data.findById(reference_id);
@@ -18,7 +18,7 @@ const fetchingApprovedRequest = async (req, res) => {
       console.log(`The user who made the request with reference ID ${reference_id} cannot be found in the database.`);
       return res.status(404).json({ message: 'No user found that match to the reference_id' });
     }
-    console.log('The request data is ',fetchUserRequestData)
+
     return res.status(200).json({
       message: 'Successfully fetched approved request',
       requestData,

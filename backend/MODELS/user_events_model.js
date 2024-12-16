@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const event_schema = new Schema({
-    reference_id: { type: String, required: true },
+    reference_id: { type: String, required: false },
     event_name: { type: String, required: true },
     event_date: { type: String, required: true },
     event_time: { type: String, required: true },

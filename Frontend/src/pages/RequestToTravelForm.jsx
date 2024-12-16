@@ -25,7 +25,6 @@ function RequestToTravelForm() {
   }
 
         //main 
-    
       let [ dateOfRequestMonth,setdateOfRequestMonth] = useState('')  //date of request data
       let [ dateOfRequestDay,setdateOfRequestDay] = useState('')
       let [ dateOfRequestYear,setdateOfRequestYear] = useState('')
@@ -78,32 +77,52 @@ function RequestToTravelForm() {
       const success = '#7ED4AD'
      const [loadingModal,setShowLoadingModal] = useState(false)
      const [loadingMessage,setLoadingMessage] = useState('')
-  
 
+      const clearFields = async () =>{
+        setOrganizationName('')
+        setdateOfRequestDay('')
+       setdateOfRequestYear('')
+        setdateOfRequestHour('')
+       setdateOfRequestMinute('')
+        setdateOfRequestType('')
+        setDateOfTravelMonth('')       
+        setDateOfTravelDay('')
+        setDateOfTravelYear('')
+        setExpectedDepartureHour('')
+        setExpectedDepartureMinute('')
+        setExpectedDepartureType('')
+        setExpectedArrivalHour('')
+        setExpectedArrivalMinute('')
+       setExpectedArrivalType('')
+        setExpectedReturnDateMonth('')
+        setExpectedReturnDateDay('')
+        setExpectedReturnDateYear('')
+        setExpectedReturnArrivalHour('')
+        setExpectedReturnArrivalMinute('')
+        setExpectedReturnArrivalType('')
+      }
 
 
       const onInputImage = async (e) => {
         const file = e.target.files[0];
         setShowLoadingModal(true)
         setLoadingMessage('Please wait while uploading file...')
+
         if (file) {
           const fileExtension = file.name.split('.').pop().toLowerCase();
           const allowedExtensions = ['png', 'jpg', 'jpeg', 'gif','pdf'];
     
           if (allowedExtensions.includes(fileExtension)) {
             setAttImage(file); 
-    
-            // Setting up FormData for the file upload
             const formData = new FormData();
             formData.append('file', file);
-            formData.append('upload_preset', 'gsu_motorpool'); // Replace with your Cloudinary upload preset
+            formData.append('upload_preset', 'gsu_motorpool'); 
     
             try {
               const cloudinaryResponse = await fetch(cloudinary_url, {
                 method: 'POST',
                 body: formData,
               });
-           
               if (!cloudinaryResponse.ok) {
                 setShowLoadingModal(false)
                 alert('Unable to upload file to Cloudinary');
@@ -111,105 +130,134 @@ function RequestToTravelForm() {
               }
               
               const responseData = await cloudinaryResponse.json();
-              setImageUrl(responseData.secure_url); // Update the state with the 
+              setImageUrl(responseData.secure_url); 
               setIsImageUploaded(true); 
               setShowLoadingModal(false)
             } catch (error) {
-              setShowErrorModal(true)
-              setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732116882/warning_xpcpdr.png')
+              setShowErrorModal(true)     
+              setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
               setErrorColor('white')
               setErrorDiv(danger)
-              setErrorMessage('Something went wrong! Please check your internet connection and try again.')
-             
+              setErrorMessage('Something went wrong. Please check your internet connection.')
             }
-    
           } else {
 
-            setShowErrorModal(true)
-            setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732116882/warning_xpcpdr.png')
-            setErrorColor('white')
+            setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732118396/warning_1_vj16yl.png')
+            setButtonColor('danger')
             setErrorDiv(danger)
             setErrorMessage('Only .png, .jpg, .jpeg, or .gif files are allowed.')
+            setModalIsOpen(true);
             e.target.value = '';
           }
         } else {
           setShowErrorModal(true)
-          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732290025/complain_z5n7bb.png')
-          setErrorColor('white')
+          setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732118396/warning_1_vj16yl.png')
+          setButtonColor('danger')
           setErrorDiv(warning)
           setErrorMessage('Please select a file to upload first before proceeding.')
           return;
         }
       };
     
-      // Using useEffect to monitor changes to imageUrl
-      const handleSubmit = (e) => {
-        e.preventDefault(); // Prevent form from auto-submitting
+
+      const nullChecker = async (userId, organization_name,requestor_name,request_date,request_time,
+        passenger_names,date_travel,destination,departure_time,return_date,return_arrival_time,
+        travel_purpose,return_departure_arrival_time) =>
+          {
+            if(userId === '' || organization_name === '' || requestor_name === '' || request_date === '' ||
+              request_time === '' || passenger_names === '' || date_travel === '' || destination === '' || departure_time === '' || 
+              return_arrival_time === '' || return_date === '' || travel_purpose === '' || return_departure_arrival_time === '')
+              {
+                return false;
+              }
+              return true;
+      }
+
+
+
+      const handleSubmit = async (e) => {
+        e.preventDefault(); 
         if(att_File === null)
         {
           setShowErrorModal(true)
-          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732290025/complain_z5n7bb.png')
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734241668/warning-sign_ajxpqp.png')
           setErrorColor('white')
           setErrorDiv(warning)
           setErrorMessage('Please select a file to upload first before proceeding.')
+
           return;
         }
-        if (!isImageUploaded) {
-          alert('Please wait for the image to finish uploading.');
-          return;
-        }
-      
-        // Call the function to submit the form data
         requestToTravelHandler();
-
       };
-      
-
       const requestToTravelHandler = async () => {
+        const token = localStorage.getItem("auth_token")
         const userInfo = JSON.parse(localStorage.getItem("user_info"));
         const userId = userInfo?.user_id;
-    
-        if (imageUrl === null) {
-          alert('The attachment file is still uploading. Please wait!');
-          return; // Exit the function to prevent proceeding
-        }
-    
-        const data = {
-          userId, organization_name,   requestor_name,  contact_number, request_date, request_time,
+        
+        const isValid = await nullChecker(userId, organization_name,requestor_name,request_date,request_time,
           passenger_names,date_travel,destination,departure_time,return_date,return_arrival_time,
-          travel_purpose,return_departure_arrival_time, imageUrl,};
+          travel_purpose,return_departure_arrival_time)
+
+          if(!isValid){
+            setShowErrorModal(true)
+            setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734241668/warning-sign_ajxpqp.png')
+            setErrorColor('white')
+            setErrorDiv(warning)
+            setErrorMessage('Request cannot be processed because some inputs are missing. Please ensure all fields are filled.')
+            return;
+          }
+        const data = {
+          userId, organization_name,requestor_name,contact_number,request_date,request_time,
+          passenger_names,date_travel,destination,departure_time,return_date,return_arrival_time,
+          travel_purpose,return_departure_arrival_time, imageUrl};
+
         try {
-          // Send the request to the backend
           const response = await fetch('http://localhost:8000/user/travel_request', {
-            method: "POST", // Corrected "METHOD" to "method"
+            method: "POST", 
             headers: {
               "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
             },
             body: JSON.stringify(data),
           });
       
           if (!response.ok) {
             setShowErrorModal(true)
-            setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732290025/complain_z5n7bb.png')
+            setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
             setErrorColor('white')
             setErrorDiv(warning)
-            setErrorMessage('You have already submitted a request. If you wish to submit another request, please use a different requester name. Thank you.')
+            setErrorMessage('Something went wrong while processing you request. Please try again')
             return;
           }
+           clearFields()
           setShowErrorModal(true)
           setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732291143/checked_prbxuf.png')
           setErrorColor('white')
           setErrorDiv(success)
-          setErrorMessage('Successfully submitting you request.  Your request is currently reviewed by the admin. Thankyou')
+          setErrorMessage('Your request has been successfully submitted and is currently under review by the admin. You will receive an email notification once your request has been approved. Thank you for your patience.')
+         
+          let time = 5000; 
+          const intervalId = setInterval(() => {
+            if (time <= 0) {
+              navigate(`/user/id=${id}/homepage`);
+              clearInterval(intervalId); 
+            } else {
+              time -= 1000; 
+            }
+          }, 1000);
+
         } catch (error) {
-          console.error('Error sending the data -- frontend:', error);
+          setShowErrorModal(true)     
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+          setErrorColor('white')
+          setErrorDiv(danger)
+          setErrorMessage('Something went wrong. Please check your internet connection.')
         }
       };
       
 
 
-
-
+  
   return (
     <>
       {/** HEADER */}
@@ -288,6 +336,7 @@ function RequestToTravelForm() {
                           <Form.Control
                             id="organization"
                             type="text"
+                            value={organization_name}
                             placeholder="Organization"
                             onChange={(e) => setOrganizationName(e.target.value)}
                             style={{
@@ -324,6 +373,7 @@ function RequestToTravelForm() {
                             id="requestor"
                             type="text"
                             placeholder="Full Name"
+                            value={requestor_name}
                             onChange={(e) => setRequestorName(e.target.value)}
                             style={{
                               width: "22rem",
@@ -358,6 +408,7 @@ function RequestToTravelForm() {
                           <Form.Control
                             id="contact"
                             type="text"
+                            value={contact_number}
                             placeholder="Optional"
                             onChange={(e) => setContactNumber(e.target.value)}
                             style={{
@@ -1238,16 +1289,16 @@ function RequestToTravelForm() {
                       </Modal>
                       
 
-                      <Modal show={errorModal} centered>
-                            <Modal.Body style={{ backgroundColor: errorColor, borderRadius: '0px', display: 'flex',
-                                justifyContent: 'center',alignItems: 'center',flexDirection: 'column',padding: 0,}}>
-                              <img src={errorIcon} alt="no internet" height="90px" width="90px" draggable={false} style={{marginBottom: "1.5em",marginTop:'2rem'}}/>
-                              <p style={{color: 'black',textAlign:'center',margin:'.5rem'}}>{errorMessage}</p>
-                              <div style={{display:'flex',backgroundColor:errorDiv,width:'100%',  padding: '10px',marginTop:'1em',justifyContent:'center'}}>
-                              <button style={{ backgroundColor: 'transparent',border:'none',margin:'.8em',color:'white'}} onClick={()=>setShowErrorModal(false)}> DISMISS </button>
-                            </div>
-                            </Modal.Body>
-                      </Modal>
+                       <Modal show={errorModal} centered>
+                                        <Modal.Body style={{ backgroundColor: errorColor, borderRadius: '0px', display: 'flex',
+                                            justifyContent: 'center',alignItems: 'center',flexDirection: 'column',padding: 0,}}>
+                                          <img src={errorIcon} alt="no internet" height="70px" width="70px" draggable={false} style={{marginBottom: "1.5em",marginTop:'2rem'}}/>
+                                          <p style={{color: 'black',textAlign:'center',margin:'.5rem'}}>{errorMessage}</p>
+                                          <div style={{display:'flex',backgroundColor:errorDiv,width:'100%',  padding: '10px',marginTop:'1em',justifyContent:'center'}}>
+                                          <button style={{ backgroundColor: 'transparent',border:'none',margin:'.8em',color:'white'}} onClick={()=>setShowErrorModal(false)}> DISMISS </button>
+                                         </div>
+                                        </Modal.Body>
+                       </Modal>
 
                     </Container>
                   </Card>

@@ -32,14 +32,15 @@ const  {fetchingApprovedRequest} = require('../CONTROLLERS/admin controllers/fet
 const {fetchUsersATT} = require ('../CONTROLLERS/admin controllers/fetch_users_approved_att')
 const {generatePdf} = require('../CONTROLLERS/admin controllers/download_dtt')
 const {fetchAllApprovedEvents} = require('../CONTROLLERS/admin controllers/approved_travel_events')
+const {deleteApprovedEvents} = require('../CONTROLLERS/admin controllers/delete_approved_events')
+const {createPersonalEvent} = require('../CONTROLLERS/admin controllers/admin_personal_event')
+const {fetchPersonalEvent} = require('../CONTROLLERS/admin controllers/fetch_personal_event')
+const {countTodaysRequest} = require('../CONTROLLERS/admin controllers/count_todays_request')
+const {vehicleTotal} = require('../CONTROLLERS/admin controllers/count_available_vehicle')
+const {sendDeclinedEmail} = require('../CONTROLLERS/admin controllers/send_declined_email');
+const { authenticate } = require('passport');
 
 
-
-
-
-
-router.get('/user-accounts',authenticateToken,getAllUsers); //get all users 
-router.get('/admin-accounts',getAllAdmin); //get all users 
 router.post('/login',login_admin)  //admin login
 router.post('/signup',create_account) //admin signup - only use in thunder client
 router.post('/forgot_password_verify',emailVerifier) // verify email
@@ -47,30 +48,34 @@ router.post('/verify_pin',pinVerifier); //verify pin
 router.patch('/change_password',changePassword); 
 router.post('/resend_pin',resendPin); //resend pin (para sa pin verification sa forgot password)
 router.post('/pin_timeout',pinTimeout); // 
-router.post('/add_driver',addDriver);
-router.get('/get_all_drivers',fetchAllDrivers)
-router.delete(`/delete_driver/:_id`,deleteDriver)
-router.patch('/update_driver',updateDriver)
-router.get('/fetch_pending_request',fetchPendingRequest)
-router.post('/fetch_att_information', fetchAttInformation);
-router.post('/add_vehicle',addVehicle)
-router.get('/get_all_vehicle',fetchAllVehicle)
-router.delete('/delete_vehicle',deleteVehicle);
-router.get('/fetch_available_drivers',availableDrivers)
-router.get('/fetch_available_vehicles',fetchAvailableVehicles);
-router.post('/forward_admin_request',forwardToGsu);
-router.get('/fetch_onduty_drivers',fetch_onduty_drivers);
-router.post('/inspection_list_generate_pdf',generatePostInspectionPdf);
-router.get('/fetch_pending_request_approval',fetchPendingRequestForApproval) //
-router.get('/fetched_approved_request',fetchApprovedRequest)
-router.get(`/fetch_approved_rtt/:requestId`,fetchPendingRtt) // view approved rtt -admin side
-router.get(`/fetch_drivers_trip_ticket/:requestId`,fetchDriversTripTicket)
-router.post('/decline_request',declineRequest);
-router.post('/head_approve_admin_request',approvedRequestData)
-router.get('/fetch_approved_request',fetchingApprovedRequest)
-router.get('/fetch_users_approved_att/:requestId',fetchUsersATT)
-router.post('/generate_dtt',generatePdf)
-router.get('/approved_travel_events',fetchAllApprovedEvents)
-
-
+router.post('/add_driver',authenticateToken,addDriver);
+router.get('/get_all_drivers',authenticateToken,fetchAllDrivers)
+router.delete(`/delete_driver/:_id`,authenticateToken,deleteDriver)
+router.patch('/update_driver',authenticateToken,updateDriver)
+router.get('/fetch_pending_request',authenticateToken,fetchPendingRequest)
+router.post('/fetch_att_information',authenticateToken, fetchAttInformation);
+router.post('/add_vehicle',authenticateToken,addVehicle)
+router.get('/get_all_vehicle',authenticateToken,fetchAllVehicle)
+router.delete('/delete_vehicle',authenticateToken,deleteVehicle);
+router.get('/fetch_available_drivers',authenticateToken,availableDrivers)
+router.get('/fetch_available_vehicles',authenticateToken,fetchAvailableVehicles);
+router.post('/forward_admin_request',authenticateToken,forwardToGsu);
+router.get('/fetch_onduty_drivers',authenticateToken,fetch_onduty_drivers);
+router.post('/inspection_list_generate_pdf',authenticateToken,generatePostInspectionPdf);
+router.get('/fetch_pending_request_approval',authenticateToken,fetchPendingRequestForApproval) //
+router.get('/fetched_approved_request',authenticateToken,fetchApprovedRequest)
+router.get(`/fetch_approved_rtt/:requestId`,authenticateToken,fetchPendingRtt) // view approved rtt -admin side
+router.get(`/fetch_drivers_trip_ticket/:requestId`,authenticateToken,fetchDriversTripTicket)
+router.post('/decline_request',authenticateToken,declineRequest);
+router.post('/head_approve_admin_request',authenticateToken,approvedRequestData)
+router.get('/fetch_approved_request',authenticateToken,fetchingApprovedRequest)
+router.get('/fetch_users_approved_att/:requestId',authenticateToken,fetchUsersATT)
+router.post('/generate_dtt',authenticateToken,generatePdf)
+router.get('/approved_travel_events',authenticateToken,fetchAllApprovedEvents) //
+router.delete('/delete_event',authenticateToken,deleteApprovedEvents) //motorpool delete event
+router.patch('/save_event',authenticateToken,createPersonalEvent) // motorpool mag create ug personal na event
+router.get('/fetch_personal_event/:adminId',authenticateToken,fetchPersonalEvent) //sa motorpool na calendar
+router.get('/todays_total_request',authenticateToken,countTodaysRequest)
+router.get('/available_vehicle',authenticateToken,vehicleTotal)
+router.post('/decline_email',authenticateToken,sendDeclinedEmail)
 module.exports = router

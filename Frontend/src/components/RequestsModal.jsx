@@ -3,40 +3,57 @@ import { Modal, Row, Col, Card } from "react-bootstrap";
 import DataTable from "react-data-table-component";
 import { useNavigate } from "react-router-dom";
 import ViewRequest from "../pages/MOTORPOOL/ViewRequest";  
+import { style } from "framer-motion/client";
 const RequestsModal = ({ requestShow, requestClose, customStyles }) => {
   
   /******************************************* SA REQUEST DATA TABLE NI SYA ************/
 
   const [requestData,setRequestData] = useState("");
   const navigate = useNavigate();
+   const [errorModal,setShowErrorModal] = useState(false)
+      const [errorMessage,setErrorMessage] = useState('')
+      const [errorColor,setErrorColor] = useState('')
+      const [errorIcon,setErrorIcon] = useState('')
+      const [errorDiv,setErrorDiv] = useState('')
+      const warning = '#FCC737'
+      const danger = '#C63C51'
+      const success = '#6EC207'
+  
 
+  
+  useEffect(() => {
   const fetchPendingRequest = async () =>
   {
+    const adminInfo = JSON.parse(localStorage.getItem("admin_info"))
+    const token = adminInfo.admin_token;
+
       try{
             const response = await fetch('http://localhost:8000/admin/fetch_pending_request',{
               method: "GET",
               headers: {
                 "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
               },
             })
-
             const data =  await response.json()
-            
             if (data.data) {
-              setRequestData(data.data);  // Set data to the state correctly
-              
+              setRequestData(data.data);  
+
             } else {
-              console.log("No data found:", data.message);  // Optionally log if no data
-              setRequestData([]);  // Set an empty array if no pending requests are found
+              console.log("No data found:", data.message); 
+              setRequestData([]); 
             }
       }catch(error)
           {
-          alert('error fetching pending request')
+            setShowErrorModal(true)     
+            setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+            setErrorColor('white')
+            setErrorDiv(danger)
+            setErrorMessage('Something went wrong. Please check your internet connection.')
         }
   }
 
-  useEffect(() => {
-    fetchPendingRequest();  // Fetch pending requests when the component mounts
+    fetchPendingRequest(); 
   }, []); 
 
 
@@ -93,6 +110,19 @@ const RequestsModal = ({ requestShow, requestClose, customStyles }) => {
   
 
   return (
+    <>
+      <Modal show={errorModal} centered>
+                        <Modal.Body style={{ backgroundColor: errorColor, borderRadius: '0px', display: 'flex',
+                            justifyContent: 'center',alignItems: 'center',flexDirection: 'column',padding: 0,}}>
+                          <img src={errorIcon} alt="no internet" height="60px" width="60px" draggable={false} style={{marginBottom: "1.5em",marginTop:'2rem'}}/>
+                          <p style={{color: 'black',textAlign:'center',margin:'.5rem'}}>{errorMessage}</p>
+                          <div style={{display:'flex',backgroundColor:errorDiv,width:'100%',  padding: '10px',marginTop:'1em',justifyContent:'center'}}>
+                          <button style={{ backgroundColor: 'transparent',border:'none',margin:'.8em',color:'white'}} onClick={()=>setShowErrorModal(false)}> DISMISS </button>
+                         </div>
+                        </Modal.Body>
+                   </Modal>
+
+
     <Modal
       show={requestShow}
       onHide={requestClose}
@@ -133,6 +163,7 @@ const RequestsModal = ({ requestShow, requestClose, customStyles }) => {
         </Row>
       </Modal.Body>
     </Modal>
+    </>
   );
 };
 

@@ -22,14 +22,14 @@ const handleGoogleCallback = async (req, res) => {
             redirectUrl
         );
         const response = await oAuth2Client.getToken(code);
-        oAuth2Client.setCredentials(response.tokens); // Set the credentials to the client
+        oAuth2Client.setCredentials(response.tokens); 
   
-        // Fetching user data from Google
+      
         const accessToken = response.tokens.access_token;
-        const userData = await getUserData(accessToken); // Get user data from the utility function
+        const userData = await getUserData(accessToken); 
         const refresh_token = response.tokens.refresh_token;
   
-        const { id, email, name } = userData; // Destructure the user data
+        const { id, email, name } = userData;
         let user = await user_data.findOne({ email: email });
         if(user)
             { 
@@ -44,30 +44,29 @@ const handleGoogleCallback = async (req, res) => {
                 { new: true }
             );
               const token = userGenerateToken(user.id, user.college_name, user.name, user.email, user.office_code);
-              res.redirect(`http://localhost:5173/redirect?redirectedFrom=googleCallback&token=${token}&id=${user.id}&name=${user.name}&email=${user.email}`);
+              res.redirect(`http://localhost:5173/redirect?redirectedFrom=googleCallback&token=${token}&id=${user.id}&name=${user.name}&email=${user.email}&college_name=${user.college_name}&office_code=${user.office_code}`);
               return;
             } 
   
         function generateRandomPassword(length = 12) {
-          // Generate random bytes and convert them to a base64 string
           return crypto.randomBytes(length).toString('base64').slice(0, length);
         } 
         generatedPassword = generateRandomPassword();
         
         const hashedPassword = await bcrypt.hash(generatedPassword, 12);  
         if (!user) {
-            // If user does not exist, create a new user
+      
             user = new user_data({
                 name,
                 email,
                 password:hashedPassword,
-                office_code: '', // Default empty, can be updated later
-                college_name: '', // Default empty, can be updated later
-                temporary_key: '', // No temporary key required
-                google_id: id, // Save the Google ID
+                office_code: '', 
+                college_name: '', 
+                temporary_key: '', 
+                google_id: id, 
                 google_refresh_token: refresh_token
             });
-            await user.save(); // Save the new user to the database
+            await user.save();
         }
    
       const token = userGenerateToken(user.id, user.college_name, user.name, user.email, user.office_code);
@@ -94,7 +93,6 @@ const handleGoogleCallback = async (req, res) => {
         try {
           await transporter.sendMail(mailOptions);
           console.log('Email sent to:', email);
-          
           res.redirect(`http://localhost:5173/redirect?redirectedFrom=googleCallback&token=${token}&id=${user.id}&name=${user.name}`);
   
         } catch (error) {

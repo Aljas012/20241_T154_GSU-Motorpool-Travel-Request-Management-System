@@ -1,11 +1,12 @@
 import React, { useState,useRef, } from "react";
-import { Container, Row, Col, Form, Button, InputGroup,Modal, Stack, ModalBody } from "react-bootstrap";
+import { Container, Row, Col, Form, Button, InputGroup,Modal, Spinner } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faLock } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate ,useLocation} from "react-router-dom"; 
 import Swal from "sweetalert2";
 import "../styles/LandingPage.css";
 import ReCAPTCHA from "react-google-recaptcha";
+
 
 
 
@@ -21,15 +22,9 @@ function UserLandingPage() {
   const toggleEmailModal = () => setShowEmailModal(!showEmailModal);
   const togglePinModal = () => setShowPinModal(!showPinModal);
   const toggleChangePassword = () => setShowNewPassword(!showChangePassword);
-  const [captchaData,setCaptchaData] = useState('')
-
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [modalMessage, setModalMessage] = useState('');
-  const [modalImage,setModalImage] = useState('')
-  const [modalButton,setModalButton] =useState('')
-  const [buttonColor,setButtonColor] = useState('')
+  const [loading,setLoading] = useState(false)
+  const [forgotEmailLoading,setForgotEmailLoading] = useState(false)
   const inputsRef = useRef([]);
-  const [captchaToken, setCaptchaToken] = useState(""); // State to store reCAPTCHA token
   const [showCaptchaModal, setShowCaptchaModal] = useState(false);
   const [errorModal,setShowErrorModal] = useState(false)
   const [errorMessage,setErrorMessage] = useState('')
@@ -38,9 +33,7 @@ function UserLandingPage() {
   const [errorDiv,setErrorDiv] = useState('')
   const warning = '#FCC737'
   const danger = '#C63C51'
-
-
-
+  const success = '#6EC207'
 
   const location = useLocation();
   
@@ -72,15 +65,15 @@ function UserLandingPage() {
       height:"40px",
       width: "400px",
       customClass: {
-        popup: "my-popup", // Custom class for additional styling
-        icon: "my-icon",   // Custom class for the icon
+        popup: "my-popup", 
+        icon: "my-icon",   
       },
       didOpen: () => {
         // You can use inline styling if you prefer
         const icon = document.querySelector(".swal2-icon.swal2-error");
         if (icon) {
-          icon.style.width = "30px";  // Adjust the width
-          icon.style.height = "30px"; // Adjust the height
+          icon.style.width = "30px";  
+          icon.style.height = "30px"; 
         }
       },
     });
@@ -146,22 +139,27 @@ function UserLandingPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setLoading(true)
     if (email === "" || password === "") {
       setShowErrorModal(true)
-      setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1733419224/warning_3_pkhfuq.png')
+      setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734241668/warning-sign_ajxpqp.png')
       setErrorColor('white')
       setErrorDiv(warning)
-      setErrorMessage('Input cannot be empty! Please complete all required fields before proceeding.')
+      setErrorMessage('Action cannot be completed because an input field is empty.')
+      setLoading(false)
       return;
     }
 
     if (!validateEmail(email)) {
-      alert('invalid email  -login')
+      setShowErrorModal(true)
+      setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734241668/warning-sign_ajxpqp.png')
+      setErrorColor('white')
+      setErrorDiv(warning)
+      setErrorMessage('Non institutional accounts are not allowed')
+      setLoading(false)
       return;
     }
 
-    // Show captcha modal
     setShowCaptchaModal(true);
   };
 
@@ -183,7 +181,11 @@ function UserLandingPage() {
         return;
       }
     } catch (error) {
-      console.error('Error during Google signup:', error);
+          setShowErrorModal(true)     
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+          setErrorColor('white')
+          setErrorDiv(danger)
+          setErrorMessage('Something went wrong. Please check your internet connection.')
     }
   }
 
@@ -197,13 +199,6 @@ function UserLandingPage() {
 
 
 
-function notifyModal (imageUrl,message,buttonColor) 
-      {
-          setModalMessage(message);
-          setModalImage(imageUrl);
-          setButtonColor(buttonColor);
-          setModalIsOpen(true);      
-  }
 
 
   const handleInputPin = (e, index) => {
@@ -233,22 +228,28 @@ function notifyModal (imageUrl,message,buttonColor)
  function forgotEmailValidator(forgotEmail) {
 
   if(forgotEmail === "")
-      {
-        setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732118396/warning_1_vj16yl.png')
-        setModalMessage('Unable to continue due to null input field')
-        setButtonColor('danger')
-        setModalIsOpen(true);
+      { 
+        setShowEmailModal(false);
+        setShowErrorModal(true)
+        setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734241668/warning-sign_ajxpqp.png')
+        setErrorColor('white')
+        setErrorDiv(warning)
+        setErrorMessage('Action cannot be completed because an input field is empty.')
+        setForgotEmailLoading(false)
         return false;
       }
 
       const allowedDomains = ['@buksu.edu.ph', '@student.buksu.edu.ph'];
       const isValid = allowedDomains.some((domain) => forgotEmail.endsWith(domain));
       if (!isValid) {
-        setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732318636/sensitive-content_m1cqf8.png');
-        setModalMessage('Non-Institutional Accounts are not allowed!');
-        setButtonColor('warning')
-        setModalIsOpen(true);
-        return false; // Validation failed
+        setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734241668/warning-sign_ajxpqp.png')
+        setErrorColor('white')
+        setErrorDiv(warning)
+        setErrorMessage('Non-Institutional Accounts are not allowed!')
+        setShowEmailModal(false);
+        setShowErrorModal(true)
+        setForgotEmailLoading(false)
+        return false;
       }
       return true;
 }
@@ -256,7 +257,7 @@ function notifyModal (imageUrl,message,buttonColor)
 
 
   const sendEmailHandler = async (e) => {
-   
+   setForgotEmailLoading(true)
       const isValid =  forgotEmailValidator(forgotEmail)
       if(!isValid) { return; }
 
@@ -270,28 +271,32 @@ function notifyModal (imageUrl,message,buttonColor)
         });
 
       const json = await response.json();
-
-      if (response.ok) {
-        setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732202334/tick_whwxlk.png')
-        setModalMessage('202 Successfull: We already sent the verification code to your email '+ forgotEmail)
-        setButtonColor('success')
-        setModalIsOpen(true);
+        if(!response.ok){
+          setForgotEmailLoading(false)
+          setShowEmailModal(false);
+          setShowErrorModal(true)    
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+          setErrorColor('white')
+          setErrorDiv(danger)
+          setErrorMessage('Access denied. Please ensure the information you entered is correct and try again.')
+          return
+        }
+        setForgotEmailLoading(false)
         setShowEmailModal(false);
+        setShowErrorModal(true)    
+        setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732202334/tick_whwxlk.png')
+        setErrorColor('white')
+        setErrorMessage("Great! We've sent a verification code to "+forgotEmail+" Please check your inbox.")
+        setErrorDiv(success)
         setShowPinModal(true);
-        return
-      } 
-        console.error("Error response:", json);
-        setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732318357/404-error_w1pvfd.png')
-        setModalMessage('401 Unauthorized. Email address is not registered!')
-        setButtonColor('danger')
-        setModalIsOpen(true);
-      
-        return;
+        
     } catch (error) {
-     
-      setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732190987/no-wifi_sxabwm.png')
-      setModalMessage('An unexpected error occurred. Please try again later.');
-      setModalIsOpen(true);
+      setForgotEmailLoading(false)
+      setShowErrorModal(true)     
+      setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+      setErrorColor('white')
+      setErrorDiv(danger)
+      setErrorMessage('Something went wrong. Please check your internet connection.')
     }
   };
 
@@ -299,18 +304,22 @@ function notifyModal (imageUrl,message,buttonColor)
   function nullPinHandler (forgotPin) {
         if(forgotPin === "")
           {
-            setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732118396/warning_1_vj16yl.png')
-            setModalMessage('You are almost there! Please complete all required fields to move forward.')
-            setButtonColor('warning')
-            setModalIsOpen(true); 
+            setForgotEmailLoading(false)
+            setShowErrorModal(true)
+            setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734241668/warning-sign_ajxpqp.png')
+            setErrorColor('white')
+            setErrorDiv(warning)
+            setErrorMessage('Input cannot be empty! Please complete all required fields before proceeding.')
             return false;
           }
         if(forgotPin < 6)
             {
-              setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732118396/warning_1_vj16yl.png')
-              setModalMessage('Please input 6 digit pins to continue')
-              setButtonColor('danger')
-              setModalIsOpen(true); 
+              setForgotEmailLoading(false)
+              setShowErrorModal(true)
+              setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734241668/warning-sign_ajxpqp.png')
+              setErrorColor('white')
+              setErrorDiv(warning)
+              setErrorMessage('Please input 6 digit pins to continue.')
               return false;
             }
           return true;
@@ -321,8 +330,8 @@ function notifyModal (imageUrl,message,buttonColor)
 
 
   // Function to handle the PIN verification
-  const pinHandler = async () => {
-
+    const pinHandler = async () => {
+      setForgotEmailLoading(true)
     const forgotPin = inputsRef.current.map((input) => input.value).join("");
 
     console.log('Forgot pin is '+forgotPin)
@@ -330,8 +339,7 @@ function notifyModal (imageUrl,message,buttonColor)
     if(!isValid){return;}
 
     const data = { forgotPin, forgotEmail };
-    alert('forgot email that will be sent to backend is '+ forgotEmail)
-    alert('forgot pin that will be sent to backend is '+forgotPin)
+    
     try {
       const response = await fetch('http://localhost:8000/user/verify_code', {
         method: "POST",
@@ -340,26 +348,34 @@ function notifyModal (imageUrl,message,buttonColor)
           "Content-Type": "application/json",
         },
       });
-      const json = await response.json();
+      const responseData = await response.json();
 
-      if (response.ok) {
-        setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732265851/verified_qylqds.png')
-        setModalMessage('Great! Your PIN is correct.');
-        setButtonColor('success')
-        setModalIsOpen(true);
-        setShowPinModal(false);
-        setShowNewPassword(true)
-      } else {
-        setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732209488/remove_w2nkoi.png')
-        setModalMessage('Incorrect Pin!');
-        setButtonColor('danger')
-        setModalIsOpen(true);
-        return;
-      }
+      if (!response.ok) {
+        setForgotEmailLoading(false)
+      setShowErrorModal(true)     
+      setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+      setErrorColor('white')
+      setErrorDiv(danger)
+      setErrorMessage('The PIN you entered is invalid. Please check and try again..')
+      return;
+    } 
+    setForgotEmailLoading(false)
+      setShowPinModal(false);
+      setShowErrorModal(true)     
+      setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732291143/checked_prbxuf.png')
+      setErrorColor('white')
+      setErrorDiv(success)
+      setErrorMessage('Great! Your PIN is correct.')
+      setShowNewPassword(true)
+
     } catch (error) {
-      setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732190987/no-wifi_sxabwm.png')
-      setModalMessage('An unexpected error occurred. Please try again later.');
-      setModalIsOpen(true);
+      setForgotEmailLoading(false)
+      setShowErrorModal(true)     
+      setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+      setErrorColor('white')
+      setErrorDiv(danger)
+      setErrorMessage('Something went wrong. Please check your internet connection.')
+
     }
   };
 
@@ -372,10 +388,11 @@ function notifyModal (imageUrl,message,buttonColor)
  {  
         if(confirmPassword !== newPassword) 
         {
-          setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732209488/remove_w2nkoi.png')
-          setModalMessage("Password don't match!");
-          setButtonColor('danger')
-          setModalIsOpen(true);
+          setShowErrorModal(true)
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734241668/warning-sign_ajxpqp.png')
+          setErrorColor('white')
+          setErrorDiv(warning)
+          setErrorMessage("Password don't match. Please try again! Thankyou")
           return false;
         }
         return true;
@@ -390,23 +407,34 @@ function notifyModal (imageUrl,message,buttonColor)
       if (!isValid) { return;}
   
     const data = { newPassword, forgotEmail};
-    alert(''+forgotEmail)
     try {  const response = await fetch('http://localhost:8000/user/change_password', {
         method: 'PATCH',  body: JSON.stringify(data), headers: {
           'Content-Type': 'application/json',}, });
   
       const json = await response.json();
   
-      if (!response.ok) { return;  } 
-        setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732265851/verified_qylqds.png')
-        setModalMessage('Congratulations! Your password has been changed successfully.');
-        setButtonColor('success')
-        setModalIsOpen(true);
-        setShowNewPassword(false)
-    } catch (error) {
-      setModalImage('https://res.cloudinary.com/dvhfgstud/image/upload/v1732190987/no-wifi_sxabwm.png')
-      setModalMessage('An unexpected error occurred. Please try again later.');
-      setModalIsOpen(true);
+      if (!response.ok){
+          setShowErrorModal(true)     
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732291143/checked_prbxuf.png')
+          setErrorColor('white')
+          setErrorDiv(success)
+          setErrorMessage('Something went wrong while processing your request.')  
+           return;  
+          } 
+          setShowErrorModal(true)     
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732291143/checked_prbxuf.png')
+          setErrorColor('white')
+          setErrorDiv(success)
+          setErrorMessage('Congratulations! Your password has been changed successfully.')
+          setShowNewPassword(false)
+    } 
+    catch (error) {
+      setLoading(false)
+      setShowErrorModal(true)     
+      setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+      setErrorColor('white')
+      setErrorDiv(danger)
+      setErrorMessage('Something went wrong. Please check your internet connection.')
     }
   };
   
@@ -416,11 +444,9 @@ function notifyModal (imageUrl,message,buttonColor)
         method: "POST", headers: {"Content-Type": "application/json",
         },body: JSON.stringify({ token }), });
 
-      const data = await response.json();
-
       if (response.ok) {
         setShowCaptchaModal(false);
-
+        setLoading(false)
         const loginData = { email, password, token };
         
         try {
@@ -436,6 +462,7 @@ function notifyModal (imageUrl,message,buttonColor)
 
           if (!loginResponse.ok) {
             setShowErrorModal(true)
+            setLoading(false)
             setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732120207/error_rbqoyb.png')
             setErrorColor('white')
             setErrorDiv(danger)
@@ -443,7 +470,7 @@ function notifyModal (imageUrl,message,buttonColor)
             return;
           }
 
-          // Success handling
+          setLoading(false)
           setEmail("");
           setPassword("");
           setError(null);
@@ -454,9 +481,10 @@ function notifyModal (imageUrl,message,buttonColor)
           navigate(`/user/id=${id}/homepage`);
 
         } catch (error) {
-          alertWindow();
+      
         }
       } else {
+        setLoading(false)
         setShowErrorModal(true)
         setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732116882/warning_xpcpdr.png')
         setErrorColor('white')
@@ -464,6 +492,7 @@ function notifyModal (imageUrl,message,buttonColor)
         setErrorMessage('Captcha Failed')
       }
     } catch (error) {
+      setLoading(false)
       console.error("Captcha verification error:", error);
       setShowErrorModal(true)
       setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1732116882/warning_xpcpdr.png')
@@ -473,50 +502,6 @@ function notifyModal (imageUrl,message,buttonColor)
     }
   };
 
-
-
-
-    async function handleGoogleLogin() {
-
-      
-      try {
-        const response = await fetch('http://localhost:8000/user/login_as_google', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-
-        const data = await response.json();
-        console.log('Response from backend:', data);
-
-        if (data.url) {
-          // Try different navigation methods
-          try {
-            // Method 1: window.location
-            window.location.href = data.url;
-            
-            // Method 2: navigate (as backup)
-            setTimeout(() => {
-              if (window.location.href !== data.url) {
-                navigate(data.url);
-              }
-            }, 100);
-          } catch (navError) {
-            console.error('Navigation error:', navError);
-            // Method 3: window.open as last resort
-            window.open(data.url, '_self');
-          }
-        } else {
-          throw new Error('No authorization URL received');
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        // Show error modal to user
-      }
-    }
-
-    
   return (
     <Container fluid style={{ position: "relative", height: "100vh" }}>
       <div style={leftImageStyle}></div>
@@ -610,14 +595,11 @@ function notifyModal (imageUrl,message,buttonColor)
                 />
               </InputGroup>
              
-              <Button
-                variant="primary"
-                size="lg"
-                type="submit"
-                className="w-100"
-              >
-                Login
-              </Button>
+               <Button variant="primary" size="lg"
+                type="button"  className="w-100"
+                 onClick={handleSubmit} disabled={loading}>
+                {loading ? ( <> <Spinner animation="border" size="sm" /></> ) : ('LOGIN')}
+               </Button>
               {/** SIGN IN WITH GOOGLE */}
               <h5
                 className="text-center mt-3"
@@ -687,10 +669,8 @@ function notifyModal (imageUrl,message,buttonColor)
                         Enter your email address below, and we'll send you instructions to reset your password.
                       </p>
                     </div>
-
-                    {/* Form Container */}
                     <div style={{ margin: "0 auto", maxWidth: "350px" }}>
-                      {/* Form for Email Input */}
+  
                       <Form 
                       onSubmit={(e) => {
                         e.preventDefault()
@@ -711,13 +691,10 @@ function notifyModal (imageUrl,message,buttonColor)
                         </Form.Group>
 
                         {/* Verify Button */}
-                        <Button
-                          type="submit"
-                          variant="primary"
-                          className="w-100 text-white"
-                          style={{ padding: "10px 0", fontWeight: "bold" }}
-                        >
-                          Verify Email
+                        <Button variant="primary" size="lg"
+                          type="submit"  className="w-100"
+                          disabled={forgotEmailLoading}>
+                          {forgotEmailLoading ? ( <> <Spinner animation="border" size="sm" /></> ) : ('Verify Email')}
                         </Button>
                       </Form>
                     </div>
@@ -733,7 +710,6 @@ function notifyModal (imageUrl,message,buttonColor)
       <Modal show={showPinModal} onHide={togglePinModal} centered>
             <Modal.Header closeButton></Modal.Header>
             <Modal.Body className="p-2" style={{ padding: "0 24px" }}>
-            
               <div className="d-flex flex-column justify-content-center align-items-center pt-4">
                 <img src="https://res.cloudinary.com/dvhfgstud/image/upload/v1732194851/authentication_jdckfv.png"  alt="Company Logo" draggable="false"    style={{ width: "90px", height: "90px" }}/>
                 <h6 className="mt-3">Verify your account</h6>
@@ -777,15 +753,11 @@ function notifyModal (imageUrl,message,buttonColor)
                         />
                     ))}
                   </Form.Group>
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    className="w-100 text-white"
-                    
-                    style={{ padding: "10px 0", fontWeight: "bold" }}
-                  >
-                    SUBMIT
-                  </Button>
+                  <Button variant="primary" size="lg"
+                          type="submit"  className="w-100"
+                          disabled={forgotEmailLoading}>
+                          {forgotEmailLoading ? ( <> <Spinner animation="border" size="sm" /></> ) : ('SUBMIT')}
+                        </Button>
                 </Form>
               </div>
             </Modal.Body>
@@ -875,9 +847,9 @@ function notifyModal (imageUrl,message,buttonColor)
 
 
 
-          <Modal show={showCaptchaModal} onHide={() => setShowCaptchaModal(false)}  centered>
+          <Modal show={showCaptchaModal}  centered >
                   <Modal.Body style={{ backgroundColor: '#FEFEFF', borderRadius: '0px', display: 'flex',
-                      justifyContent: 'center',alignItems: 'center',flexDirection: 'column',}}>
+                      justifyContent: 'center',alignItems: 'center',flexDirection: 'column',height:'300px'}}>
                     <form style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' ,marginTop:'1rem'}}>
                       <ReCAPTCHA
                         sitekey="6LeNWpMqAAAAAGPC8sroRz2YudH6Kbb_jhSzzyKX"
@@ -886,9 +858,8 @@ function notifyModal (imageUrl,message,buttonColor)
                           alert('Invalid captcha!');
                         }}
                       />
-                      <h6 style={{ marginTop: '1rem', color: 'red', textAlign: 'center' }}>
-                        Please verify that you're not a robot to continue.
-                      </h6>
+                      <p style={{ marginTop: '1rem', color: 'black', textAlign: 'center',fontSize: '.8rem' }}>
+                        Please verify that you're not a robot to continue. </p>
                     </form>
                   </Modal.Body>
           </Modal>
@@ -897,7 +868,7 @@ function notifyModal (imageUrl,message,buttonColor)
           <Modal show={errorModal} centered>
                   <Modal.Body style={{ backgroundColor: errorColor, borderRadius: '0px', display: 'flex',
                       justifyContent: 'center',alignItems: 'center',flexDirection: 'column',padding: 0,}}>
-                    <img src={errorIcon} alt="no internet" height="90px" width="90px" draggable={false} style={{marginBottom: "1.5em",marginTop:'2rem'}}/>
+                    <img src={errorIcon} alt="no internet" height="60px" width="60px" draggable={false} style={{marginBottom: "1.5em",marginTop:'2rem'}}/>
                     <p style={{color: 'black',textAlign:'center',margin:'.5rem'}}>{errorMessage}</p>
                     <div style={{display:'flex',backgroundColor:errorDiv,width:'100%',  padding: '10px',marginTop:'1em',justifyContent:'center'}}>
                     <button style={{ backgroundColor: 'transparent',border:'none',margin:'.8em',color:'white'}} onClick={()=>setShowErrorModal(false)}> DISMISS </button>
@@ -908,37 +879,6 @@ function notifyModal (imageUrl,message,buttonColor)
 
 
 
-    <Modal show={modalIsOpen}
-            onHide={() => setModalIsOpen(false)}
-            centered
-            size="sm"
-            animation={true}
-          >
-            <Modal.Body
-              style={{
-                textAlign: 'center',  
-                padding: '20px',
-                backgroundColor: 'white',
-                color: '#721c24',
-              }}
-            >
-        
-              {modalImage && <img src={modalImage} alt="Modal Image" style={{ width: '50px', height: '50px', marginBottom: '20px', borderRadius: '8px' }} />}
-              
-              <p style={{fontSize:".9rem"}}>{modalMessage}</p>
-              <Button
-                variant= {buttonColor}
-                onClick={() => setModalIsOpen(false)}
-                style={{
-                  marginTop: '15px',
-                  width: '100%',
-                  borderRadius: '5px',
-                }}
-              >
-              continue
-              </Button>
-            </Modal.Body>
-          </Modal>
 
 
 

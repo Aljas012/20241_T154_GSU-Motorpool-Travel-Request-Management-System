@@ -10,12 +10,11 @@ import {
   Form,
   Card,
   Button,
+  Modal
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-//const generatePdf = require('')
 import ATTNav from "../components/ATT_Nav";
-//  import PdfGenerator from './middleware/wordGenerator'; // adjust the path based on your file structure
   import "../styles/AuthorityToTravelForm.css";
 
   function AuthorityToTravelForm({ children }) {
@@ -38,11 +37,29 @@ import ATTNav from "../components/ATT_Nav";
     const   [checkedWithoutVehicle, setCheckedWithoutVehicle] = useState(false);
     const   [request_date, setRequestDate] = useState(new Date());
     const   [isCalendarVisible, setIsCalendarVisible] = useState(false);
-  
+    const [errorModal,setShowErrorModal] = useState(false)
+      const [errorMessage,setErrorMessage] = useState('')
+      const [errorColor,setErrorColor] = useState('')
+      const [errorIcon,setErrorIcon] = useState('')
+      const [errorDiv,setErrorDiv] = useState('')
+      const warning = '#FCC737'
+      const danger = '#C63C51'
+      const success = '#6EC207'
+    
+
+    async function inputChecker(name,auth_travel_number,position,station,purpose_travel,destination,
+      travel_time_period,fundSource,chair_person_name,dean_name,vpaa_name,request_date){
+      if(name === '' || auth_travel_number === '' || position === '' ||  station === ''|| purpose_travel === ''
+          || destination === '' || travel_time_period === '' || fundSource === '' || chair_person_name ==='' || 
+          dean_name === '' || vpaa_name === '' || request_date === ''){
+            return false;
+        }
+        return true;
+    }
 
     const handleBackButton = () => {
-      const userInfo = JSON.parse(localStorage.getItem("user_info")); // Parse the stored JSON
-      const id = userInfo.user_id; // Access the correct key for the user ID
+      const userInfo = JSON.parse(localStorage.getItem("user_info")); 
+      const id = userInfo.user_id;
       navigate(`/user/id=${id}/homepage`);
     };
 
@@ -60,10 +77,10 @@ import ATTNav from "../components/ATT_Nav";
     const formattedDate = request_date
     ? request_date.toLocaleDateString('en-US', {
         year: 'numeric',
-        month: 'short',  // Abbreviated month (e.g., Jan, Feb)
-        day: 'numeric',  // Day of the month
+        month: 'short',  
+        day: 'numeric', 
       })
-    : "Select a Date";  // Default placeholder if no date is selected
+    : "Select a Date";  
 
 
 
@@ -72,13 +89,12 @@ import ATTNav from "../components/ATT_Nav";
       const { id } = event.target;
       
       if (id === "withGovernmentVehicle") {
-        // If the "withVehicle" checkbox is checked, set it to true and "withoutVehicle" to false
+
         setCheckedWithVehicle(!checkedWithVehicle);
         if (!checkedWithVehicle) {
           setCheckedWithoutVehicle(false);
         }
       } else if (id === "withoutGovernmentVehicle") {
-        // If the "withoutVehicle" checkbox is checked, set it to true and "withVehicle" to false
         setCheckedWithoutVehicle(!checkedWithoutVehicle);
         if (!checkedWithoutVehicle) {
           setCheckedWithVehicle(false);
@@ -87,17 +103,13 @@ import ATTNav from "../components/ATT_Nav";
     };
     
     const use_vehicle = checkedWithVehicle ? "true" : checkedWithoutVehicle ? "false" : undefined;
-
-
     const handleClickh6 = () => {
-      alert("H6 clicked!"); // You can replace this with any action you want
+
     };
     
-  const currentYear = new Date().getFullYear(); // Get the current year
-  const startYear = 2023; // Define the starting year
-  const years = []; // Initialize an array to hold the years
-
-  // Populate the years array with the range of years
+  const currentYear = new Date().getFullYear(); 
+  const startYear = 2023;
+  const years = [];
   for (let year = currentYear; year >= startYear; year--) {
     years.push(year);
   }
@@ -106,19 +118,24 @@ import ATTNav from "../components/ATT_Nav";
   const userId = userInfo?.user_id;
 
   const formDataHandler = async (e) => {
-    e.preventDefault(); // Prevent the form from submitting the default way
-  
-    // Fetch token and user info from localStorage
-    const token = localStorage.getItem("auth_token");
+    e.preventDefault();
+      const isValid = await inputChecker(name,auth_travel_number,position,station,purpose_travel,destination, travel_time_period,fundSource,chair_person_name,dean_name,vpaa_name,request_date)
+      if(!isValid){
+        setShowErrorModal(true)
+        setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734241668/warning-sign_ajxpqp.png')
+        setErrorColor('white')
+        setErrorDiv(warning)
+        setErrorMessage('Input cannot be empty! Please complete all required fields before proceeding.')
+        return
+      }
 
+
+    const token = localStorage.getItem("auth_token");
     const data = { name,position,purpose_travel,station, request_date,destination,
       fundSource, travel_time_period, auth_travel_number,checkedWithVehicle, checkedWithoutVehicle,chair_person_name,
       dean_name,vpaa_name, userId};
-  
-    console.log(JSON.stringify(request_date));
 
     try {
-      // Make the API call to generate the PDF
       const response = await fetch(
         `http://localhost:8000/user/${userId}/authority_to_travel/generate_pdf`,
         {
@@ -132,12 +149,9 @@ import ATTNav from "../components/ATT_Nav";
       );
   
       if (response.ok) {
-    
         const pdfBlob = await response.blob();
         const pdfUrl = URL.createObjectURL(pdfBlob);
-  
         console.log("PDF generated successfully. Redirecting to the PDF...");
-
         const link = document.createElement("a");
         link.href = pdfUrl;
         link.download = "AuthorityToTravel.pdf";
@@ -145,48 +159,55 @@ import ATTNav from "../components/ATT_Nav";
         link.click(); 
         document.body.removeChild(link); 
         await saveToDatabase();
+        return;
       } else {
-        // Handle errors from the server
-        const result = await response.json();
-        console.error("Error:", result.error || result.message);
-        alert(`Error generating PDF: ${result.message || "Unknown error"}`);
+         const result = await response.json();
+          setShowErrorModal(true)     
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+          setErrorColor('white')
+          setErrorDiv(danger)
+          setErrorMessage('We cannot proccess your request. Something went wrong while processing your request.')
       }
     } catch (error) {
-      // Catch and log any errors
-      console.error("Error:", error);
+      setShowErrorModal(true)     
+      setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+      setErrorColor('white')
+      setErrorDiv(danger)
+      setErrorMessage('Something went wrong. Please check your internet connection.')
     }
   };
 
   const displayDate = request_date || "Select a Date";
-
-
+  const token = localStorage.getItem("auth_token")
   const saveToDatabase = async () =>
           {
-
- 
      const data = {name, position, purpose_travel,  station, destination,
       fundSource,request_date,travel_time_period,auth_travel_number, use_vehicle, chair_person_name,
       dean_name, vpaa_name,userId };
-
-
-        
-      console.log('data that will be sent to backend',data)
-      console.log('the id that will be sent to backend is ',userId)
       try{
           const response  = await fetch('http://localhost:8000/user/save_data',{
             method: "POST",
             headers: {
-              "Content-Type": "application/json"
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
             },
-            body: JSON.stringify(data), // Ensure `data` is serializable
+            body: JSON.stringify(data), 
           })
               if(!response.ok)
                   {
-                console.log('there is an error in the backend that causes an error')
+                    setShowErrorModal(true)     
+                    setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+                    setErrorColor('white')
+                    setErrorDiv(danger)
+                    setErrorMessage('Something went wrong while processing your request.')
               }
       }catch(error)
         {
-          
+          setShowErrorModal(true)     
+          setErrorIcon('https://res.cloudinary.com/dvhfgstud/image/upload/v1734240543/warning_4_sla1qv.png')
+          setErrorColor('white')
+          setErrorDiv(danger)
+          setErrorMessage('Something went wrong. Please check your internet connection.')
         }
       }
   
@@ -223,6 +244,19 @@ import ATTNav from "../components/ATT_Nav";
                   />
                 </button>
               </div>
+
+
+              <Modal show={errorModal} centered>
+                  <Modal.Body style={{ backgroundColor: errorColor, borderRadius: '0px', display: 'flex',
+                      justifyContent: 'center',alignItems: 'center',flexDirection: 'column',padding: 0,}}>
+                    <img src={errorIcon} alt="no internet" height="70px" width="70px" draggable={false} style={{marginBottom: "1.5em",marginTop:'2rem'}}/>
+                    <p style={{color: 'black',textAlign:'center',margin:'.5rem'}}>{errorMessage}</p>
+                    <div style={{display:'flex',backgroundColor:errorDiv,width:'100%',  padding: '10px',marginTop:'1em',justifyContent:'center'}}>
+                    <button style={{ backgroundColor: 'transparent',border:'none',margin:'.8em',color:'white'}} onClick={()=>setShowErrorModal(false)}> DISMISS </button>
+                   </div>
+                  </Modal.Body>
+             </Modal>
+
 
               <div>
                         <Card

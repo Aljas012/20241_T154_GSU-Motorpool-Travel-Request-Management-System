@@ -1,6 +1,33 @@
-import React from 'react';
+import { data } from 'framer-motion/client';
+import React, { useState,useEffect } from 'react';
 
-const WeatherInfo = ({ city, temperature, precipitation, humidity, windSpeed }) => {
+const WeatherInfo = ({ city, temperature, description, humidity, windSpeed }) => {
+  const [image,setImage] = useState()
+  useEffect(() => {
+    let weatherIcon = '';
+    
+    switch (description?.toUpperCase?.()) {
+      case 'CLEAR SKY':
+        weatherIcon = "https://res.cloudinary.com/dvhfgstud/image/upload/v1734151317/cloudy_2_g2gy9c.png";
+        break;
+      case 'FEW CLOUDS':
+        weatherIcon = "https://res.cloudinary.com/dvhfgstud/image/upload/v1734150763/cloudy_qsjzaq.png";
+        break;
+      case 'SCATTERED CLOUDS':
+        weatherIcon = "https://res.cloudinary.com/dvhfgstud/image/upload/v1734150762/clear-sky_ypecgj.png";
+        break;
+      case 'SHOWER RAIN':
+        weatherIcon = "https://res.cloudinary.com/dvhfgstud/image/upload/v1734150946/rainy-day_km9l1f.png";
+        break;
+      default:
+        weatherIcon = 'https://res.cloudinary.com/dvhfgstud/image/upload/v1734151317/cloudy_2_g2gy9c.png'; 
+        break;
+    }
+    setImage(weatherIcon);
+  }, [description]);
+
+
+
   return (
     <div>
       <h6 style={{ fontFamily: "Helvetica", marginTop: "1rem" }}>
@@ -16,13 +43,12 @@ const WeatherInfo = ({ city, temperature, precipitation, humidity, windSpeed }) 
           flexDirection: "row",
           alignItems: "center",
         }}
-      >
-        <img
-          src="https://res.cloudinary.com/dx6ccf6ey/image/upload/v1732112644/GSU/i21lpp2sussdyequ0gob.svg"
-          alt="weatherIcon"
-          style={{ width: "55px", height: "auto" }}
-        />
-
+      > 
+    {image && (
+          <img src={image} alt="weatherIcon" style={{ width: "55px", height: "auto" }} />
+        )}
+        
+    
         <h6
           style={{
             fontFamily: "Helvetica",
@@ -35,7 +61,7 @@ const WeatherInfo = ({ city, temperature, precipitation, humidity, windSpeed }) 
           {temperature}
         </h6>
 
-        <div style={{ marginBottom: "1.2rem" }}>
+        <div style={{ marginBottom: "1.1rem" }}>
           <span
             style={{
               fontFamily: "Helvetica",
@@ -46,16 +72,7 @@ const WeatherInfo = ({ city, temperature, precipitation, humidity, windSpeed }) 
           >
             °C
           </span>
-          <span
-            style={{
-              fontFamily: "Helvetica",
-              fontWeight: "400",
-              marginLeft: "2px",
-              fontSize: "16px",
-            }}
-          >
-            |°F
-          </span>
+        
         </div>
 
         <div style={{ marginLeft: "1rem" }}>
@@ -68,7 +85,7 @@ const WeatherInfo = ({ city, temperature, precipitation, humidity, windSpeed }) 
               fontSize: "14px",
             }}
           >
-            Precipitation: {precipitation}%
+            Description: {description}
           </p>
           <p
             style={{
@@ -79,7 +96,7 @@ const WeatherInfo = ({ city, temperature, precipitation, humidity, windSpeed }) 
               fontSize: "14px",
             }}
           >
-            Humidity: {humidity}%
+            Humidity: {humidity} %
           </p>
           <p
             style={{
@@ -90,7 +107,7 @@ const WeatherInfo = ({ city, temperature, precipitation, humidity, windSpeed }) 
               fontSize: "14px",
             }}
           >
-            Wind: {windSpeed} km/h
+            Wind: {windSpeed} 
           </p>
         </div>
       </div>
