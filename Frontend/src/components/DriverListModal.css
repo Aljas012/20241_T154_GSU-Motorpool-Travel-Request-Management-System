@@ -1,0 +1,30 @@
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    width: 100%;
+}
+
+.loading-container p {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.driver-list {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.driver-item {
+    padding: 0.5rem;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+
+.driver-item:hover {
+    background-color: #f5f5f5;
+} 

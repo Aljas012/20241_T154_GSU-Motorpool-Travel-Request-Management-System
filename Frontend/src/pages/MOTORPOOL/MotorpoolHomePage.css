@@ -1,0 +1,778 @@
+.customRow {
+  height: 100vh;
+  background-color: #f2f2f2;
+}
+
+.customNavMHP {
+  background: linear-gradient(90deg, #0760a1 0%, #02233b 100%);
+  position: relative;
+  border-bottom: 1px solid rgb(144, 144, 144);
+  box-shadow: 0px 1px 2px rgba(7, 96, 161, 0.5); /* Adds a soft blue glow */
+}
+.customHeadHeader {
+  font-family: Helvetica;
+  font-weight: 550;
+}
+.customHeadHeader1 {
+  font-family: Helvetica;
+}
+
+.CustomButtonHead1 {
+  font-family: Helvetica;
+  width: 30%;
+}
+
+.alignmentHead2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.alignmentFA {
+  display: flex;
+  justify-content: space-between;
+}
+.customLogoMHP {
+  width: 80%;
+  justify-content: center;
+}
+
+.fontColorMHP {
+  color: #ffffff;
+}
+
+.customH3MHP {
+  font-family: Helvetica;
+  font-weight: 600;
+  margin: 0;
+}
+
+.customH5MHP {
+  font-family: Helvetica;
+  font-weight: 500;
+  margin: 0;
+}
+.customH6MHP {
+  font-family: Helvetica;
+  font-weight: 500;
+  font-size: 50px;
+  margin: 0;
+
+  margin-left: 1rem;
+}
+
+.customFont {
+  font-family: Helvetica;
+  font-weight: 600;
+  color: #0760a1;
+
+  margin: 0;
+}
+
+.customFont1 {
+  font-family: Helvetica;
+  font-weight: 600;
+}
+.pIcon {
+  width: 40%;
+}
+
+.pIcon2 {
+  margin-right: 1rem;
+  width: 4vw;
+}
+
+.pIcon3 {
+  width: 13%;
+}
+.customIcon {
+  width: 3.5vw;
+}
+
+.customANav {
+  text-decoration: none;
+  color: #ffffff;
+}
+
+.customA2 {
+  color: #0760a1;
+  cursor: pointer;
+}
+
+.customA3 {
+  color: #0760a1;
+  cursor: pointer;
+  transition: all 0.2s ease; /* Smooth transition */
+}
+
+.customA3:hover {
+  color: #054a7a; /* Darker shade */
+  transform: scale(1.01); /* Slight increase in size */
+}
+
+.customh4MPH {
+  font-family: Helvetica;
+  font-weight: 600;
+
+  margin-left: 15rem;
+
+  margin: 0;
+}
+
+.customSideBarMHP {
+  position: absolute;
+  left: 0;
+  height: 100vh;
+  width: 20vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: #f1f1f1;
+
+  color: #0760a1;
+}
+
+.noMargMHP {
+  margin: 0;
+}
+
+.centerMHP {
+  display: flex;
+
+  gap: 2rem;
+}
+
+.lineBorder {
+  padding: 0.8rem;
+  border-bottom: 1.5px solid #ccc; /* Light gray border */
+}
+
+.noLine {
+  text-decoration: none;
+  color: #0760a1;
+
+  cursor: pointer;
+}
+
+.alignmentMHP {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.alignmentMHP4 {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+}
+
+.alignmentMHP2 {
+  justify-content: start;
+}
+
+.alignmentMHP3 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.alignmentMHP5 {
+  align-items: center;
+}
+
+.textCntr {
+  text-align: center;
+}
+
+.customFooterMHP {
+  background-color: #145ca3; /* Light background */
+  color: #ffffff; /* White text for contrast */
+
+  border-top: 1px solid #dee2e6;
+
+  /* Fixed positioning at the bottom */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  z-index: 2;
+}
+
+.customCard {
+  background-color: #f1f1f1;
+
+  padding: 1rem;
+
+  margin-top: 2.5rem;
+}
+
+.customCard2 {
+  background: linear-gradient(180deg, #0760a1 0%, #02233b 100%);
+
+  height: 20rem;
+  border-radius: 6px;
+  border: none;
+
+  /* Add a shadow to highlight the card */
+  box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.1);
+
+  /* Optional: Ensure smooth shadow effect */
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.customCard2:hover {
+  /* Enhance the shadow on hover for better highlight */
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px);
+
+  cursor: pointer;
+}
+
+.customCard3 {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 1rem;
+
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.customP {
+  color: #ffffff;
+
+  font-family: Helvetica;
+  font-weight: 550;
+  font-size: 10px;
+}
+
+.customP3 {
+  color: #ffffff;
+
+  font-family: Helvetica;
+  font-weight: 500;
+  font-size: 8px;
+
+  margin: 0;
+}
+
+.customP4 {
+  color: #ffffff;
+
+  font-family: Helvetica;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.customP5 {
+  font-family: Helvetica;
+  font-weight: 540;
+  font-size: 1.4rem;
+
+  margin: 0;
+}
+
+.customP6 {
+  font-family: Helvetica;
+  font-weight: 450;
+  font-size: 0.8rem;
+
+  margin: 0;
+}
+
+.customP7 {
+  font-family: Helvetica;
+  color: #0760a1;
+
+  font-size: 16px;
+}
+
+.customPad {
+  margin: 1.5rem 0.2rem 3rem 0.2rem;
+}
+
+.customPad1 {
+  margin: 1.5rem 0.2rem 3rem 0.2rem;
+}
+
+.smolMarg {
+  margin-top: 5px;
+}
+
+.customSpan {
+  font-family: Helvetica;
+  font-weight: 600;
+}
+
+.centerMHP1 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.celFar {
+  font-family: Helvetica;
+  font-weight: 400;
+  font-size: 16px;
+}
+
+.humWind {
+  font-family: Helvetica;
+
+  margin: 0;
+  padding: 0;
+  line-height: 1.2;
+  font-size: 13px;
+}
+
+.alignment {
+  margin-top: 2.2rem;
+  margin-left: 1rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.effects {
+  display: inline-block; /* Ensures scaling works */
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease; /* Smooth transition */
+  will-change: transform; /* Optimizes for smooth scaling */
+}
+
+.effects:hover {
+  background-color: #f1f1f1; /* Light gray background for highlight */
+  color: #1f87f5; /* Change text color */
+  transform: scale(1.1); /* Subtle enlargement */
+}
+
+.glass-modal .modal-content {
+  background: rgba(
+    226,
+    226,
+    255,
+    0.82
+  ); /* Increase opacity for a more solid look */
+  -webkit-backdrop-filter: blur(5px); /* Reduce blur intensity */
+  backdrop-filter: blur(5px); /* Reduce blur intensity */
+  border-radius: 15px; /* Smooth corners */
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Slightly reduce shadow intensity */
+}
+
+.glass-modal .modal-header,
+.glass-modal .modal-footer {
+  background: rgba(
+    226,
+    226,
+    225,
+    0.5
+  ); /* Higher opacity for more solid appearance */
+  -webkit-backdrop-filter: blur(5px); /* Reduce blur intensity */
+  backdrop-filter: blur(5px); /* Reduce blur intensity */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
+}
+
+.image-container {
+  position: relative; /* Make the container a positioned element */
+  display: inline-block; /* Ensure it wraps around the image */
+}
+
+.image-container img {
+  display: block; /* Ensure the image doesn't leave gaps */
+  width: 70%; /* Optional: Adjust image size */
+}
+
+.centered-number {
+  position: absolute; /* Position relative to the .image-container */
+  top: 50%; /* Move to the vertical center */
+  left: 34%; /* Move to the horizontal center */
+  transform: translate(-50%, -50%); /* Adjust position to be fully centered */
+  color: white; /* Optional: Text color */
+  font-family: Helvetica;
+  font-weight: bold; /* Optional: Make the number stand out */
+  font-size: 14px; /* Adjust size as needed */
+}
+
+ul {
+  list-style-type: disc; /* Default bullets */
+  margin-left: 20px; /* Add some indentation */
+  padding-left: 0;
+}
+
+li {
+  margin-bottom: 2px; /* Add spacing between items */
+  font-size: 1rem; /* Customize text size */
+}
+
+ul.custom-bullets li {
+  list-style-type: disc; /* Use solid circle bullets */
+}
+
+.alignmentAG {
+  display: flex;
+
+  align-items: center;
+
+  margin: 0;
+}
+.customNavFORM {
+  background: linear-gradient(90deg, #0760a1 0%, #02233b 100%);
+}
+
+.customLogoFORM {
+  width: 80%;
+  justify-content: center;
+}
+
+.fontColorFORM {
+  color: #ffffff;
+}
+
+.customH3FORM {
+  font-family: Helvetica;
+  font-weight: 600;
+  margin: 0;
+}
+
+.customH5FORM {
+  font-family: Helvetica;
+  font-weight: 500;
+  margin: 0;
+}
+
+.customColorButton {
+  color: #ffffff;
+  background-color: #0760a1;
+}
+
+.customFooter {
+  background: linear-gradient(90deg, #0760a1 0%, #02233b 100%);
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 3;
+  margin: 0;
+  padding: 10px;
+
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  color: #ffffff;
+}
+
+.alignTIC {
+  display: flex;
+  flex-direction: column;
+
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.alignCenterTIC {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2px;
+
+  margin-bottom: 0.5rem;
+}
+
+.alignCenterTIC1 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2px;
+
+  width: 60%;
+
+  margin-bottom: 0.5rem;
+}
+
+.alignCenterTIC2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2px;
+}
+
+.customFieldTIC {
+  width: 60%;
+  display: flex;
+  align-items: end;
+
+  border: 1.5px solid #000000;
+
+  font-family: Helvetica;
+}
+
+.fieldBorder {
+  border: 1.5px solid #000000;
+
+  font-family: Helvetica;
+}
+
+.alignment1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.customFont3 {
+  font-family: Helvetica;
+  font-weight: 600;
+}
+
+.customFont2 {
+  font-family: Helvetica;
+  font-weight: 600;
+
+  border-top: 1px solid #00000066;
+
+  padding-top: 6px; /* Adds space between text and line */
+
+  border-bottom: 1px solid #00000066; /* Bottom border */
+
+  padding-bottom: 5px; /* Adds space between text and line */
+
+  margin-top: 12px;
+}
+
+.scrollableDiv {
+  max-height: 200px; /* Set the fixed height */
+  overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.scrollableDiv1 {
+  max-height: 450px;
+  overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.customButonMHP {
+  width: 100%;
+  background-color: #cd8800; /* Default background color */
+  border: none;
+  color: #fff; /* Default text color */
+  font-family: Helvetica;
+  font-weight: 550;
+  transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+}
+
+.customButonMHP:hover {
+  background-color: #b37400; /* Darker shade for hover */
+  color: #fff; /* Optional: Change text color on hover */
+}
+
+.customButtonDriver {
+  position: absolute;
+  background-color: transparent;
+  color: #cd8800;
+  border: 1px solid #cd8800;
+  border-radius: 5px;
+  padding: 5px 14px;
+  left: 2.5rem;
+  bottom: 1.2rem;
+  cursor: pointer;
+
+  font-family: Helvetica;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: transform 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.customButtonDriver:hover {
+  transform: scale(1.02); /* Slightly enlarge the button on hover */
+}
+
+.customButtonVehicle {
+  position: absolute;
+  background-color: transparent;
+  color: #cd8800;
+  border: 1px solid #cd8800;
+  border-radius: 5px;
+  padding: 5px 14px;
+  left: 2.5rem;
+  bottom: 1.2rem;
+  cursor: pointer;
+
+  font-family: Helvetica;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: transform 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.customButtonVehicle:hover {
+  transform: scale(1.02); /* Slightly enlarge the button on hover */
+}
+
+.addDriverIconAlignment {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2px;
+  margin-right: 8px;
+}
+
+.addDriveIcon {
+  height: 1rem;
+  width: auto;
+}
+
+.alignment2 {
+  display: flex;
+
+  gap: 18px;
+}
+
+.customIcon2 {
+  height: auto;
+  width: 16px;
+}
+
+.sidebarIconSize {
+  height: 2rem;
+}
+
+.sidebarIconSize1 {
+  height: 2.5rem;
+}
+
+.sidebarBG {
+  height: 100vh;
+  box-shadow: 0.8px 0 3px 0.5px rgba(106, 106, 106, 0.5);
+
+  padding: 0;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  color: #0760a1;
+  border-bottom: 1px solid #00000026;
+  padding: 0.3rem 0 0.3rem 0;
+
+  will-change: transform; /* Optimize rendering for transform */
+  transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+}
+
+.menuItem:hover {
+  transform: scale(1.05);
+}
+
+.menuItem img {
+  will-change: transform;
+  transition: transform 0.3s ease;
+}
+
+.menuItem:hover img {
+  transform: scale(1.1);
+}
+
+.menuItemDiv {
+  display: flex;
+  align-items: center;
+  width: 14.8vw;
+  gap: 2rem;
+}
+
+.customP8 {
+  font-size: 14px;
+  padding: 14px;
+}
+
+.customP8Num {
+  font-size: 28px;
+  font-weight: 550;
+}
+
+.customH6Card {
+  font-size: 0.9rem;
+  font-weight: 550;
+  margin-top: 1rem;
+}
+
+.customCardFont {
+  color: white;
+  font-family: Helvetica;
+}
+
+.customCardAlignment {
+  display: flex;
+  justify-content: center;
+}
+.customRowAlignement {
+  display: flex;
+  gap: 2rem;
+}
+
+.customHeader {
+  font-family: Helvetica;
+  font-weight: 450;
+  font-size: 1.9rem;
+}
+
+.CustomButtonHead {
+  flex: 1;
+  min-width: 5rem;
+  font-family: Helvetica;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  border: none;
+}
+
+.CustomButtonHead:hover {
+  opacity: 0.9;
+  transform: scale(1.01);
+}
+
+.CustomButtonHead1 {
+  font-family: Helvetica;
+  width: 30%;
+}
+
+.customFormHead::placeholder {
+  font-family: Helvetica;
+  color: #000000;
+}
+
+.alignmentHead {
+  display: flex;
+  gap: 0.4rem;
+  justify-content: center;
+  width: 30%;
+}
+
+.alignmentHead2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.acknowledgment {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  padding-right: 6.5rem;
+  transform: translateY(-50%);
+  font-weight: bold;
+}
+
+.headCustomCard {
+  font-family: Helvetica, sans-serif;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.headCustomCard .card-header {
+  font-weight: 550;
+}
